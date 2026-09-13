@@ -9,6 +9,7 @@ import {
   Activity,
   Armchair,
 } from "lucide-react";
+import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { getPageSetting, getCompanyIdentity } from "@/lib/settings";
@@ -89,10 +90,14 @@ export default async function PerawatLansiaLayananPage() {
 
       <section className="relative pt-12 pb-20 md:pt-16 md:pb-28 overflow-hidden bg-surface-bright">
         <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-          <img
+          <Image
             src={heroImage}
             alt={heroImageAlt}
-            className="w-full h-full object-cover opacity-25"
+            fill
+            priority
+            sizes="100vw"
+            quality={75}
+            className="object-cover opacity-25"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-brand-offwhite/40 via-brand-offwhite/75 to-brand-offwhite" />
         </div>

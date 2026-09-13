@@ -1,13 +1,11 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import {
-  Sparkles,
+  Baby,
   ShieldCheck,
   CheckCircle2,
   PhoneCall,
   ArrowRight,
-  Baby,
-  Heart,
-  Brain,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
@@ -22,15 +20,15 @@ import {
 import { SITE_CONFIG } from "@/lib/siteConfig";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const setting = await getPageSetting("page_layanan_baby_sitter");
+  const setting = await getPageSetting("page_layanan_babysitter");
   const company = await getCompanyIdentity();
 
   const title =
     setting.meta_title ||
-    `Jasa Baby Sitter & Pengasuh Anak Resmi | ${SITE_CONFIG.name}`;
+    `Penyalur Baby Sitter & Nanny Terdidik | ${SITE_CONFIG.name}`;
   const description =
     setting.meta_description ||
-    "Penyalur baby sitter & suster balita resmi berizin Disnaker. Pengasuh sabar, teruji medis, memahami stimulasi tumbuh kembang anak, serta bergaransi.";
+    "Penyalur suster baby sitter & pengasuh anak terpercaya berizin Disnaker. Sedia suster newborn & balita yang sabar, terdidik, dan bergaransi.";
   const ogImage = setting.og_image || setting.hero_image || SITE_CONFIG.logo;
 
   return {
@@ -56,26 +54,26 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function BabySitterLayananPage() {
-  const pageSetting = await getPageSetting("page_layanan_baby_sitter");
+export default async function BabySitterPage() {
+  const pageSetting = await getPageSetting("page_layanan_babysitter");
   const company = await getCompanyIdentity();
   const waNumber = company.nomor_whatsapp || SITE_CONFIG.whatsappPrimary;
 
   const serviceSchema = generateServiceSchema(
     "Baby Sitter & Pengasuh Anak",
-    "Penyalur baby sitter & suster balita resmi berizin Disnaker. Pengasuh sabar, teruji medis, memahami stimulasi tumbuh kembang anak, serta bergaransi.",
+    "Penyalur suster baby sitter & pengasuh anak terpercaya berizin Disnaker. Sedia suster newborn & balita yang sabar, terdidik, dan bergaransi.",
     "/layanan/baby-sitter"
   );
   const breadcrumbSchema = generateBreadcrumbSchema([
     { name: "Beranda", url: "/" },
     { name: "Layanan", url: "/layanan" },
-    { name: "Baby Sitter", url: "/layanan/baby-sitter" },
+    { name: "Baby Sitter & Nanny", url: "/layanan/baby-sitter" },
   ]);
   const faqSchema = generateFAQSchema(pageSetting.faqs || []);
 
   const heroTitle =
     pageSetting.hero_title ||
-    "Jasa Baby Sitter & Suster Pengasuh Anak Resmi";
+    "Baby Sitter & Pengasuh Anak Terpercaya";
   const heroSubtitle =
     pageSetting.hero_subtitle ||
     "Penyalur suster newborn & balita profesional. Sabar, paham stimulasi anak, dan bergaransi.";
@@ -89,10 +87,14 @@ export default async function BabySitterLayananPage() {
 
       <section className="relative pt-12 pb-20 md:pt-16 md:pb-28 overflow-hidden bg-surface-bright">
         <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-          <img
+          <Image
             src={heroImage}
             alt={heroImageAlt}
-            className="w-full h-full object-cover opacity-25"
+            fill
+            priority
+            sizes="100vw"
+            quality={75}
+            className="object-cover opacity-25"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-brand-offwhite/40 via-brand-offwhite/75 to-brand-offwhite" />
         </div>

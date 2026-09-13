@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import {
   ShieldCheck,
@@ -185,10 +186,14 @@ export function LayananClientContent({ pageSetting, company }: LayananClientCont
       <section className="relative pt-12 pb-20 md:pt-16 md:pb-28 overflow-hidden bg-brand-offwhite border-b border-outline-variant/30">
         {/* Background Image Overlay */}
         <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-          <img
+          <Image
             src={heroImage}
             alt={heroImageAlt}
-            className="w-full h-full object-cover opacity-20"
+            fill
+            priority
+            sizes="100vw"
+            quality={75}
+            className="object-cover opacity-20"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-brand-offwhite/40 via-brand-offwhite/80 to-brand-offwhite" />
         </div>

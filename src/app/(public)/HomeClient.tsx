@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import {
@@ -174,10 +175,14 @@ export default function HomeClient({ pageSetting, company }: HomeClientProps) {
       <section className="relative w-full min-h-[80vh] flex items-center justify-center overflow-hidden pt-8 pb-16 md:py-24">
         {/* Background Image Overlay */}
         <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-          <img
+          <Image
             src={heroImage}
             alt={heroImageAlt}
-            className="w-full h-full object-cover opacity-25"
+            fill
+            priority
+            sizes="100vw"
+            quality={75}
+            className="object-cover opacity-25"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-brand-offwhite/40 via-brand-offwhite/75 to-brand-offwhite" />
         </div>
@@ -274,9 +279,9 @@ export default function HomeClient({ pageSetting, company }: HomeClientProps) {
                     <ShieldCheck className="w-6 h-6" />
                   </div>
                   <div>
-                    <h3 className="font-serif text-xl font-semibold text-brand-pine">
+                    <h2 className="font-serif text-xl font-semibold text-brand-pine">
                       Garansi Keamanan 100%
-                    </h3>
+                    </h2>
                     <p className="font-sans text-xs text-on-surface-variant mt-1 leading-relaxed">
                       Identitas KTP, KK, dan riwayat SKCK diverifikasi resmi.
                     </p>
@@ -288,9 +293,9 @@ export default function HomeClient({ pageSetting, company }: HomeClientProps) {
                     <CheckCircle2 className="w-6 h-6" />
                   </div>
                   <div>
-                    <h3 className="font-serif text-xl font-semibold text-brand-pine">
+                    <h2 className="font-serif text-xl font-semibold text-brand-pine">
                       Medical Check-up Lengkap
-                    </h3>
+                    </h2>
                     <p className="font-sans text-xs text-on-surface-variant mt-1 leading-relaxed">
                       Bebas penyakit menular (TBC, Hepatitis, Typhus) & sehat fisik.
                     </p>
@@ -302,9 +307,9 @@ export default function HomeClient({ pageSetting, company }: HomeClientProps) {
                     <RefreshCw className="w-6 h-6" />
                   </div>
                   <div>
-                    <h3 className="font-serif text-xl font-semibold text-brand-pine">
+                    <h2 className="font-serif text-xl font-semibold text-brand-pine">
                       Jaminan Penggantian
-                    </h3>
+                    </h2>
                     <p className="font-sans text-xs text-on-surface-variant mt-1 leading-relaxed">
                       Garansi penggantian hingga 3x jika terjadi ketidakcocokan.
                     </p>
@@ -366,10 +371,13 @@ export default function HomeClient({ pageSetting, company }: HomeClientProps) {
 
               <div className={`${idx % 2 === 1 ? "md:order-1" : "md:order-2"}`}>
                 <div className="relative rounded-2xl overflow-hidden shadow-ambient border border-outline-subtle aspect-[4/3]">
-                  <img
+                  <Image
                     src={service.image}
                     alt={service.title}
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    quality={75}
+                    className="object-cover hover:scale-105 transition-transform duration-700"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-brand-pine/30 to-transparent opacity-60" />
                 </div>
