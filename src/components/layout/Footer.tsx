@@ -58,9 +58,9 @@ export function Footer({ company }: FooterProps) {
 
           {/* Services Link */}
           <div className="flex flex-col gap-4">
-            <h4 className="text-xs tracking-[0.2em] uppercase font-bold text-[#83bfaf]">
+            <p className="text-xs tracking-[0.2em] uppercase font-bold text-[#83bfaf]">
               Layanan Utama
-            </h4>
+            </p>
             <div className="flex flex-col gap-2.5">
               <Link href="/layanan" className="text-sm font-semibold text-[#82c467] hover:text-white transition-colors">
                 ✦ Semua Layanan & Paket
@@ -79,9 +79,9 @@ export function Footer({ company }: FooterProps) {
 
           {/* Quick Links */}
           <div className="flex flex-col gap-4">
-            <h4 className="text-xs tracking-[0.2em] uppercase font-bold text-[#83bfaf]">
+            <p className="text-xs tracking-[0.2em] uppercase font-bold text-[#83bfaf]">
               Navigasi Utama
-            </h4>
+            </p>
             <div className="flex flex-col gap-2.5">
               <Link href="/" className="text-sm text-surface-dim/80 hover:text-white transition-colors">
                 Beranda Utama
@@ -109,9 +109,9 @@ export function Footer({ company }: FooterProps) {
 
           {/* Contact Details */}
           <div className="flex flex-col gap-4">
-            <h4 className="text-xs tracking-[0.2em] uppercase font-bold text-[#83bfaf]">
+            <p className="text-xs tracking-[0.2em] uppercase font-bold text-[#83bfaf]">
               Hubungi Kami
-            </h4>
+            </p>
             <div className="flex flex-col gap-3 text-sm text-surface-dim/80">
               <div className="flex gap-2.5">
                 <MapPin className="w-5 h-5 shrink-0 text-[#82c467] mt-0.5" />

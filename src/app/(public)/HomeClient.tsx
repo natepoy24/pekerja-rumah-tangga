@@ -397,7 +397,7 @@ export default function HomeClient({ pageSetting, company }: HomeClientProps) {
                 key={step.no}
                 className="relative bg-white rounded-xl p-6 border border-outline-variant/40 shadow-sm hover:border-brand-pine transition-all group"
               >
-                <div className="absolute -right-2 -top-4 font-serif text-7xl font-bold text-brand-pine/10 group-hover:text-brand-pine/20 transition-colors select-none">
+                <div aria-hidden="true" className="absolute -right-2 -top-4 font-serif text-7xl font-bold text-brand-pine/10 group-hover:text-brand-pine/20 transition-colors select-none">
                   {step.no}
                 </div>
                 <div className="relative z-10 space-y-3">

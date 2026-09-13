@@ -18,6 +18,8 @@ import { ContactFormClient } from "./ContactFormClient";
 import { getPageSetting, getCompanyIdentity } from "@/lib/settings";
 import FaqSection from "@/components/common/FaqSection";
 
+import { SITE_CONFIG } from "@/lib/siteConfig";
+
 export async function generateMetadata(): Promise<Metadata> {
   const setting = await getPageSetting("page_kontak");
   const company = await getCompanyIdentity();
@@ -25,14 +27,22 @@ export async function generateMetadata(): Promise<Metadata> {
   const title = setting.meta_title || `Hubungi ${company.nama_perusahaan} | Kantor Penyalur PRT, Baby Sitter & Perawat Lansia`;
   const description = setting.meta_description || "Konsultasikan kebutuhan PRT, baby sitter, dan perawat lansia bersama kami.";
   const ogImage = setting.og_image || setting.hero_image || "/asisten rumah tangga.jpeg";
+  const canonicalUrl = `${SITE_CONFIG.url}/kontak`;
 
   return {
     title,
     description,
     keywords: setting.keywords ? setting.keywords.split(",").map((k) => k.trim()) : undefined,
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
       title,
       description,
+      url: canonicalUrl,
+      siteName: company.nama_perusahaan || SITE_CONFIG.name,
+      locale: "id_ID",
+      type: "website",
       images: [{ url: ogImage, alt: setting.hero_image_alt || title }],
     },
   };
@@ -197,9 +207,9 @@ export default async function ContactPage() {
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
                       <span className="w-2.5 h-2.5 rounded-full bg-[#3E7B28] animate-pulse" />
-                      <h3 className="font-serif text-lg font-bold text-[#14201D]">
+                      <h2 className="font-serif text-lg font-bold text-[#14201D]">
                         WhatsApp Priority Line
-                      </h3>
+                      </h2>
                     </div>
                     <p className="font-sans text-xs text-[#404945]">
                       Respon rata-rata &lt; 15 menit pada jam operasional.

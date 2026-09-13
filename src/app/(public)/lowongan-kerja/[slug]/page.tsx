@@ -67,6 +67,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title,
       description,
       url: `${SITE_CONFIG.url}/lowongan-kerja/${job.slug}`,
+      siteName: company.nama_perusahaan || SITE_CONFIG.name,
       type: "website",
       locale: "id_ID",
       images: [{ url: ogImage, alt: title }],
@@ -163,7 +164,7 @@ export default async function JobDetailPage({ params }: PageProps) {
               </h1>
             </div>
 
-            <a href={waApplyUrl} target="_blank" rel="noopener noreferrer" className="shrink-0">
+            <a href={waApplyUrl} target="_blank" rel="noopener noreferrer" className="shrink-0 inline-flex min-h-[44px] min-w-[44px] items-center justify-center">
               <Button variant="compassionate" size="lg" className="gap-2 shadow-md">
                 <PhoneCall className="w-4 h-4" />
                 <span>Lamar Posisi Ini (WA)</span>

@@ -4,6 +4,8 @@ import PekerjaCatalogClient from "./PekerjaCatalogClient";
 import { getPageSetting, getCompanyIdentity } from "@/lib/settings";
 import FaqSection from "@/components/common/FaqSection";
 
+import { SITE_CONFIG } from "@/lib/siteConfig";
+
 export const revalidate = 0;
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -13,14 +15,22 @@ export async function generateMetadata(): Promise<Metadata> {
   const title = setting.meta_title || `Katalog Pekerja Rumah Tangga Resmi & Terverifikasi | ${company.nama_perusahaan}`;
   const description = setting.meta_description || "Cari dan pilih profil Asisten Rumah Tangga, Baby Sitter, dan Perawat Lansia siap kerja.";
   const ogImage = setting.og_image || "/asisten rumah tangga.jpeg";
+  const canonicalUrl = `${SITE_CONFIG.url}/pekerja`;
 
   return {
     title,
     description,
     keywords: setting.keywords ? setting.keywords.split(",").map((k) => k.trim()) : undefined,
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
       title,
       description,
+      url: canonicalUrl,
+      siteName: company.nama_perusahaan || SITE_CONFIG.name,
+      locale: "id_ID",
+      type: "website",
       images: [{ url: ogImage, alt: title }],
     },
   };

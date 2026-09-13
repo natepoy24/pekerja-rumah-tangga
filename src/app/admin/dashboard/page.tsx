@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
+import { DEFAULT_JOBS } from "@/lib/jobs";
 import {
   Users,
   UserPlus,
@@ -18,6 +19,7 @@ import {
   Edit,
   History,
   Layers,
+  Briefcase,
 } from "lucide-react";
 
 export const revalidate = 0;
@@ -27,9 +29,11 @@ export default async function AdminDashboardPage() {
 
   let totalPekerja = 0;
   let totalTersedia = 0;
+  let totalLowongan = 0;
   let totalArtikel = 0;
   let totalViews = 0;
   let recentWorkers: any[] = [];
+  let recentJobs: any[] = [];
   let recentArticles: any[] = [];
   let cmsLogs: any[] = [];
 
@@ -43,6 +47,11 @@ export default async function AdminDashboardPage() {
       .select("*", { count: "exact", head: true })
       .eq("status", "Tersedia");
     totalTersedia = countAvailable || 0;
+
+    const { count: countJobs } = await supabase
+      .from("jobs")
+      .select("*", { count: "exact", head: true })
+      .eq("is_active", true);
 
     const { count: countArticles } = await supabase.from("artikel").select("*", { count: "exact", head: true });
     totalArtikel = countArticles || 0;
@@ -58,7 +67,22 @@ export default async function AdminDashboardPage() {
       .limit(5);
     if (workersData) recentWorkers = workersData;
 
-    // 3. 3 Artikel Terakhir
+    // 3. 3 Lowongan Terakhir (Lowongan Kerja Aktif)
+    const { data: jobsData } = await supabase
+      .from("jobs")
+      .select("id, title, slug, category, system, salary_display, is_active, created_at")
+      .order("created_at", { ascending: false })
+      .limit(3);
+
+    if (jobsData && jobsData.length > 0) {
+      recentJobs = jobsData;
+      totalLowongan = countJobs ?? jobsData.filter((j) => j.is_active !== false).length;
+    } else {
+      recentJobs = DEFAULT_JOBS.slice(0, 3);
+      totalLowongan = DEFAULT_JOBS.filter((j) => j.is_active !== false).length;
+    }
+
+    // 4. 3 Artikel Terakhir
     const { data: articlesData } = await supabase
       .from("artikel")
       .select("id, judul, slug, kategori, views, published_at, gambar_url, created_at")
@@ -66,14 +90,13 @@ export default async function AdminDashboardPage() {
       .limit(3);
     if (articlesData) recentArticles = articlesData;
 
-    // 4. Log CMS dari site_settings dan input data terbaru
+    // 5. Log CMS
     const { data: settingsData } = await supabase
       .from("site_settings")
       .select("id, name, updated_at")
       .order("updated_at", { ascending: false })
       .limit(5);
 
-    // Combine recent activities
     const logs: any[] = [];
     if (settingsData) {
       settingsData.forEach((s) => {
@@ -89,7 +112,7 @@ export default async function AdminDashboardPage() {
     }
 
     if (workersData && workersData.length > 0) {
-      workersData.slice(0, 3).forEach((w) => {
+      workersData.slice(0, 2).forEach((w) => {
         logs.push({
           type: "pekerja",
           title: `Pekerja: ${w.nama}`,
@@ -97,6 +120,19 @@ export default async function AdminDashboardPage() {
           time: w.created_at,
           icon: Users,
           badge: "Pekerja",
+        });
+      });
+    }
+
+    if (recentJobs && recentJobs.length > 0) {
+      recentJobs.slice(0, 2).forEach((j) => {
+        logs.push({
+          type: "lowongan",
+          title: `Lowongan: ${j.title}`,
+          desc: `Posisi ${j.category?.toUpperCase() || "Umum"} - ${j.system || "Aktif"}`,
+          time: j.created_at || new Date().toISOString(),
+          icon: Briefcase,
+          badge: "Lowongan",
         });
       });
     }
@@ -114,11 +150,12 @@ export default async function AdminDashboardPage() {
       });
     }
 
-    // Sort by timestamp desc
     logs.sort((a, b) => new Date(b.time || 0).getTime() - new Date(a.time || 0).getTime());
     cmsLogs = logs.slice(0, 6);
   } catch (err) {
     console.error("Dashboard data fetch warning:", err);
+    recentJobs = DEFAULT_JOBS.slice(0, 3);
+    totalLowongan = DEFAULT_JOBS.filter((j) => j.is_active !== false).length;
   }
 
   const formatRupiah = (val: any) => {
@@ -152,7 +189,7 @@ export default async function AdminDashboardPage() {
             Ringkasan Operasional & Manajemen Konten
           </h1>
           <p className="text-xs sm:text-sm text-on-surface-variant mt-1 max-w-2xl">
-            Pantau ringkasan kandidat pekerja aktif, artikel edukasi, pembaruan log CMS, serta pintasan cepat ke seluruh fitur pengelolaan.
+            Pantau ringkasan kandidat pekerja aktif, lowongan kerja, artikel edukasi, pembaruan log CMS, serta pintasan cepat ke seluruh fitur pengelolaan.
           </p>
         </div>
 
@@ -164,6 +201,13 @@ export default async function AdminDashboardPage() {
           >
             <UserPlus className="w-4 h-4" />
             <span>+ Pekerja</span>
+          </Link>
+          <Link
+            href="/admin/dashboard/lowongan/tambah"
+            className="px-4 py-2.5 rounded-xl bg-[#0B4F42] hover:bg-[#00372d] text-white text-xs font-semibold flex items-center gap-1.5 shadow-sm transition-all active:scale-95"
+          >
+            <Briefcase className="w-4 h-4" />
+            <span>+ Lowongan</span>
           </Link>
           <Link
             href="/admin/dashboard/artikel/tambah"
@@ -183,44 +227,54 @@ export default async function AdminDashboardPage() {
       </div>
 
       {/* Bento Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        <div className="bg-white p-6 rounded-2xl border border-[#D5E8D0] shadow-sm flex items-center gap-4 hover:border-[#0B4F42]/40 transition-colors">
-          <div className="w-12 h-12 rounded-2xl bg-[#EBF4E7] flex items-center justify-center text-[#0B4F42] shrink-0">
-            <Users className="w-6 h-6" />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="bg-white p-5 rounded-2xl border border-[#D5E8D0] shadow-sm flex items-center gap-3.5 hover:border-[#0B4F42]/40 transition-colors">
+          <div className="w-11 h-11 rounded-2xl bg-[#EBF4E7] flex items-center justify-center text-[#0B4F42] shrink-0">
+            <Users className="w-5 h-5" />
           </div>
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant/70">Total Pekerja</p>
-            <h3 className="font-serif text-2xl font-bold text-[#14201D]">{totalPekerja}</h3>
+            <p className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant/70">Total Pekerja</p>
+            <h3 className="font-serif text-xl font-bold text-[#14201D]">{totalPekerja}</h3>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-2xl border border-[#D5E8D0] shadow-sm flex items-center gap-4 hover:border-[#0B4F42]/40 transition-colors">
-          <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-[#3E7B28] shrink-0">
-            <ShieldCheck className="w-6 h-6" />
+        <div className="bg-white p-5 rounded-2xl border border-[#D5E8D0] shadow-sm flex items-center gap-3.5 hover:border-[#0B4F42]/40 transition-colors">
+          <div className="w-11 h-11 rounded-2xl bg-emerald-50 flex items-center justify-center text-[#3E7B28] shrink-0">
+            <ShieldCheck className="w-5 h-5" />
           </div>
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant/70">Kandidat Tersedia</p>
-            <h3 className="font-serif text-2xl font-bold text-[#3E7B28]">{totalTersedia}</h3>
+            <p className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant/70">Kandidat Tersedia</p>
+            <h3 className="font-serif text-xl font-bold text-[#3E7B28]">{totalTersedia}</h3>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-2xl border border-[#D5E8D0] shadow-sm flex items-center gap-4 hover:border-[#0B4F42]/40 transition-colors">
-          <div className="w-12 h-12 rounded-2xl bg-[#EBF4E7] flex items-center justify-center text-[#0B4F42] shrink-0">
-            <FileText className="w-6 h-6" />
+        <div className="bg-white p-5 rounded-2xl border border-[#D5E8D0] shadow-sm flex items-center gap-3.5 hover:border-[#0B4F42]/40 transition-colors">
+          <div className="w-11 h-11 rounded-2xl bg-[#EBF4E7] flex items-center justify-center text-[#0B4F42] shrink-0">
+            <Briefcase className="w-5 h-5" />
           </div>
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant/70">Total Artikel</p>
-            <h3 className="font-serif text-2xl font-bold text-[#14201D]">{totalArtikel}</h3>
+            <p className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant/70">Lowongan Aktif</p>
+            <h3 className="font-serif text-xl font-bold text-[#0B4F42]">{totalLowongan}</h3>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-2xl border border-[#D5E8D0] shadow-sm flex items-center gap-4 hover:border-[#0B4F42]/40 transition-colors">
-          <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-700 shrink-0">
-            <Activity className="w-6 h-6" />
+        <div className="bg-white p-5 rounded-2xl border border-[#D5E8D0] shadow-sm flex items-center gap-3.5 hover:border-[#0B4F42]/40 transition-colors">
+          <div className="w-11 h-11 rounded-2xl bg-[#EBF4E7] flex items-center justify-center text-[#0B4F42] shrink-0">
+            <FileText className="w-5 h-5" />
           </div>
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant/70">Total Pembaca</p>
-            <h3 className="font-serif text-2xl font-bold text-[#14201D]">{totalViews.toLocaleString("id-ID")}</h3>
+            <p className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant/70">Total Artikel</p>
+            <h3 className="font-serif text-xl font-bold text-[#14201D]">{totalArtikel}</h3>
+          </div>
+        </div>
+
+        <div className="bg-white p-5 rounded-2xl border border-[#D5E8D0] shadow-sm flex items-center gap-3.5 hover:border-[#0B4F42]/40 transition-colors">
+          <div className="w-11 h-11 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-700 shrink-0">
+            <Activity className="w-5 h-5" />
+          </div>
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant/70">Total Pembaca</p>
+            <h3 className="font-serif text-xl font-bold text-[#14201D]">{totalViews.toLocaleString("id-ID")}</h3>
           </div>
         </div>
       </div>
@@ -328,6 +382,94 @@ export default async function AdminDashboardPage() {
                     })}
                   </tbody>
                 </table>
+              </div>
+            )}
+          </div>
+
+          {/* 3 Lowongan Kerja Terakhir (Aktif) */}
+          <div className="bg-white p-6 sm:p-7 rounded-3xl border border-[#D5E8D0] shadow-sm space-y-5">
+            <div className="flex items-center justify-between border-b border-outline-variant/20 pb-4">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-[#EBF4E7] text-[#0B4F42] flex items-center justify-center">
+                  <Briefcase className="w-4 h-4" />
+                </div>
+                <div>
+                  <h2 className="font-serif text-xl font-bold text-[#14201D]">3 Lowongan Kerja Terakhir</h2>
+                  <p className="text-xs text-on-surface-variant">Lowongan kerja aktif yang dapat dilamar calon pekerja.</p>
+                </div>
+              </div>
+
+              <Link
+                href="/admin/dashboard/lowongan"
+                className="text-xs font-bold text-[#0B4F42] hover:text-[#9E232A] transition-colors flex items-center gap-1"
+              >
+                <span>Kelola Semua</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+
+            {recentJobs.length === 0 ? (
+              <p className="text-xs text-on-surface-variant py-6 text-center">Belum ada data lowongan kerja.</p>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {recentJobs.map((j) => {
+                  const isActive = j.is_active !== false;
+                  return (
+                    <div
+                      key={j.id || j.slug}
+                      className="group border border-[#D5E8D0] rounded-2xl p-4 bg-[#FAFAF7] hover:bg-white transition-all hover:shadow-sm flex flex-col justify-between space-y-3"
+                    >
+                      <div className="space-y-2.5">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#EBF4E7] text-[#0B4F42] border border-[#D5E8D0] uppercase tracking-wider">
+                            {j.category || "Umum"}
+                          </span>
+                          <span
+                            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border ${
+                              isActive
+                                ? "bg-emerald-50 text-emerald-800 border-emerald-200"
+                                : "bg-gray-100 text-gray-700 border-gray-200"
+                            }`}
+                          >
+                            <span className={`w-1.5 h-1.5 rounded-full ${isActive ? "bg-emerald-500" : "bg-gray-400"}`} />
+                            {isActive ? "Aktif" : "Nonaktif"}
+                          </span>
+                        </div>
+                        <h4 className="font-serif text-sm font-bold text-[#14201D] line-clamp-2 leading-snug group-hover:text-[#0B4F42]">
+                          {j.title}
+                        </h4>
+                        <p className="text-xs font-semibold text-[#0B4F42]">
+                          {j.salary_display || "Sesuai Kesepakatan"}
+                        </p>
+                      </div>
+
+                      <div className="flex items-center justify-between text-[11px] text-on-surface-variant pt-2 border-t border-outline-variant/15">
+                        <span className="truncate max-w-[110px]" title={j.system}>
+                          {j.system || "Live-In"}
+                        </span>
+                        <div className="flex items-center gap-1.5">
+                          <Link
+                            href={`/admin/dashboard/lowongan/edit/${j.id || j.slug}`}
+                            className="font-bold text-[#0B4F42] hover:underline flex items-center gap-1"
+                          >
+                            <span>Edit</span>
+                            <Edit className="w-3 h-3" />
+                          </Link>
+                          {j.slug && (
+                            <Link
+                              href={`/lowongan-kerja/${j.slug}`}
+                              target="_blank"
+                              className="p-1 rounded text-on-surface-variant hover:text-[#0B4F42] transition-colors"
+                              title="Lihat Halaman Publik"
+                            >
+                              <ExternalLink className="w-3 h-3" />
+                            </Link>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             )}
           </div>

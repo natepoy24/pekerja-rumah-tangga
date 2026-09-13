@@ -45,6 +45,7 @@ export async function generateMetadata(): Promise<Metadata> {
       title,
       description,
       url: "https://pekerjarumahtangga.com/lowongan-kerja",
+      siteName: company.nama_perusahaan || "PT Jasa Mandiri Agency",
       type: "website",
       locale: "id_ID",
       images: [{ url: ogImage, alt: setting.hero_image_alt || title }],
@@ -148,13 +149,14 @@ export default async function LowonganKerjaHubPage() {
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
+                className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center"
               >
                 <Button variant="compassionate" size="lg" className="gap-2">
                   <PhoneCall className="w-4 h-4" />
                   <span>Daftar via WhatsApp Sekarang</span>
                 </Button>
               </a>
-              <a href="#daftar-posisi">
+              <a href="#daftar-posisi" className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center">
                 <Button variant="secondary" size="lg">
                   Lihat Semua Posisi Lowongan ↓
                 </Button>
@@ -362,28 +364,28 @@ export default async function LowonganKerjaHubPage() {
             </div>
             <div className="space-y-4">
               <div className="flex gap-4">
-                <span className="font-serif text-2xl font-bold text-[#0B4F42]/40">01</span>
+                <span aria-hidden="true" className="font-serif text-2xl font-bold text-[#0B4F42]">01</span>
                 <div>
                   <h3 className="font-serif font-bold text-[#0B4F42] text-base">Hubungi Tim HRD via WhatsApp</h3>
                   <p className="text-xs text-on-surface-variant mt-0.5">Kirimkan nama, asal daerah, dan posisi yang diinginkan.</p>
                 </div>
               </div>
               <div className="flex gap-4">
-                <span className="font-serif text-2xl font-bold text-[#0B4F42]/40">02</span>
+                <span aria-hidden="true" className="font-serif text-2xl font-bold text-[#0B4F42]">02</span>
                 <div>
                   <h3 className="font-serif font-bold text-[#0B4F42] text-base">Datang ke Asrama Resmi</h3>
                   <p className="text-xs text-on-surface-variant mt-0.5">Tiba di kantor operasional untuk verifikasi berkas dan penempatan kamar istirahat.</p>
                 </div>
               </div>
               <div className="flex gap-4">
-                <span className="font-serif text-2xl font-bold text-[#0B4F42]/40">03</span>
+                <span aria-hidden="true" className="font-serif text-2xl font-bold text-[#0B4F42]">03</span>
                 <div>
                   <h3 className="font-serif font-bold text-[#0B4F42] text-base">Pemeriksaan Medis & Pengarahan</h3>
                   <p className="text-xs text-on-surface-variant mt-0.5">Pemeriksaan kesehatan gratis serta pembekalan tata krama dan etika sopan santun.</p>
                 </div>
               </div>
               <div className="flex gap-4">
-                <span className="font-serif text-2xl font-bold text-[#0B4F42]/40">04</span>
+                <span aria-hidden="true" className="font-serif text-2xl font-bold text-[#0B4F42]">04</span>
                 <div>
                   <h3 className="font-serif font-bold text-[#0B4F42] text-base">Tanda Tangan Kontrak & Berangkat</h3>
                   <p className="text-xs text-on-surface-variant mt-0.5">Wawancara dengan majikan, penandatanganan kontrak legal, dan mulai bekerja.</p>

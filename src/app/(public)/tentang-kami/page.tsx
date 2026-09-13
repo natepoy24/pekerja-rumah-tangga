@@ -120,6 +120,79 @@ export default async function TentangKamiPage() {
         </div>
       </section>
 
+      {/* Standar Seleksi Section */}
+      <section className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 bg-surface-container-low border-y border-outline-variant/30">
+        <div className="max-w-container mx-auto space-y-12">
+          <div className="text-center max-w-3xl mx-auto space-y-4">
+            <Chip label="STANDAR SELEKSI BERLAPIS" />
+            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-brand-pine">
+              4 Tahapan Kurasi Penyaluran Pekerja Rumah Tangga
+            </h2>
+            <p className="font-sans text-base text-on-surface-variant max-w-2xl mx-auto">
+              Setiap tenaga kerja melewati verifikasi identitas, tes medis laboratorium, evaluasi etika, serta perlindungan garansi resmi.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="glass-surface p-6 rounded-2xl border border-outline-subtle space-y-4 hover:border-brand-pine transition-all group bg-white shadow-xs">
+              <div className="space-y-4">
+                <span aria-hidden="true" className="font-serif text-4xl font-bold text-brand-pine group-hover:text-brand-pine block">
+                  01
+                </span>
+                <h2 className="font-serif text-xl font-bold text-brand-pine">
+                  Verifikasi Latar Belakang & Identitas
+                </h2>
+                <p className="font-sans text-sm text-on-surface-variant leading-relaxed">
+                  Pengecekan KTP, KK, SKCK Kepolisian, serta konfirmasi riwayat kerja dari majikan sebelumnya.
+                </p>
+              </div>
+            </div>
+
+            <div className="glass-surface p-6 rounded-2xl border border-outline-subtle space-y-4 hover:border-brand-pine transition-all group bg-white shadow-xs">
+              <div className="space-y-4">
+                <span aria-hidden="true" className="font-serif text-4xl font-bold text-brand-pine group-hover:text-brand-pine block">
+                  02
+                </span>
+                <h2 className="font-serif text-xl font-bold text-brand-pine">
+                  Medical Check-Up Lengkap
+                </h2>
+                <p className="font-sans text-sm text-on-surface-variant leading-relaxed">
+                  Pemeriksaan kesehatan bebas penyakit menular (Hepatitis, TBC, HIV, Typhus) di klinik terpercaya.
+                </p>
+              </div>
+            </div>
+
+            <div className="glass-surface p-6 rounded-2xl border border-outline-subtle space-y-4 hover:border-brand-pine transition-all group bg-white shadow-xs">
+              <div className="space-y-4">
+                <span aria-hidden="true" className="font-serif text-4xl font-bold text-brand-pine group-hover:text-brand-pine block">
+                  03
+                </span>
+                <h2 className="font-serif text-xl font-bold text-brand-pine">
+                  Uji Keterampilan & Etika Kerja
+                </h2>
+                <p className="font-sans text-sm text-on-surface-variant leading-relaxed">
+                  Evaluasi keahlian praktis, sopan santun, serta tes kesiapan mental sebelum masa tugas.
+                </p>
+              </div>
+            </div>
+
+            <div className="glass-surface p-6 rounded-2xl border border-outline-subtle space-y-4 hover:border-brand-pine transition-all group bg-white shadow-xs">
+              <div className="space-y-4">
+                <span aria-hidden="true" className="font-serif text-4xl font-bold text-brand-pine group-hover:text-brand-pine block">
+                  04
+                </span>
+                <h2 className="font-serif text-xl font-bold text-brand-pine">
+                  Garansi Penukaran Pekerja
+                </h2>
+                <p className="font-sans text-sm text-on-surface-variant leading-relaxed">
+                  Perjanjian kontrak legal dengan jaminan penggantian tenaga kerja jika terdapat ketidakcocokan.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <FaqSection items={pageSetting?.faqs} whatsappNumber={waNumber} />
     </div>
   );

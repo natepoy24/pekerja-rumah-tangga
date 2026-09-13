@@ -61,11 +61,13 @@ export function ContactFormClient() {
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Pilihan Layanan */}
           <div className="space-y-2">
-            <label className="block font-sans text-xs font-semibold uppercase tracking-wider text-[#14201D] flex items-center gap-1.5">
+            <label htmlFor="pilihanLayanan" className="block font-sans text-xs font-semibold uppercase tracking-wider text-[#14201D] flex items-center gap-1.5">
               <Briefcase className="w-3.5 h-3.5 text-[#0B4F42]" />
               <span>Pilihan Layanan</span>
             </label>
             <select
+              id="pilihanLayanan"
+              aria-label="Pilihan Layanan"
               value={layanan}
               onChange={(e) => setLayanan(e.target.value)}
               className="w-full px-4 py-3 bg-[#FAFAF7] border border-[#D5E8D0] rounded-lg text-sm text-[#14201D] focus:outline-none focus:ring-2 focus:ring-[#0B4F42] focus:border-transparent transition-all"
@@ -123,12 +125,14 @@ export function ContactFormClient() {
 
           {/* Tanggal Mulai Bekerja */}
           <div className="space-y-2">
-            <label className="block font-sans text-xs font-semibold uppercase tracking-wider text-[#14201D] flex items-center gap-1.5">
+            <label htmlFor="tanggalMulai" className="block font-sans text-xs font-semibold uppercase tracking-wider text-[#14201D] flex items-center gap-1.5">
               <Calendar className="w-3.5 h-3.5 text-[#0B4F42]" />
               <span>Perkiraan Tanggal Mulai</span>
             </label>
             <input
+              id="tanggalMulai"
               type="date"
+              aria-label="Perkiraan Tanggal Mulai"
               value={tanggalMulai}
               onChange={(e) => setTanggalMulai(e.target.value)}
               className="w-full px-4 py-3 bg-[#FAFAF7] border border-[#D5E8D0] rounded-lg text-sm text-[#14201D] focus:outline-none focus:ring-2 focus:ring-[#0B4F42] focus:border-transparent transition-all"
@@ -137,11 +141,13 @@ export function ContactFormClient() {
 
           {/* Catatan Kriteria Khusus */}
           <div className="space-y-2">
-            <label className="block font-sans text-xs font-semibold uppercase tracking-wider text-[#14201D] flex items-center gap-1.5">
+            <label htmlFor="catatanKhusus" className="block font-sans text-xs font-semibold uppercase tracking-wider text-[#14201D] flex items-center gap-1.5">
               <FileText className="w-3.5 h-3.5 text-[#0B4F42]" />
               <span>Catatan Kriteria Khusus</span>
             </label>
             <textarea
+              id="catatanKhusus"
+              aria-label="Catatan Kriteria Khusus"
               rows={3}
               value={catatan}
               onChange={(e) => setCatatan(e.target.value)}

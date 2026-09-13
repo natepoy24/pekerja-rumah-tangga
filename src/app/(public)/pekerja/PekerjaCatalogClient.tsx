@@ -94,10 +94,12 @@ export default function PekerjaCatalogClient({
 
         {/* Status Filter */}
         <div className="flex items-center gap-3 w-full md:w-auto">
-          <span className="text-xs font-semibold text-on-surface-variant/70 whitespace-nowrap">
+          <label htmlFor="statusKetersediaan" className="text-xs font-semibold text-[#14201D] whitespace-nowrap">
             Status:
-          </span>
+          </label>
           <select
+            id="statusKetersediaan"
+            aria-label="Filter Status Ketersediaan Pekerja"
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
             className="bg-surface-container-low border border-outline-variant/40 rounded-xl px-4 py-2.5 text-xs font-semibold text-on-surface focus:outline-none focus:ring-2 focus:ring-[#0B4F42]/20 cursor-pointer w-full md:w-auto"
@@ -132,7 +134,7 @@ export default function PekerjaCatalogClient({
         </div>
       ) : (
         <div className="bg-white rounded-3xl p-12 text-center border border-[#D5E8D0] shadow-sm space-y-3">
-          <h3 className="font-serif text-2xl font-bold text-[#14201D]">Kandidat Tidak Ditemukan</h3>
+          <h2 className="font-serif text-2xl font-bold text-[#14201D]">Kandidat Tidak Ditemukan</h2>
           <p className="text-sm text-on-surface-variant max-w-md mx-auto">
             Maaf, tidak ada kandidat pekerja yang sesuai dengan kriteria filter saat ini. Coba sesuaikan kata kunci pencarian Anda.
           </p>

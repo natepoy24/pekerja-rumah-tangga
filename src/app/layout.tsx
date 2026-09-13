@@ -4,20 +4,34 @@ import "./globals.css";
 import { getCompanyIdentity } from "@/lib/settings";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { SITE_CONFIG } from "@/lib/siteConfig";
 
 export async function generateMetadata(): Promise<Metadata> {
   const company = await getCompanyIdentity();
   const favicon = company.favicon_url || "/logo.png";
+  const siteName = company.nama_perusahaan || SITE_CONFIG.name;
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || SITE_CONFIG.url;
+
   return {
+    metadataBase: new URL(siteUrl),
     title: {
-      default: `${company.nama_perusahaan} — Penempatan Pekerja Rumah Tangga Resmi & Terpercaya`,
-      template: `%s | ${company.nama_perusahaan}`,
+      default: `${siteName} — Penempatan Pekerja Rumah Tangga Resmi & Terpercaya`,
+      template: `%s | ${siteName}`,
     },
     description: company.deskripsi,
     icons: {
       icon: favicon,
       shortcut: favicon,
       apple: favicon,
+    },
+    alternates: {
+      canonical: siteUrl,
+    },
+    openGraph: {
+      siteName,
+      url: siteUrl,
+      locale: "id_ID",
+      type: "website",
     },
   };
 }
@@ -45,5 +59,3 @@ export default async function RootLayout({
     </html>
   );
 }
-
-

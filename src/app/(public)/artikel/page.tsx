@@ -6,6 +6,8 @@ import { Calendar, Eye, Tag, BookOpen, ArrowRight } from "lucide-react";
 import { getPageSetting, getCompanyIdentity } from "@/lib/settings";
 import FaqSection from "@/components/common/FaqSection";
 
+import { SITE_CONFIG } from "@/lib/siteConfig";
+
 export const revalidate = 0;
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -15,14 +17,22 @@ export async function generateMetadata(): Promise<Metadata> {
   const title = setting.meta_title || `Artikel & Edukasi Rumah Tangga | ${company.nama_perusahaan}`;
   const description = setting.meta_description || "Panduan memilih ART, tips pengasuhan anak balita, dan edukasi perawatan lansia.";
   const ogImage = setting.og_image || "/asisten rumah tangga.jpeg";
+  const canonicalUrl = `${SITE_CONFIG.url}/artikel`;
 
   return {
     title,
     description,
     keywords: setting.keywords ? setting.keywords.split(",").map((k) => k.trim()) : undefined,
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
       title,
       description,
+      url: canonicalUrl,
+      siteName: company.nama_perusahaan || SITE_CONFIG.name,
+      locale: "id_ID",
+      type: "website",
       images: [{ url: ogImage, alt: title }],
     },
   };
