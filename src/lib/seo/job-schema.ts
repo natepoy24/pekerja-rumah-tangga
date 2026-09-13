@@ -1,39 +1,32 @@
 import type {
   JobSchemaInput,
   JobSchemaOptions,
-  HiringOrganization,
+  HaringOrganization,
   JobLocationAddress,
 } from "@/types/job-schema";
 
-const DEFAULT_ORGANIZATION: HiringOrganization = {
-  name: "PT Jasa Mandiri",
+const DEFAULT_ORGANIZATION: HaringOrganization = {
+  name: "PT Jasa Mandiri Agency",
   sameAs: "https://pekerjarumahtangga.com",
   logo: "https://pekerjarumahtangga.com/logo.png",
 };
 
 const DEFAULT_LOCATION: JobLocationAddress = {
-  addressLocality: "Jakarta",
+  streetAddress: "Jl. Gunung Balon III No.78, RT.11/RW.4",
+  addressLocality: "Lebak bulus, Cilandak, Jakarta Selatan",
   addressRegion: "DKI Jakarta",
+  postalCode: "12440",
   addressCountry: "ID",
 };
 
-/**
- * Sanitizes text content by removing HTML tags and normalizing whitespace
- * to ensure clean string embedding inside JSON-LD script blocks.
- */
 export function sanitizeText(text: string): string {
   if (!text) return "";
   return text
-    .replace(/<[^>]*>?/gm, "") // Strip HTML tags
-    .replace(/\s+/g, " ") // Normalize whitespace
+    .replace(/<[^>]*>/gm, "")
+    .replace(/\s+/g, " ")
     .trim();
 }
 
-/**
- * Calculates dynamic rolling freshness dates for Google for Jobs compliance.
- * Computes a rolling validThrough date (now + validityDays) and normalizes
- * datePosted if stale (> 30 days old) to prevent algorithmic indexing drops.
- */
 export function calculateEvergreenDates(
   datePostedInput?: string | Date,
   validityDaysInput?: number
@@ -41,12 +34,10 @@ export function calculateEvergreenDates(
   const validityDays = validityDaysInput ?? 30;
   const nowMs = Date.now();
 
-  // 1. Dynamic Rolling validThrough (ISO 8601)
   const validThroughDate = new Date(nowMs + validityDays * 24 * 60 * 60 * 1000);
   const validThrough = validThroughDate.toISOString();
 
-  // 2. Intelligent datePosted Freshness
-  const maxAgeMs = 30 * 24 * 60 * 60 * 1000; // 30 days in milliseconds
+  const maxAgeMs = 30 * 24 * 60 * 60 * 1000;
   let finalDatePosted: string;
 
   if (datePostedInput) {
@@ -57,23 +48,18 @@ export function calculateEvergreenDates(
 
     const ageMs = nowMs - parsedDate.getTime();
 
-    // If date is invalid or older than 30 days, normalize to a rolling fresh relative date (now - 3 days)
     if (isNaN(parsedDate.getTime()) || ageMs > maxAgeMs || ageMs < 0) {
       finalDatePosted = new Date(nowMs - 3 * 24 * 60 * 60 * 1000).toISOString();
     } else {
       finalDatePosted = parsedDate.toISOString();
     }
   } else {
-    // Fallback: 3 days prior to current crawl timestamp
     finalDatePosted = new Date(nowMs - 3 * 24 * 60 * 60 * 1000).toISOString();
   }
 
   return { datePosted: finalDatePosted, validThrough };
 }
 
-/**
- * Pure utility function to generate a valid, evergreen Schema.org JobPosting object.
- */
 export function generateEvergreenJobSchema(
   input: JobSchemaInput,
   options?: JobSchemaOptions
@@ -112,11 +98,11 @@ export function generateEvergreenJobSchema(
       "@type": "Place",
       address: {
         "@type": "PostalAddress",
-        addressLocality: loc.addressLocality || "Jakarta",
-        addressRegion: loc.addressRegion || "DKI Jakarta",
-        addressCountry: loc.addressCountry || "ID",
-        ...(loc.streetAddress ? { streetAddress: loc.streetAddress } : {}),
-        ...(loc.postalCode ? { postalCode: loc.postalCode } : {}),
+        streetAddress: loc.streetAddress || DEFAULT_LOCATION.streetAddress,
+        addressLocality: loc.addressLocality || DEFAULT_LOCATION.addressLocality,
+        addressRegion: loc.addressRegion || DEFAULT_LOCATION.addressRegion,
+        postalCode: loc.postalCode || DEFAULT_LOCATION.postalCode,
+        addressCountry: loc.addressCountry || DEFAULT_LOCATION.addressCountry,
       },
     },
   };
@@ -152,9 +138,6 @@ export function generateEvergreenJobSchema(
   return schema;
 }
 
-/**
- * Utility function to generate a Schema.org ItemList wrapping multiple JobPosting objects.
- */
 export function generateEvergreenJobListSchema(
   inputs: JobSchemaInput[],
   options?: JobSchemaOptions
@@ -173,3 +156,4 @@ export function generateEvergreenJobListSchema(
     })),
   };
 }
+

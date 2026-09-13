@@ -4,6 +4,8 @@ export interface HiringOrganization {
   logo?: string;
 }
 
+export type HaringOrganization = HiringOrganization;
+
 export interface JobLocationAddress {
   addressLocality?: string;
   addressRegion?: string;

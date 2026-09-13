@@ -1,136 +1,147 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import {
   Sparkles,
-  CheckCircle2,
-  Home,
-  Shirt,
-  Utensils,
   ShieldCheck,
-  ChevronDown,
+  CheckCircle2,
   PhoneCall,
   ArrowRight,
-  Clock,
+  Shirt,
+  Utensils,
+  Home as HomeIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { getPageSetting, getCompanyIdentity } from "@/lib/settings";
 import FaqSection from "@/components/common/FaqSection";
+import JsonLd from "@/components/seo/JsonLd";
+import {
+  generateServiceSchema,
+  generateBreadcrumbSchema,
+  generateFAQSchema,
+} from "@/lib/seo/schemaGenerator";
+import { SITE_CONFIG } from "@/lib/siteConfig";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const setting = await getPageSetting("page_art");
+  const setting = await getPageSetting("page_layanan_art");
   const company = await getCompanyIdentity();
 
-  const title = setting.meta_title || `Penyalur Asisten Rumah Tangga (ART) Resmi & Bergaransi | ${company.nama_perusahaan}`;
-  const description = setting.meta_description || "Penyalur resmi Asisten Rumah Tangga (ART) terdidik berizin Disnaker & Kemnaker.";
-  const ogImage = setting.og_image || setting.hero_image || "/asisten rumah tangga.jpeg";
+  const title =
+    setting.meta_title ||
+    `Jasa Asisten Rumah Tangga (ART) Resmi & Bergaransi | ${SITE_CONFIG.name}`;
+  const description =
+    setting.meta_description ||
+    "Penyalur ART resmi berizin Disnaker. Sedia asisten rumah tangga menginap & pulang-pergi yang terlatih, lolos uji medis, identitas jelas, dan bergaransi.";
+  const ogImage = setting.og_image || setting.hero_image || SITE_CONFIG.logo;
 
   return {
     title,
     description,
-    keywords: setting.keywords ? setting.keywords.split(",").map((k) => k.trim()) : undefined,
+    keywords: setting.keywords ? setting.keywords.split(",").map((k: string) => k.trim()) : undefined,
+    alternates: {
+      canonical: `${SITE_CONFIG.url}/layanan/art`,
+    },
     openGraph: {
       title,
       description,
       images: [{ url: ogImage, alt: setting.hero_image_alt || title }],
+      url: `${SITE_CONFIG.url}/layanan/art`,
+      siteName: SITE_CONFIG.name,
+      locale: "id_ID",
+      type: "website",
+    },
+    robots: {
+      index: true,
+      follow: true,
     },
   };
 }
 
-export default async function ARTServicePage() {
-  const pageSetting = await getPageSetting("page_art");
+export default async function ArtLayananPage() {
+  const pageSetting = await getPageSetting("page_layanan_art");
   const company = await getCompanyIdentity();
+  const waNumber = company.nomor_whatsapp || SITE_CONFIG.whatsappPrimary;
 
-  const waNumber = company?.nomor_whatsapp || process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "6285111399962";
-  const heroImage = pageSetting?.hero_image || "/asisten rumah tangga.jpeg";
-  const heroImageAlt = pageSetting?.hero_image_alt || "Layanan Asisten Rumah Tangga";
-  const heroTitle = pageSetting?.hero_title || "Asisten Rumah Tangga Terlatih untuk Rumah yang Rapi, Bersih, dan Terawat.";
+  const serviceSchema = generateServiceSchema(
+    "Asisten Rumah Tangga (ART)",
+    "Penyalur ART resmi berizin Disnaker. Sedia asisten rumah tangga menginap & pulang-pergi yang terlatih, lolos uji medis, identitas jelas, dan bergaransi.",
+    "/layanan/art"
+  );
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: "Beranda", url: "/" },
+    { name: "Layanan", url: "/layanan" },
+    { name: "Asisten Rumah Tangga", url: "/layanan/art" },
+  ]);
+  const faqSchema = generateFAQSchema(pageSetting.faqs || []);
+
+  const heroTitle =
+    pageSetting.hero_title ||
+    "Jasa Asisten Rumah Tangga (ART) Resmi & Terpercaya";
   const heroSubtitle =
-    pageSetting?.hero_subtitle ||
-    "Dapatkan tenaga ART terverifikasi dengan latar belakang bersih, uji kesehatan lengkap, serta etika kerja profesional untuk mendukung kelancaran aktivitas harian keluarga Anda.";
+    pageSetting.hero_subtitle ||
+    "Sedia ART menginap (live-in) & pulang-pergi (part-time) yang terlatih, lolos uji medis, identitas jelas, dan bergaransi.";
+  const heroImage = pageSetting.hero_image || "/asisten rumah tangga.jpeg";
+  const heroImageAlt = pageSetting.hero_image_alt || "Asisten Rumah Tangga";
 
   const scopeOfDuties = [
     {
-      icon: Home,
-      title: "Tata Graha & Kebersihan Hunian",
-      desc: "Menyapu, mengepel, sanitasi kamar mandi & dapur, pembersihan debu perabot halus, dan kerapian berkala.",
+      icon: HomeIcon,
+      title: "Tata Graha & Kebersihan",
+      desc: "Membersihkan seluruh area rumah, memastikan hunian rapi, higienis, dan nyaman.",
     },
     {
       icon: Shirt,
-      title: "Tata Kelola Pakaian & Linen",
-      desc: "Pencucian pakaian sesuai panduan bahan, penjemuran, penyetrikaan rapi, menata lemari, serta pergantian sprei.",
+      title: "Penunjang Cuci & Setrika",
+      desc: "Mencuci, menyetrika, mengatur pakaian keluarga dengan rapi dan higienis.",
     },
     {
       icon: Utensils,
-      title: "Pengelolaan Dapur & Masakan",
-      desc: "Persiapan bahan masakan rumahan harian, memasak sesuai selera keluarga, serta higienitas peralatan makan.",
+      title: "Penyediaan Makanan Harian",
+      desc: "Memasak menu harian keluarga sesuai selera dan standar kesehatan rumah tangga.",
     },
   ];
 
   const placementOptions = [
     {
-      type: "Live-In (Menginap)",
-      desc: "ART tinggal di kediaman Anda, siap sedia menjaga kelancaran dan kerapian rumah sepanjang hari.",
-      features: [
-        "Ketersediaan waktu lebih fleksibel",
-        "Ideal untuk keluarga sibuk / rumah luas",
-        "Fasilitas kamar & makan disediakan majikan",
-      ],
-      badge: "Rekomendasi Utama",
+      type: "ART Menginap (Live-In)",
+      badge: "Paling Diminati",
+      desc: "ART tinggal di rumah anda, siap membantu kebutuhan rumah tangga sepanjang hari.",
+      features: ["Jam kerja fleksibel", "Bantuan harian penuh", "Fasilitas menginap di rumah"],
     },
     {
-      type: "Live-Out (Pulang-Pergi)",
-      desc: "ART datang sesuai jam kerja harian yang disepakati dan pulang setelah tugas selesai.",
-      features: [
-        "Jam kerja pasti (misal: 08:00 - 17:00 WIB)",
-        "Privasi keluarga di malam hari terjaga penuh",
-        "Tidak membutuhkan fasilitas kamar tidur",
-      ],
-      badge: "Privasi Maksimal",
+      type: "ART Pulang-Pergi",
+      badge: "Keluarga Modern",
+      desc: "ART datang pagi dan pulang sore/malam sesuai keperluan.",
+      features: ["Cocok untuk rumah minimalis", "Tidak butuh kamar menginap", "Jam kerja terstruktur"],
     },
   ];
 
   const salaryTable = [
     {
-      category: "ART Pemula / Junior",
-      experience: "0 – 2 Tahun",
-      range: "Rp 2.000.000 – Rp 2.700.000",
-      duties: "Pembersihan standar, cuci setrika dasar, masakan rumahan sederhana.",
+      category: "ART Pemula",
+      experience: "0-1 Tahun",
+      range: "Rp 2.500.000 - Rp 3.000.000",
+      duties: "Kebersihan, mencuci, menyetrika",
     },
     {
       category: "ART Berpengalaman",
-      experience: "2 – 5 Tahun",
-      range: "Rp 2.500.000 – Rp 3.500.000",
-      duties: "Manajemen mandiri seluruh rumah tangga, memasak variatif, merawat material sensitif.",
+      experience: "2-5 Tahun",
+      range: "Rp 3.000.000 - Rp 3.500.000",
+      duties: "Kebersihan, memasak, mencuci, menyetrika",
     },
     {
-      category: "Senior / Kepala Rumah Tangga",
-      experience: "5+ Tahun",
-      range: "Rp 3.500.000 – Rp 4.500.000+",
-      duties: "Manajemen rumah tangga luas, kepemimpinan tim ART, keahlian memasak tinggi.",
-    },
-  ];
-
-  const artFaqs = [
-    {
-      q: "Apakah ART PT Jasa Mandiri sudah siap kerja tanpa perlu diajari dari awal?",
-      a: "Setiap calon ART telah mengikuti pelatihan dasar tata graha, etika kerja, serta standar kebersihan rumah tangga di pusat pelatihan kami sebelum ditempatkan.",
-    },
-    {
-      q: "Bagaimana jika ART yang diantar tidak cocok dengan kriteria rumah kami?",
-      a: "Anda berhak melakukan permintaan penggantian tenaga kerja (garansi hingga 3 kali penukaran) selama masa kontrak berlaku tanpa biaya administrasi tambahan.",
-    },
-    {
-      q: "Apakah biaya di atas sudah termasuk biaya admin penyalur?",
-      a: "Tabel di atas merupakan estimasi gaji bersih bulanan untuk pekerja. Biaya administrasi penyaluran resmi akan dijelaskan secara transparan saat konsultasi awal.",
+      category: "ART Khusus / Masak",
+      experience: "> 5 Tahun",
+      range: "Rp 3.500.000 - Rp 4.500.000",
+      duties: "Keahlian memasak variatif, manajemen rumah",
     },
   ];
 
   return (
-    <div className="overflow-hidden min-h-screen bg-brand-offwhite pt-6 pb-20">
-      {/* Hero Section */}
-      <section className="relative w-full min-h-[70vh] flex items-center justify-center overflow-hidden py-16 md:py-24">
-        {/* Background Image Overlay */}
+    <div className="space-y-16 pb-20">
+      <JsonLd schema={[serviceSchema, breadcrumbSchema]} />
+      {faqSchema && <JsonLd schema={faqSchema} />}
+
+      <section className="relative pt-12 pb-20 md:pt-16 md:pb-28 overflow-hidden bg-surface-bright">
         <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
           <img
             src={heroImage}
@@ -175,7 +186,6 @@ export default async function ARTServicePage() {
         </div>
       </section>
 
-      {/* Scope of Duties */}
       <section className="px-4 sm:px-6 lg:px-8 max-w-container mx-auto my-16 md:my-24 space-y-12">
         <div className="text-center max-w-2xl mx-auto space-y-3">
           <h2 className="font-serif text-3xl sm:text-4xl font-bold text-brand-pine">
@@ -207,7 +217,6 @@ export default async function ARTServicePage() {
         </div>
       </section>
 
-      {/* Placement Options */}
       <section className="px-4 sm:px-6 lg:px-8 max-w-container mx-auto my-16 md:my-24 space-y-12 border-t border-outline-variant/30 pt-16">
         <div className="text-center max-w-2xl mx-auto space-y-3">
           <h2 className="font-serif text-3xl sm:text-4xl font-bold text-brand-pine">
@@ -246,7 +255,6 @@ export default async function ARTServicePage() {
         </div>
       </section>
 
-      {/* Salary Guide Table */}
       <section className="px-4 sm:px-6 lg:px-8 max-w-container mx-auto my-16 md:my-24 space-y-8">
         <div className="text-center max-w-2xl mx-auto space-y-3">
           <h2 className="font-serif text-3xl sm:text-4xl font-bold text-brand-pine">
@@ -281,10 +289,8 @@ export default async function ARTServicePage() {
         </div>
       </section>
 
-      {/* FAQ Section (CMS Driven) */}
       <FaqSection items={pageSetting?.faqs} whatsappNumber={waNumber} />
 
-      {/* CTA */}
       <section className="px-4 sm:px-6 lg:px-8 max-w-container mx-auto my-12">
         <div className="bg-brand-pine text-white rounded-2xl p-8 sm:p-12 text-center space-y-6">
           <h2 className="font-serif text-3xl sm:text-4xl font-bold max-w-2xl mx-auto leading-tight">
@@ -306,3 +312,4 @@ export default async function ARTServicePage() {
     </div>
   );
 }
+
