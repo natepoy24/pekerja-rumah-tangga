@@ -166,26 +166,28 @@ export default async function ArtLayananPage() {
               {heroSubtitle}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 pt-2">
-              <a
+              <Button
                 href={`https://wa.me/${waNumber}`}
                 target="_blank"
                 rel="noopener noreferrer"
+                variant="primary"
+                size="lg"
+                className="w-full sm:w-auto gap-2"
               >
-                <Button variant="primary" size="lg" className="w-full sm:w-auto gap-2">
-                  <span>Cari ART Sesuai Kriteria</span>
-                  <ArrowRight className="w-4 h-4" />
-                </Button>
-              </a>
-              <a
+                <span>Cari ART Sesuai Kriteria</span>
+                <ArrowRight className="w-4 h-4" />
+              </Button>
+              <Button
                 href={`https://wa.me/${waNumber}`}
                 target="_blank"
                 rel="noopener noreferrer"
+                variant="secondary"
+                size="lg"
+                className="w-full sm:w-auto gap-2"
               >
-                <Button variant="secondary" size="lg" className="w-full sm:w-auto gap-2">
-                  <PhoneCall className="w-4 h-4" />
-                  <span>Konsultasi Gaji & Kebutuhan</span>
-                </Button>
-              </a>
+                <PhoneCall className="w-4 h-4" />
+                <span>Konsultasi Gaji & Kebutuhan</span>
+              </Button>
             </div>
           </div>
         </div>
@@ -301,17 +303,17 @@ export default async function ArtLayananPage() {
           <h2 className="font-serif text-3xl sm:text-4xl font-bold max-w-2xl mx-auto leading-tight">
             Pesan Asisten Rumah Tangga Terpercaya untuk Kediaman Anda Sekarang.
           </h2>
-          <a
+          <Button
             href={`https://wa.me/${waNumber}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block"
+            variant="compassionate"
+            size="lg"
+            className="gap-2"
           >
-            <Button variant="compassionate" size="lg" className="gap-2">
-              <PhoneCall className="w-4 h-4" />
-              <span>Hubungi WA Tim Penyalur</span>
-            </Button>
-          </a>
+            <PhoneCall className="w-4 h-4" />
+            <span>Hubungi WA Tim Penyalur</span>
+          </Button>
         </div>
       </section>
     </div>

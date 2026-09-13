@@ -249,7 +249,7 @@ export default function JobAdminListClient({ initialJobs }: JobAdminListClientPr
                 <Link
                   href={`/lowongan-kerja/${job.slug}`}
                   target="_blank"
-                  className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors"
+                  className="min-h-[44px] min-w-[44px] inline-flex items-center justify-center p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors"
                   title="Pratinjau Halaman Publik"
                 >
                   <ExternalLink className="w-4 h-4" />
@@ -257,7 +257,7 @@ export default function JobAdminListClient({ initialJobs }: JobAdminListClientPr
 
                 <Link
                   href={`/admin/dashboard/lowongan/edit/${job.id}`}
-                  className="px-3 py-2 rounded-xl bg-[#EBF4E7] hover:bg-[#D5E8D0] text-[#0B4F42] text-xs font-bold flex items-center gap-1.5 transition-colors"
+                  className="min-h-[44px] min-w-[44px] px-3.5 py-2.5 rounded-xl bg-[#EBF4E7] hover:bg-[#D5E8D0] text-[#0B4F42] text-xs font-bold inline-flex items-center justify-center gap-1.5 transition-colors"
                 >
                   <Edit className="w-3.5 h-3.5" />
                   <span>Edit</span>
@@ -269,7 +269,7 @@ export default function JobAdminListClient({ initialJobs }: JobAdminListClientPr
                   type="button"
                   disabled={isPending}
                   onClick={() => handleDelete(job.id!, job.title)}
-                  className="p-2 rounded-xl text-red-600 hover:bg-red-50 transition-colors"
+                  className="min-h-[44px] min-w-[44px] inline-flex items-center justify-center p-2 rounded-xl text-red-600 hover:bg-red-50 transition-colors"
                   title="Hapus Lowongan Ini"
                 >
                   <Trash2 className="w-4 h-4" />

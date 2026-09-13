@@ -450,19 +450,19 @@ export default async function AdminDashboardPage() {
                         <div className="flex items-center gap-1.5">
                           <Link
                             href={`/admin/dashboard/lowongan/edit/${j.id || j.slug}`}
-                            className="font-bold text-[#0B4F42] hover:underline flex items-center gap-1"
+                            className="min-h-[44px] min-w-[44px] px-3 py-2 rounded-lg font-bold text-[#0B4F42] hover:bg-[#EBF4E7] transition-colors inline-flex items-center justify-center gap-1"
                           >
                             <span>Edit</span>
-                            <Edit className="w-3 h-3" />
+                            <Edit className="w-3.5 h-3.5" />
                           </Link>
                           {j.slug && (
                             <Link
                               href={`/lowongan-kerja/${j.slug}`}
                               target="_blank"
-                              className="p-1 rounded text-on-surface-variant hover:text-[#0B4F42] transition-colors"
+                              className="min-h-[44px] min-w-[44px] p-2 rounded-lg text-on-surface-variant hover:text-[#0B4F42] hover:bg-slate-100 transition-colors inline-flex items-center justify-center"
                               title="Lihat Halaman Publik"
                             >
-                              <ExternalLink className="w-3 h-3" />
+                              <ExternalLink className="w-4 h-4" />
                             </Link>
                           )}
                         </div>

@@ -143,24 +143,22 @@ export default async function LowonganKerjaHubPage() {
             </p>
 
             <div className="flex flex-wrap gap-4 pt-2">
-              <a
+              <Button
                 href={`https://wa.me/${recruiterWa}?text=${encodeURIComponent(
                   `Halo ${companyName}, saya ingin mendaftar lowongan kerja.`
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center"
+                variant="compassionate"
+                size="lg"
+                className="gap-2"
               >
-                <Button variant="compassionate" size="lg" className="gap-2">
-                  <PhoneCall className="w-4 h-4" />
-                  <span>Daftar via WhatsApp Sekarang</span>
-                </Button>
-              </a>
-              <a href="#daftar-posisi" className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center">
-                <Button variant="secondary" size="lg">
-                  Lihat Semua Posisi Lowongan ↓
-                </Button>
-              </a>
+                <PhoneCall className="w-4 h-4" />
+                <span>Daftar via WhatsApp Sekarang</span>
+              </Button>
+              <Button href="#daftar-posisi" variant="secondary" size="lg">
+                Lihat Semua Posisi Lowongan ↓
+              </Button>
             </div>
 
             <div className="flex flex-wrap items-center gap-6 pt-4 text-xs font-sans text-on-surface-variant">
@@ -408,19 +406,19 @@ export default async function LowonganKerjaHubPage() {
           <p className="font-sans text-sm text-white/80 max-w-xl mx-auto leading-relaxed">
             Daftarkan diri Anda hari ini. Konsultasikan persyaratan dan jadwal keberangkatan bersama tim rekrutmen {companyName}.
           </p>
-          <a
+          <Button
             href={`https://wa.me/${recruiterWa}?text=${encodeURIComponent(
               `Halo Admin Rekrutmen ${companyName}, saya mau mendaftar kerja.`
             )}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block"
+            variant="compassionate"
+            size="lg"
+            className="gap-2"
           >
-            <Button variant="compassionate" size="lg" className="gap-2">
-              <PhoneCall className="w-4 h-4" />
-              <span>Hubungi Tim Rekrutmen (WhatsApp)</span>
-            </Button>
-          </a>
+            <PhoneCall className="w-4 h-4" />
+            <span>Hubungi Tim Rekrutmen (WhatsApp)</span>
+          </Button>
         </div>
       </section>
     </div>
