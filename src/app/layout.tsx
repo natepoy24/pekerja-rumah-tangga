@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { ebGaramond, geist } from "./fonts";
 import "./globals.css";
 import { getCompanyIdentity } from "@/lib/settings";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 export async function generateMetadata(): Promise<Metadata> {
   const company = await getCompanyIdentity();
@@ -37,6 +39,8 @@ export default async function RootLayout({
       </head>
       <body className="min-h-screen flex flex-col bg-brand-offwhite text-brand-charcoal antialiased selection:bg-brand-sage-tint selection:text-brand-pine">
         {children}
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

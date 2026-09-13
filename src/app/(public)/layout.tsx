@@ -1,6 +1,8 @@
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { getCompanyIdentity } from "@/lib/settings";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 export default async function PublicLayout({
   children,
@@ -16,7 +18,8 @@ export default async function PublicLayout({
         {children}
       </main>
       <Footer company={company} />
+      <Analytics />
+      <SpeedInsights />
     </>
   );
 }
-
