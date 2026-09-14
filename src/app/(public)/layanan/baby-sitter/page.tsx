@@ -10,7 +10,7 @@ import {
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { getPageSetting, getCompanyIdentity } from "@/lib/settings";
-import FaqSection from "@/components/common/FaqSection";
+import dynamic from "next/dynamic";
 import JsonLd from "@/components/seo/JsonLd";
 import {
   generateServiceSchema,
@@ -19,16 +19,24 @@ import {
 } from "@/lib/seo/schemaGenerator";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 
+const FaqSection = dynamic(() => import("@/components/common/FaqSection"), {
+  loading: () => <div className="h-64 animate-pulse bg-surface-container rounded-2xl" />,
+});
+
+export const revalidate = 3600;
+
 export async function generateMetadata(): Promise<Metadata> {
-  const setting = await getPageSetting("page_layanan_babysitter");
-  const company = await getCompanyIdentity();
+  const [setting, company] = await Promise.all([
+    getPageSetting("page_layanan_baby_sitter"),
+    getCompanyIdentity(),
+  ]);
 
   const title =
     setting.meta_title ||
-    `Penyalur Baby Sitter & Nanny Terdidik | ${SITE_CONFIG.name}`;
+    `Jasa Baby Sitter & Pengasuh Anak Resmi | ${SITE_CONFIG.name}`;
   const description =
     setting.meta_description ||
-    "Penyalur suster baby sitter & pengasuh anak terpercaya berizin Disnaker. Sedia suster newborn & balita yang sabar, terdidik, dan bergaransi.";
+    "Penyalur baby sitter & suster balita resmi berizin Disnaker. Pengasuh sabar, teruji medis, memahami stimulasi tumbuh kembang anak, serta bergaransi.";
   const ogImage = setting.og_image || setting.hero_image || SITE_CONFIG.logo;
 
   return {
@@ -54,30 +62,32 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function BabySitterPage() {
-  const pageSetting = await getPageSetting("page_layanan_babysitter");
-  const company = await getCompanyIdentity();
+export default async function BabySitterLayananPage() {
+  const [pageSetting, company] = await Promise.all([
+    getPageSetting("page_layanan_baby_sitter"),
+    getCompanyIdentity(),
+  ]);
   const waNumber = company.nomor_whatsapp || SITE_CONFIG.whatsappPrimary;
 
   const serviceSchema = generateServiceSchema(
     "Baby Sitter & Pengasuh Anak",
-    "Penyalur suster baby sitter & pengasuh anak terpercaya berizin Disnaker. Sedia suster newborn & balita yang sabar, terdidik, dan bergaransi.",
+    "Penyalur baby sitter & suster balita resmi berizin Disnaker. Pengasuh sabar, teruji medis, memahami stimulasi tumbuh kembang anak, serta bergaransi.",
     "/layanan/baby-sitter"
   );
   const breadcrumbSchema = generateBreadcrumbSchema([
     { name: "Beranda", url: "/" },
     { name: "Layanan", url: "/layanan" },
-    { name: "Baby Sitter & Nanny", url: "/layanan/baby-sitter" },
+    { name: "Baby Sitter", url: "/layanan/baby-sitter" },
   ]);
   const faqSchema = generateFAQSchema(pageSetting.faqs || []);
 
   const heroTitle =
     pageSetting.hero_title ||
-    "Baby Sitter & Pengasuh Anak Terpercaya";
+    "Jasa Baby Sitter & Pengasuh Anak Resmi";
   const heroSubtitle =
     pageSetting.hero_subtitle ||
-    "Penyalur suster newborn & balita profesional. Sabar, paham stimulasi anak, dan bergaransi.";
-  const heroImage = pageSetting.hero_image || "/baby sitter.jpeg";
+    "Penyalur suster bayi & pengasuh anak terpercaya. Penyabar, penyayang, terlatih, dan bergaransi kontrak.";
+  const heroImage = pageSetting.hero_image || "/baby-sitter.webp";
   const heroImageAlt = pageSetting.hero_image_alt || "Baby Sitter";
 
   return (
@@ -91,8 +101,10 @@ export default async function BabySitterPage() {
             src={heroImage}
             alt={heroImageAlt}
             fill
-            priority
-            sizes="100vw"
+            priority={true}
+            fetchPriority="high"
+            loading="eager"
+            sizes="(max-width: 768px) 100vw, 100vw"
             quality={75}
             className="object-cover opacity-25"
           />

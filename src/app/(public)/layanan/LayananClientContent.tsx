@@ -24,7 +24,11 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import type { PageSetting, CompanyIdentity } from "@/lib/settings";
-import FaqSection from "@/components/common/FaqSection";
+import dynamic from "next/dynamic";
+
+const FaqSection = dynamic(() => import("@/components/common/FaqSection"), {
+  loading: () => <div className="h-64 animate-pulse bg-surface-container rounded-2xl" />,
+});
 
 interface LayananClientContentProps {
   pageSetting?: PageSetting;
@@ -37,7 +41,7 @@ export function LayananClientContent({ pageSetting, company }: LayananClientCont
   const heroSubtitle =
     pageSetting?.hero_subtitle ||
     "Dari tata kelola hunian yang bersih, pengasuhan balita penuh kasih, hingga pendampingan lansia bermartabat. Seluruh tenaga kerja telah melewati kurasi identitas, skrining medis, dan berpayung hukum resmi sejak 2010.";
-  const heroImage = pageSetting?.hero_image || "/asisten rumah tangga.jpeg";
+  const heroImage = pageSetting?.hero_image || "/asisten-rumah-tangga.webp";
   const heroImageAlt = pageSetting?.hero_image_alt || "Layanan Penempatan PRT PT Jasa Mandiri";
 
   const waMessage = encodeURIComponent(
@@ -190,8 +194,10 @@ export function LayananClientContent({ pageSetting, company }: LayananClientCont
             src={heroImage}
             alt={heroImageAlt}
             fill
-            priority
-            sizes="100vw"
+            priority={true}
+            fetchPriority="high"
+            loading="eager"
+            sizes="(max-width: 768px) 100vw, 100vw"
             quality={75}
             className="object-cover opacity-20"
           />

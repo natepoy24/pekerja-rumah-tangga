@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 export async function GET(request: Request) {
   try {
     const company = await getCompanyIdentity();
-    const faviconUrl = company.favicon_url || "/logo.png";
+    const faviconUrl = company.favicon_url || "/logo-jm.webp";
 
     const origin = new URL(request.url).origin;
     const targetUrl = faviconUrl.startsWith("http")

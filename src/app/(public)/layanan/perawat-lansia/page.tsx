@@ -13,7 +13,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { getPageSetting, getCompanyIdentity } from "@/lib/settings";
-import FaqSection from "@/components/common/FaqSection";
+import dynamic from "next/dynamic";
 import JsonLd from "@/components/seo/JsonLd";
 import {
   generateServiceSchema,
@@ -22,9 +22,17 @@ import {
 } from "@/lib/seo/schemaGenerator";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 
+const FaqSection = dynamic(() => import("@/components/common/FaqSection"), {
+  loading: () => <div className="h-64 animate-pulse bg-surface-container rounded-2xl" />,
+});
+
+export const revalidate = 3600;
+
 export async function generateMetadata(): Promise<Metadata> {
-  const setting = await getPageSetting("page_layanan_perawat_lansia");
-  const company = await getCompanyIdentity();
+  const [setting, company] = await Promise.all([
+    getPageSetting("page_layanan_perawat_lansia"),
+    getCompanyIdentity(),
+  ]);
 
   const title =
     setting.meta_title ||
@@ -58,8 +66,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function PerawatLansiaLayananPage() {
-  const pageSetting = await getPageSetting("page_layanan_perawat_lansia");
-  const company = await getCompanyIdentity();
+  const [pageSetting, company] = await Promise.all([
+    getPageSetting("page_layanan_perawat_lansia"),
+    getCompanyIdentity(),
+  ]);
   const waNumber = company.nomor_whatsapp || SITE_CONFIG.whatsappPrimary;
 
   const serviceSchema = generateServiceSchema(
@@ -80,7 +90,7 @@ export default async function PerawatLansiaLayananPage() {
   const heroSubtitle =
     pageSetting.hero_subtitle ||
     "Penyalur perawat lansia medis & non-medis terpercaya. Sabar, teliti, dan bergaransi kontrak.";
-  const heroImage = pageSetting.hero_image || "/perawat lansia.jpeg";
+  const heroImage = pageSetting.hero_image || "/perawat-lansia.webp";
   const heroImageAlt = pageSetting.hero_image_alt || "Perawat Lansia";
 
   return (
@@ -94,8 +104,10 @@ export default async function PerawatLansiaLayananPage() {
             src={heroImage}
             alt={heroImageAlt}
             fill
-            priority
-            sizes="100vw"
+            priority={true}
+            fetchPriority="high"
+            loading="eager"
+            sizes="(max-width: 768px) 100vw, 100vw"
             quality={75}
             className="object-cover opacity-25"
           />

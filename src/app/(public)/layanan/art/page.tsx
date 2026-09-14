@@ -13,7 +13,7 @@ import {
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { getPageSetting, getCompanyIdentity } from "@/lib/settings";
-import FaqSection from "@/components/common/FaqSection";
+import dynamic from "next/dynamic";
 import JsonLd from "@/components/seo/JsonLd";
 import {
   generateServiceSchema,
@@ -22,13 +22,21 @@ import {
 } from "@/lib/seo/schemaGenerator";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 
+const FaqSection = dynamic(() => import("@/components/common/FaqSection"), {
+  loading: () => <div className="h-64 animate-pulse bg-surface-container rounded-2xl" />,
+});
+
+export const revalidate = 3600;
+
 export async function generateMetadata(): Promise<Metadata> {
-  const setting = await getPageSetting("page_layanan_art");
-  const company = await getCompanyIdentity();
+  const [setting, company] = await Promise.all([
+    getPageSetting("page_layanan_art"),
+    getCompanyIdentity(),
+  ]);
 
   const title =
     setting.meta_title ||
-    `Jasa Asisten Rumah Tangga (ART) Resmi & Bergaransi | ${SITE_CONFIG.name}`;
+    `Jasa Asisten Rumah Tangga (ART) Resmi | ${SITE_CONFIG.name}`;
   const description =
     setting.meta_description ||
     "Penyalur ART resmi berizin Disnaker. Sedia asisten rumah tangga menginap & pulang-pergi yang terlatih, lolos uji medis, identitas jelas, dan bergaransi.";
@@ -58,8 +66,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ArtLayananPage() {
-  const pageSetting = await getPageSetting("page_layanan_art");
-  const company = await getCompanyIdentity();
+  const [pageSetting, company] = await Promise.all([
+    getPageSetting("page_layanan_art"),
+    getCompanyIdentity(),
+  ]);
   const waNumber = company.nomor_whatsapp || SITE_CONFIG.whatsappPrimary;
 
   const serviceSchema = generateServiceSchema(
@@ -70,17 +80,17 @@ export default async function ArtLayananPage() {
   const breadcrumbSchema = generateBreadcrumbSchema([
     { name: "Beranda", url: "/" },
     { name: "Layanan", url: "/layanan" },
-    { name: "Asisten Rumah Tangga", url: "/layanan/art" },
+    { name: "ART", url: "/layanan/art" },
   ]);
   const faqSchema = generateFAQSchema(pageSetting.faqs || []);
 
   const heroTitle =
     pageSetting.hero_title ||
-    "Jasa Asisten Rumah Tangga (ART) Resmi & Terpercaya";
+    "Jasa Asisten Rumah Tangga (ART) Resmi";
   const heroSubtitle =
     pageSetting.hero_subtitle ||
-    "Sedia ART menginap (live-in) & pulang-pergi (part-time) yang terlatih, lolos uji medis, identitas jelas, dan bergaransi.";
-  const heroImage = pageSetting.hero_image || "/asisten rumah tangga.jpeg";
+    "Penyalur ART terpercaya dengan masa garansi penukaran. Rumah bersih, rapi, dan keluarga tenang.";
+  const heroImage = pageSetting.hero_image || "/asisten-rumah-tangga.webp";
   const heroImageAlt = pageSetting.hero_image_alt || "Asisten Rumah Tangga";
 
   const scopeOfDuties = [
@@ -148,8 +158,10 @@ export default async function ArtLayananPage() {
             src={heroImage}
             alt={heroImageAlt}
             fill
-            priority
-            sizes="100vw"
+            priority={true}
+            fetchPriority="high"
+            loading="eager"
+            sizes="(max-width: 768px) 100vw, 100vw"
             quality={75}
             className="object-cover opacity-25"
           />

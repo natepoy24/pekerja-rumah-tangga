@@ -170,7 +170,7 @@ export default function AdminLayoutClient({ children }: AdminLayoutClientProps) 
             >
               <div className="w-10 h-10 rounded-xl bg-[#EBF4E7] p-1 flex items-center justify-center shrink-0 border border-[#D5E8D0]">
                 <Image
-                  src="/logo.png"
+                  src="/logo-jm.webp"
                   alt="Logo PT Jasa Mandiri"
                   width={36}
                   height={36}
@@ -218,8 +218,8 @@ export default function AdminLayoutClient({ children }: AdminLayoutClientProps) 
                       href={item.href}
                       title={isCollapsed ? item.label : undefined}
                       className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${active
-                          ? "bg-[#0B4F42] text-white shadow-sm shadow-[#0B4F42]/15"
-                          : "text-[#14201D]/80 hover:bg-[#EBF4E7] hover:text-[#0B4F42]"
+                        ? "bg-[#0B4F42] text-white shadow-sm shadow-[#0B4F42]/15"
+                        : "text-[#14201D]/80 hover:bg-[#EBF4E7] hover:text-[#0B4F42]"
                         } ${isCollapsed ? "justify-center" : ""}`}
                     >
                       <Icon className={`w-4 h-4 shrink-0 ${active ? "text-emerald-300" : "text-[#0B4F42]"}`} />

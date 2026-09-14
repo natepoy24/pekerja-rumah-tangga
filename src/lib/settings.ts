@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createPublicClient } from "@/lib/supabase/server";
 import {
   CompanyIdentity,
   PageSetting,
@@ -10,7 +10,7 @@ export * from "./settings-data";
 
 export async function getCompanyIdentity(): Promise<CompanyIdentity> {
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     const { data } = await supabase
       .from("site_settings")
       .select("data")
@@ -29,7 +29,7 @@ export async function getCompanyIdentity(): Promise<CompanyIdentity> {
 export async function getPageSetting(pageKey: string): Promise<PageSetting> {
   const fallback = DEFAULT_PAGE_SETTINGS[pageKey] || DEFAULT_PAGE_SETTINGS.page_home;
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     const { data } = await supabase
       .from("site_settings")
       .select("data")
@@ -52,7 +52,7 @@ export async function getAllSettingsFromDb(): Promise<Record<string, any>> {
   };
 
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     const { data } = await supabase.from("site_settings").select("id, data");
     if (data && Array.isArray(data)) {
       for (const item of data) {

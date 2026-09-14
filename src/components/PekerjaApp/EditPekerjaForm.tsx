@@ -8,9 +8,11 @@ import SukuInput from "./SukuInput";
 import KeterampilanSelector from "./KeterampilanSelector";
 import ImageCropModal from "./ImageCropModal";
 import Link from "next/link";
+import NotificationModal from "@/components/ui/NotificationModal";
+import ImageZoomModal from "@/components/ui/ImageZoomModal";
 import { type PekerjaProps } from "./PekerjaCard";
 import Image from "next/image";
-import { User, ArrowLeft, Upload, Save, CheckCircle2, AlertTriangle, ArrowRight, Languages, Utensils } from "lucide-react";
+import { User, ArrowLeft, Upload, Save, CheckCircle2, AlertTriangle, ArrowRight, Languages, Utensils, ZoomIn } from "lucide-react";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -35,6 +37,7 @@ export default function EditPekerjaForm({ pekerja }: { pekerja: PekerjaProps }) 
 
   const [imageToCrop, setImageToCrop] = useState<string | null>(null);
   const [croppedImageFile, setCroppedImageFile] = useState<File | null>(null);
+  const [zoomImage, setZoomImage] = useState<{ src: string; alt: string } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Initial languages logic
@@ -534,13 +537,20 @@ export default function EditPekerjaForm({ pekerja }: { pekerja: PekerjaProps }) 
 
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
             <div className="flex items-center gap-4">
-              <div className="relative w-24 h-24 rounded-2xl overflow-hidden border border-outline-variant/40 shrink-0 bg-surface-container-low">
-                <Image src={currentFoto} alt={pekerja.nama} fill sizes="96px" className="object-cover" />
+              <div
+                onClick={() => setZoomImage({ src: currentFoto, alt: `Foto Saat Ini - ${pekerja.nama}` })}
+                className="relative w-24 h-24 rounded-2xl overflow-hidden border border-outline-variant/40 shrink-0 bg-surface-container-low cursor-pointer group"
+                title="Klik untuk Zoom"
+              >
+                <Image src={currentFoto} alt={pekerja.nama} fill sizes="96px" className="object-cover group-hover:scale-105 transition-transform" />
+                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                  <ZoomIn className="w-5 h-5 text-white drop-shadow" />
+                </div>
               </div>
 
               <div className="text-xs text-on-surface-variant">
                 <p className="font-semibold text-on-surface">Foto Saat Ini</p>
-                <p className="text-[11px] text-on-surface-variant/70">Akan tetap digunakan jika tidak diganti</p>
+                <p className="text-[11px] text-on-surface-variant/70">Akan tetap digunakan jika tidak diganti. Klik untuk zoom.</p>
               </div>
             </div>
 
@@ -565,17 +575,31 @@ export default function EditPekerjaForm({ pekerja }: { pekerja: PekerjaProps }) 
           {croppedImageFile && (
             <div className="flex items-center justify-between gap-4 bg-[#EBF4E7] p-4 rounded-2xl border border-[#D5E8D0]">
               <div className="flex items-center gap-3">
-                <img
-                  src={URL.createObjectURL(croppedImageFile)}
-                  alt="Foto Profil Baru"
-                  className="w-16 h-16 rounded-xl object-cover border border-[#3E7B28] shadow-sm"
-                />
+                <div
+                  onClick={() =>
+                    setZoomImage({
+                      src: URL.createObjectURL(croppedImageFile),
+                      alt: `Foto Profil Baru - ${pekerja.nama}`,
+                    })
+                  }
+                  className="relative w-16 h-16 rounded-xl overflow-hidden border border-[#3E7B28] shadow-sm cursor-pointer group shrink-0"
+                  title="Klik untuk Zoom"
+                >
+                  <img
+                    src={URL.createObjectURL(croppedImageFile)}
+                    alt="Foto Profil Baru"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                  />
+                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                    <ZoomIn className="w-4 h-4 text-white drop-shadow" />
+                  </div>
+                </div>
                 <div className="text-xs space-y-1">
                   <span className="font-bold text-[#3E7B28] flex items-center gap-1.5 text-sm">
                     <CheckCircle2 className="w-4 h-4" /> Foto Baru Siap Disimpan
                   </span>
                   <p className="text-on-surface-variant text-[11px]">
-                    Ukuran: {(croppedImageFile.size / 1024).toFixed(1)} KB (Telah disesuaikan)
+                    Ukuran: {(croppedImageFile.size / 1024).toFixed(1)} KB (Klik foto untuk zoom)
                   </p>
                 </div>
               </div>
@@ -603,6 +627,21 @@ export default function EditPekerjaForm({ pekerja }: { pekerja: PekerjaProps }) 
           <SubmitButton />
         </div>
       </form>
+
+      <NotificationModal
+        isOpen={showSuccessModal}
+        onClose={() => {
+          setShowSuccessModal(false);
+          router.push("/admin/dashboard/pekerja");
+        }}
+        title="Profil Pekerja Diperbarui!"
+        message={modalSuccessMessage || "Profil pekerja berhasil diperbarui."}
+      />
+      <ImageZoomModal
+        src={zoomImage?.src || null}
+        alt={zoomImage?.alt}
+        onClose={() => setZoomImage(null)}
+      />
     </div>
   );
 }

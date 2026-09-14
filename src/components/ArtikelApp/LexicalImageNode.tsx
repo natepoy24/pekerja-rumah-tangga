@@ -53,7 +53,8 @@ export class ImageNode extends DecoratorNode<React.ReactNode> {
       <img
         src={this.__src}
         alt={this.__altText}
-        className="max-w-full rounded-2xl shadow-sm border border-[#D5E8D0]"
+        className="max-w-full rounded-2xl shadow-sm border border-[#D5E8D0] cursor-zoom-in hover:opacity-95 transition-opacity"
+        title="Klik untuk Zoom Gambar"
       />
     );
   }

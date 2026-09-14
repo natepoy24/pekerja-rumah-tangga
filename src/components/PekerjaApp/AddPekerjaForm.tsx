@@ -8,7 +8,9 @@ import SukuInput from "./SukuInput";
 import KeterampilanSelector from "./KeterampilanSelector";
 import ImageCropModal from "./ImageCropModal";
 import Link from "next/link";
-import { User, ArrowLeft, Upload, Check, CheckCircle2, AlertTriangle, ArrowRight, Languages, Utensils } from "lucide-react";
+import NotificationModal from "@/components/ui/NotificationModal";
+import ImageZoomModal from "@/components/ui/ImageZoomModal";
+import { User, ArrowLeft, Upload, Check, CheckCircle2, AlertTriangle, ArrowRight, Languages, Utensils, ZoomIn } from "lucide-react";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -33,6 +35,7 @@ export default function AddPekerjaForm() {
 
   const [imageToCrop, setImageToCrop] = useState<string | null>(null);
   const [croppedImageFile, setCroppedImageFile] = useState<File | null>(null);
+  const [zoomImage, setZoomImage] = useState<{ src: string; alt: string } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Bahasa state
@@ -516,12 +519,29 @@ export default function AddPekerjaForm() {
 
           {croppedImageFile && (
             <div className="flex items-center gap-4 bg-[#EBF4E7] p-3 rounded-xl border border-[#D5E8D0]">
-              <img
-                src={URL.createObjectURL(croppedImageFile)}
-                alt="Hasil Crop"
-                className="w-16 h-16 object-cover rounded-lg border"
-              />
-              <span className="text-xs font-semibold text-[#3E7B28]">Foto siap diunggah!</span>
+              <div
+                onClick={() =>
+                  setZoomImage({
+                    src: URL.createObjectURL(croppedImageFile),
+                    alt: "Hasil Crop Foto Profil",
+                  })
+                }
+                className="relative w-16 h-16 rounded-lg overflow-hidden border cursor-pointer group shrink-0"
+                title="Klik untuk Zoom"
+              >
+                <img
+                  src={URL.createObjectURL(croppedImageFile)}
+                  alt="Hasil Crop"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                />
+                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                  <ZoomIn className="w-4 h-4 text-white drop-shadow" />
+                </div>
+              </div>
+              <div>
+                <span className="text-xs font-semibold text-[#3E7B28] block">Foto siap diunggah!</span>
+                <span className="text-[11px] text-on-surface-variant">Klik gambar untuk pratinjau zoom</span>
+              </div>
             </div>
           )}
         </section>
@@ -536,6 +556,21 @@ export default function AddPekerjaForm() {
           <SubmitButton />
         </div>
       </form>
+
+      <NotificationModal
+        isOpen={showSuccessModal}
+        onClose={() => {
+          setShowSuccessModal(false);
+          router.push("/admin/dashboard/pekerja");
+        }}
+        title="Profil Pekerja Ditambahkan!"
+        message={modalSuccessMessage || "Kandidat pekerja berhasil ditambahkan ke katalog."}
+      />
+      <ImageZoomModal
+        src={zoomImage?.src || null}
+        alt={zoomImage?.alt}
+        onClose={() => setZoomImage(null)}
+      />
     </div>
   );
 }

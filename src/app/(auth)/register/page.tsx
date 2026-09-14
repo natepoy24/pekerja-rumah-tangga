@@ -34,7 +34,7 @@ export default function RegisterPage() {
         <div className="glass-surface p-8 md:p-10 rounded-2xl border border-outline-subtle/40 shadow-ambient">
           <div className="text-center flex flex-col items-center gap-2 mb-8">
             <Image
-              src="/logo.png"
+              src="/logo-jm.webp"
               alt="Logo PT Jasa Mandiri"
               width={64}
               height={64}

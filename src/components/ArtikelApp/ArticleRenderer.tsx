@@ -2,9 +2,10 @@
 
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { incrementViews } from "@/app/actions";
-import { Calendar, Eye, Tag } from "lucide-react";
+import { Calendar, Eye, Tag, ZoomIn } from "lucide-react";
+import ImageZoomModal from "@/components/ui/ImageZoomModal";
 
 const LexicalEditor = dynamic(() => import("./LexicalEditor"), {
   ssr: false,
@@ -29,6 +30,8 @@ interface Artikel {
 }
 
 export default function ArticleRenderer({ article }: { article: Artikel }) {
+  const [zoomImage, setZoomImage] = useState<{ src: string; alt: string } | null>(null);
+
   useEffect(() => {
     incrementViews(article.slug).catch(console.error);
   }, [article.slug]);
@@ -39,6 +42,19 @@ export default function ArticleRenderer({ article }: { article: Artikel }) {
   const tagsArray = article.tags
     ? article.tags.split(",").map((t: string) => t.trim()).filter(Boolean)
     : [];
+
+  const handleContentClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLElement;
+    if (target.tagName === "IMG") {
+      const img = target as HTMLImageElement;
+      setZoomImage({
+        src: img.src,
+        alt: img.alt || article.judul,
+      });
+    }
+  };
+
+  const coverSrc = article.gambar_url || "/asisten-rumah-tangga.webp";
 
   return (
     <div className="bg-transparent pb-16 font-sans">
@@ -82,24 +98,43 @@ export default function ArticleRenderer({ article }: { article: Artikel }) {
           </header>
 
           {/* Cover image */}
-          <div className="relative w-full aspect-[16/9] rounded-2xl overflow-hidden mb-10 bg-surface-container-low border border-outline-variant/20 shadow-sm">
+          <div
+            onClick={() => setZoomImage({ src: coverSrc, alt: article.alt_gambar || `Cover ${article.judul}` })}
+            className="relative w-full aspect-[16/9] rounded-2xl overflow-hidden mb-10 bg-surface-container-low border border-outline-variant/20 shadow-sm cursor-pointer group"
+            title="Klik untuk Zoom Cover"
+          >
             <Image
-              src={article.gambar_url || "/Image/placeholder.png"}
+              src={coverSrc}
               alt={article.alt_gambar || `Cover ${article.judul}`}
               fill
               sizes="(max-width: 1024px) 100vw, 800px"
-              className="object-cover"
+              className="object-cover group-hover:scale-105 transition-transform duration-500"
               priority
             />
-
+            <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+              <span className="px-4 py-2 rounded-xl bg-black/60 text-white text-xs font-bold shadow-lg flex items-center gap-2 backdrop-blur-sm">
+                <ZoomIn className="w-4 h-4 text-emerald-400" />
+                <span>Klik untuk Zoom Gambar</span>
+              </span>
+            </div>
           </div>
 
           {/* Content Lexical */}
-          <div className="prose prose-[#0B4F42] max-w-none font-sans text-on-surface leading-relaxed">
+          <div
+            onClick={handleContentClick}
+            className="prose prose-[#0B4F42] max-w-none font-sans text-on-surface leading-relaxed cursor-pointer"
+          >
             <LexicalEditor initialContent={initialContent} editable={false} />
           </div>
         </article>
       </div>
+
+      <ImageZoomModal
+        src={zoomImage?.src || null}
+        alt={zoomImage?.alt}
+        onClose={() => setZoomImage(null)}
+      />
     </div>
   );
 }
+

@@ -242,7 +242,6 @@ export function generateProfileSchema(worker: {
   status?: string;
 }) {
   const imageUrl = worker.fotoUrl || worker.foto_url || SITE_CONFIG.logo;
-  const detailUrl = `${SITE_CONFIG.url}/pekerja/${worker.slug}`;
 
   return {
     "@context": "https://schema.org",
@@ -262,4 +261,58 @@ export function generateProfileSchema(worker: {
     }
   };
 }
+
+export function generateArticleSchema(article: {
+  judul: string;
+  slug: string;
+  meta_title?: string;
+  meta_description?: string;
+  gambar_url?: string;
+  alt_gambar?: string;
+  published_at?: string;
+  created_at?: string;
+  focus_keyword?: string;
+  secondary_keyword?: string;
+  tags?: string;
+}) {
+  const canonicalUrl = `${SITE_CONFIG.url}/artikel/${article.slug}`;
+  const imageUrl = article.gambar_url?.startsWith("http")
+    ? article.gambar_url
+    : `${SITE_CONFIG.url}${article.gambar_url || "/asisten-rumah-tangga.webp"}`;
+
+  const keywords = [article.focus_keyword, article.secondary_keyword, article.tags]
+    .filter(Boolean)
+    .join(", ");
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": article.meta_title || article.judul,
+    "description": article.meta_description || `Artikel edukasi seputar ${article.judul} dari ${SITE_CONFIG.name}.`,
+    "image": [imageUrl],
+    "datePublished": article.published_at || article.created_at,
+    "dateModified": article.created_at || article.published_at,
+    "author": {
+      "@type": "Organization",
+      "name": SITE_CONFIG.name,
+      "url": SITE_CONFIG.url,
+      "logo": SITE_CONFIG.logo,
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": SITE_CONFIG.name,
+      "url": SITE_CONFIG.url,
+      "logo": {
+        "@type": "ImageObject",
+        "url": SITE_CONFIG.logo,
+      },
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": canonicalUrl,
+    },
+    "keywords": keywords || undefined,
+  };
+}
+
 

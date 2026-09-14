@@ -3,11 +3,14 @@
 import { useActionState, useEffect, useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { updateArtikel } from "@/app/actions";
+import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import dynamic from "next/dynamic";
 import TagSelector from "@/components/ArtikelApp/TagSelector";
 import SeoMetadataForm from "@/components/ArtikelApp/SeoMetadataForm";
-import { Save, Eye } from "lucide-react";
+import NotificationModal from "@/components/ui/NotificationModal";
+import ImageZoomModal from "@/components/ui/ImageZoomModal";
+import { Save, Eye, ZoomIn } from "lucide-react";
 
 const LexicalEditor = dynamic(() => import("@/components/ArtikelApp/LexicalEditor"), {
   ssr: false,
@@ -33,7 +36,8 @@ function SubmitButton() {
 }
 
 export default function EditArtikelFormClient({ article }: { article: any }) {
-  const initialState = { error: undefined };
+  const router = useRouter();
+  const initialState = { error: undefined, success: false };
   const [state, formAction] = useActionState(updateArtikel, initialState as any);
 
   const initialContent = typeof article.konten === "object" ? JSON.stringify(article.konten) : article.konten;
@@ -41,10 +45,17 @@ export default function EditArtikelFormClient({ article }: { article: any }) {
   const formRef = useRef<HTMLFormElement>(null);
 
   const [titleValue, setTitleValue] = useState(article.judul || "");
-  const [coverPreview, setCoverPreview] = useState<string | null>(article.gambar_url || null);
+  const [coverPreview, setCoverPreview] = useState<string | null>(
+    article.gambar_url || null
+  );
+  const [zoomImage, setZoomImage] = useState<{ src: string; alt: string } | null>(null);
+
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   useEffect(() => {
-    if (state?.error) {
+    if (state?.success) {
+      setShowSuccessModal(true);
+    } else if (state?.error) {
       toast.error(state.error);
     }
   }, [state]);
@@ -124,9 +135,26 @@ export default function EditArtikelFormClient({ article }: { article: any }) {
 
       {/* Gambar Cover */}
       <div className="bg-white p-6 rounded-2xl border border-[#D5E8D0] shadow-sm space-y-4">
-        <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant">
-          Gambar Cover Artikel
-        </label>
+        <div className="flex justify-between items-center">
+          <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant">
+            Gambar Cover Artikel
+          </label>
+          {coverPreview && <span className="text-[11px] text-on-surface-variant">Klik gambar untuk zoom</span>}
+        </div>
+
+        {coverPreview && (
+          <div
+            onClick={() => setZoomImage({ src: coverPreview, alt: article.judul })}
+            className="relative w-full aspect-video rounded-xl overflow-hidden border border-outline-variant/30 mt-2 cursor-pointer group"
+            title="Klik untuk Zoom"
+          >
+            <img src={coverPreview} alt="Cover Preview" className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+            <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+              <ZoomIn className="w-6 h-6 text-white drop-shadow" />
+            </div>
+          </div>
+        )}
+
         <div className="flex items-center gap-4">
           <input
             type="file"
@@ -136,12 +164,6 @@ export default function EditArtikelFormClient({ article }: { article: any }) {
             className="w-full text-sm text-on-surface file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-[#EBF4E7] file:text-[#3E7B28] hover:file:bg-[#D5E8D0] transition-colors cursor-pointer"
           />
         </div>
-
-        {coverPreview && (
-          <div className="relative w-full aspect-video rounded-xl overflow-hidden border border-outline-variant/30 mt-2">
-            <img src={coverPreview} alt="Cover Preview" className="w-full h-full object-cover" />
-          </div>
-        )}
       </div>
 
       {/* Rich Text Editor */}
@@ -184,6 +206,22 @@ export default function EditArtikelFormClient({ article }: { article: any }) {
         </button>
         <SubmitButton />
       </div>
+
+      <NotificationModal
+        isOpen={showSuccessModal}
+        onClose={() => {
+          setShowSuccessModal(false);
+          router.push("/admin/dashboard/artikel");
+        }}
+        title="Artikel Diperbarui!"
+        message="Perubahan pada artikel berhasil disimpan."
+      />
+
+      <ImageZoomModal
+        src={zoomImage?.src || null}
+        alt={zoomImage?.alt}
+        onClose={() => setZoomImage(null)}
+      />
     </form>
   );
 }

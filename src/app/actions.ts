@@ -478,11 +478,10 @@ export async function addArtikel(prevState: any, formData: FormData) {
 
     revalidatePath("/admin/dashboard/artikel");
     revalidatePath("/artikel");
+    return { success: true };
   } catch (err: any) {
     return { error: err.message || "Terjadi kesalahan server" };
   }
-
-  redirect("/admin/dashboard/artikel");
 }
 
 export async function updateArtikel(prevState: any, formData: FormData) {
@@ -556,11 +555,10 @@ export async function updateArtikel(prevState: any, formData: FormData) {
 
     revalidatePath("/admin/dashboard/artikel");
     revalidatePath("/artikel");
+    return { success: true };
   } catch (err: any) {
     return { error: err.message || "Terjadi kesalahan server" };
   }
-
-  redirect("/admin/dashboard/artikel");
 }
 
 export async function deleteArtikel(id: number, gambar_url: string | null) {
@@ -638,9 +636,11 @@ export async function updateSiteSetting(settingId: string, formData: FormData) {
     ];
 
     for (const { formKey, dataKey } of fileFields) {
-      const file = formData.get(formKey);
-      if (isFormFile(file)) {
-        const { url, error } = await uploadFile("gambar-artikel", file, "settings");
+      const files = formData.getAll(formKey);
+      const validFile = files.find((f: any) => isFormFile(f));
+
+      if (validFile) {
+        const { url, error } = await uploadFile("gambar-artikel", validFile, "settings");
         if (error) {
           return { error: `Gagal upload gambar untuk ${formKey}: ${error}` };
         }
@@ -682,7 +682,7 @@ export async function updateSiteSetting(settingId: string, formData: FormData) {
     revalidatePath("/tentang-kami");
     revalidatePath("/kontak");
 
-    return { success: true };
+    return { success: true, data: currentData };
   } catch (err: any) {
     return { error: err.message || "Terjadi kesalahan server saat menyimpan pengaturan" };
   }

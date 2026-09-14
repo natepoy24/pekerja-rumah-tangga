@@ -14,19 +14,33 @@ import {
   CheckCircle2,
   Award,
 } from "lucide-react";
+import dynamic from "next/dynamic";
 import { ContactFormClient } from "./ContactFormClient";
 import { getPageSetting, getCompanyIdentity } from "@/lib/settings";
-import FaqSection from "@/components/common/FaqSection";
-
+import JsonLd from "@/components/seo/JsonLd";
+import {
+  generateContactPageSchema,
+  generateEmploymentAgencySchema,
+  generateBreadcrumbSchema,
+} from "@/lib/seo/schemaGenerator";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 
+const FaqSection = dynamic(() => import("@/components/common/FaqSection"), {
+  loading: () => <div className="h-64 animate-pulse bg-surface-container rounded-2xl" />,
+});
+
+
+export const revalidate = 3600;
+
 export async function generateMetadata(): Promise<Metadata> {
-  const setting = await getPageSetting("page_kontak");
-  const company = await getCompanyIdentity();
+  const [setting, company] = await Promise.all([
+    getPageSetting("page_kontak"),
+    getCompanyIdentity(),
+  ]);
 
   const title = setting.meta_title || `Hubungi ${company.nama_perusahaan} | Kantor Penyalur PRT, Baby Sitter & Perawat Lansia`;
   const description = setting.meta_description || "Konsultasikan kebutuhan PRT, baby sitter, dan perawat lansia bersama kami.";
-  const ogImage = setting.og_image || setting.hero_image || "/asisten rumah tangga.jpeg";
+  const ogImage = setting.og_image || setting.hero_image || "/asisten-rumah-tangga.webp";
   const canonicalUrl = `${SITE_CONFIG.url}/kontak`;
 
   return {
@@ -49,8 +63,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ContactPage() {
-  const pageSetting = await getPageSetting("page_kontak");
-  const company = await getCompanyIdentity();
+  const [pageSetting, company] = await Promise.all([
+    getPageSetting("page_kontak"),
+    getCompanyIdentity(),
+  ]);
 
   const waNumber = company?.nomor_whatsapp || process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "6285111399962";
   const phone = company?.nomor_telepon || "+62 851-1139-9962";
@@ -69,54 +85,12 @@ export default async function ContactPage() {
   )}`;
 
 
-  // JSON-LD Structured Data for LocalBusiness / EmploymentAgency
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": ["EmploymentAgency", "LocalBusiness"],
-    name: "PT Jasa Mandiri Agency",
-    description:
-      "Perusahaan Penempatan Pekerja Rumah Tangga, Baby sitter/Pengasuh Anak dan Perawat lansia",
-    url: "https://pekerjarumahtangga.com/kontak",
-    telephone: "+6285111399962",
-    priceRange: "N/A",
-    address: {
-      "@type": "PostalAddress",
-      streetAddress:
-        "Jl. Gunung Balong III No.78, RT.11/RW.4, Lb. Bulus, Kec. Cilandak",
-      addressLocality: "Kota Jakarta Selatan",
-      addressRegion: "Daerah Khusus Ibukota Jakarta",
-      postalCode: "12440",
-      addressCountry: "ID",
-    },
-    geo: {
-      "@type": "GeoCoordinates",
-      latitude: -6.3047534,
-      longitude: 106.7884377,
-    },
-    hasMap: "https://maps.app.goo.gl/z5f5F93TwLPZJA7n7",
-    openingHoursSpecification: [
-      {
-        "@type": "OpeningHoursSpecification",
-        dayOfWeek: [
-          "Sunday",
-          "Monday",
-          "Tuesday",
-          "Wednesday",
-          "Thursday",
-          "Friday",
-          "Saturday",
-        ],
-        opens: "08:00",
-        closes: "21:00",
-      },
-    ],
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: "4.8",
-      reviewCount: "124",
-    },
-    sameAs: ["https://www.instagram.com/cvjasamandiri/"],
-  };
+  const contactSchema = generateContactPageSchema();
+  const agencySchema = generateEmploymentAgencySchema();
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: "Beranda", url: "/" },
+    { name: "Kontak", url: "/kontak" },
+  ]);
 
   const coverageAreas = [
     {
@@ -158,28 +132,10 @@ export default async function ContactPage() {
     },
   ];
 
-  const faqItems = [
-    {
-      q: "Apakah calon majikan harus membuat janji terlebih dahulu sebelum datang ke kantor?",
-      a: "Sangat disarankan membuat jadwal agar tim kami dapat menyiapkan berkas dan menghadirkan kandidat yang paling sesuai dengan profil kebutuhan Anda.",
-    },
-    {
-      q: "Apakah sesi wawancara pekerja bisa dilakukan tanpa harus datang ke kantor?",
-      a: "Bisa. Kami memfasilitasi sesi video call interview yang dipandu oleh konsultan penempatan kami.",
-    },
-    {
-      q: "Berapa lama waktu tunggu hingga pekerja siap diantar ke rumah?",
-      a: "Setelah proses seleksi dan administrasi selesai, pekerja siap diberangkatkan dalam di hari itu juga.",
-    },
-  ];
-
   return (
     <div className="min-h-screen bg-[#FAFAF7] font-sans text-[#14201D]">
-      {/* Inject JSON-LD Structured Data */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+      <JsonLd schema={[contactSchema, agencySchema, breadcrumbSchema]} />
+
 
       {/* SECTION 1: HERO BANNER (Split Grid Warm Off-White) */}
       <section className="bg-[#FAFAF7] border-b border-[#D5E8D0]/60 relative overflow-hidden py-12 md:py-20 px-4 sm:px-6 lg:px-8">
@@ -219,7 +175,7 @@ export default async function ContactPage() {
                     href={defaultWaUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#9E232A] hover:bg-[#8c151f] text-white font-sans text-sm font-semibold rounded-xl shadow-md transition-all shrink-0"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 min-h-[44px] min-w-[44px] bg-[#9E232A] hover:bg-[#8c151f] text-white font-sans text-sm font-semibold rounded-xl shadow-md transition-all shrink-0"
                   >
                     <MessageSquare className="w-4 h-4" />
                     <span>Konsultasi Kebutuhan via WhatsApp</span>
@@ -348,7 +304,7 @@ export default async function ContactPage() {
               href="https://maps.app.goo.gl/z5f5F93TwLPZJA7n7"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full py-3.5 px-5 bg-[#0B4F42] hover:bg-[#00372d] text-white font-sans text-sm font-semibold rounded-xl flex items-center justify-center gap-2 transition-all shadow-sm"
+              className="w-full py-3.5 px-5 min-h-[44px] min-w-[44px] bg-[#0B4F42] hover:bg-[#00372d] text-white font-sans text-sm font-semibold rounded-xl flex items-center justify-center gap-2 transition-all shadow-sm"
             >
               <span>Buka di Google Maps (Jasa ART)</span>
               <ExternalLink className="w-4 h-4" />
@@ -435,7 +391,7 @@ export default async function ContactPage() {
                 href={aftercareWaUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-[#0B4F42] hover:bg-[#00372d] text-white font-sans text-sm font-semibold rounded-xl shadow-md transition-all"
+                className="inline-flex items-center gap-2 px-8 py-4 min-h-[44px] min-w-[44px] bg-[#0B4F42] hover:bg-[#00372d] text-white font-sans text-sm font-semibold rounded-xl shadow-md transition-all"
               >
                 <MessageSquare className="w-4 h-4 text-[#82c467]" />
                 <span>Hubungi Hotline Garansi & Mediasi</span>

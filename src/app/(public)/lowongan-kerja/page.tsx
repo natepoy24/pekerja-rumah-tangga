@@ -18,28 +18,36 @@ import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { getPageSetting, getCompanyIdentity } from "@/lib/settings";
 import { getJobs } from "@/lib/jobs";
-import FaqSection from "@/components/common/FaqSection";
+import dynamic from "next/dynamic";
 import EvergreenJobJsonLd from "@/components/seo/EvergreenJobJsonLd";
+import JsonLd from "@/components/seo/JsonLd";
+import { generateBreadcrumbSchema } from "@/lib/seo/schemaGenerator";
 import type { JobSchemaInput } from "@/types/job-schema";
 
-export const revalidate = 0;
+const FaqSection = dynamic(() => import("@/components/common/FaqSection"), {
+  loading: () => <div className="h-64 animate-pulse bg-surface-container rounded-2xl" />,
+});
+
+export const revalidate = 3600;
 
 export async function generateMetadata(): Promise<Metadata> {
-  const setting = await getPageSetting("page_lowongan_kerja");
-  const company = await getCompanyIdentity();
+  const [setting, company] = await Promise.all([
+    getPageSetting("page_lowongan_kerja"),
+    getCompanyIdentity(),
+  ]);
 
   const title = setting.meta_title || `Lowongan Kerja PRT, Baby Sitter & Perawat Lansia Resmi | ${company.nama_perusahaan}`;
   const description =
     setting.meta_description ||
     "Lowongan kerja resmi penempatan dalam negeri: ART, Baby Sitter, dan Perawat Lansia. Gaji utuh tepat waktu, asrama & makan gratis, tanpa potongan liar. Berizin Kemnaker.";
-  const ogImage = setting.og_image || setting.hero_image || "/asisten rumah tangga.jpeg";
+  const ogImage = setting.og_image || setting.hero_image || "/asisten-rumah-tangga.webp";
 
   return {
     title,
     description,
     keywords: setting.keywords ? setting.keywords.split(",").map((k) => k.trim()) : undefined,
     alternates: {
-      canonical: "/lowongan-kerja",
+      canonical: "https://pekerjarumahtangga.com/lowongan-kerja",
     },
     openGraph: {
       title,
@@ -54,9 +62,17 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function LowonganKerjaHubPage() {
-  const jobs = await getJobs();
-  const pageSetting = await getPageSetting("page_lowongan_kerja");
-  const company = await getCompanyIdentity();
+  const [jobs, pageSetting, company] = await Promise.all([
+    getJobs(),
+    getPageSetting("page_lowongan_kerja"),
+    getCompanyIdentity(),
+  ]);
+
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: "Beranda", url: "/" },
+    { name: "Lowongan Kerja", url: "/lowongan-kerja" },
+  ]);
+
 
   const companyName = company?.nama_perusahaan || "PT Jasa Mandiri";
   const recruiterWa =
@@ -129,6 +145,7 @@ export default async function LowonganKerjaHubPage() {
     <div className="overflow-hidden min-h-screen bg-[#FAFAF7] font-sans pt-28 pb-20">
       {/* Dynamic Evergreen Google Jobs Schema */}
       <EvergreenJobJsonLd jobs={jobSchemaInputs} />
+      <JsonLd schema={breadcrumbSchema} />
 
       {/* Hero Section */}
       <section className="px-4 sm:px-6 lg:px-8 max-w-container mx-auto py-10 md:py-16">

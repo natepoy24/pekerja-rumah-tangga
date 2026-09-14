@@ -26,7 +26,7 @@ import { generateBreadcrumbSchema } from "@/lib/seo/schemaGenerator";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 import type { JobSchemaInput } from "@/types/job-schema";
 
-export const revalidate = 0;
+export const revalidate = 3600;
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -34,8 +34,10 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const job = await getJobBySlug(slug);
-  const company = await getCompanyIdentity();
+  const [job, company] = await Promise.all([
+    getJobBySlug(slug),
+    getCompanyIdentity(),
+  ]);
 
   if (!job || job.is_active === false) {
     return {
@@ -77,13 +79,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function JobDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  const job = await getJobBySlug(slug);
+  const [job, company] = await Promise.all([
+    getJobBySlug(slug),
+    getCompanyIdentity(),
+  ]);
 
   if (!job || job.is_active === false) {
     notFound();
   }
-
-  const company = await getCompanyIdentity();
   const companyName = SITE_CONFIG.name;
   const recruiterWa =
     process.env.NEXT_PUBLIC_RECRUITER_WHATSAPP_NUMBER ||

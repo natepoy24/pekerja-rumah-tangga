@@ -11,9 +11,13 @@ import {
 } from "@/lib/seo/schemaGenerator";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 
+export const revalidate = 3600;
+
 export async function generateMetadata(): Promise<Metadata> {
-  const setting = await getPageSetting("page_home");
-  const company = await getCompanyIdentity();
+  const [setting, company] = await Promise.all([
+    getPageSetting("page_home"),
+    getCompanyIdentity(),
+  ]);
 
   const title = setting.meta_title || `${SITE_CONFIG.name} - Penempatan Pekerja Rumah Tangga Resmi & Terpercaya`;
   const description = setting.meta_description || company.deskripsi;
@@ -48,8 +52,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function HomePage() {
-  const pageSetting = await getPageSetting("page_home");
-  const company = await getCompanyIdentity();
+  const [pageSetting, company] = await Promise.all([
+    getPageSetting("page_home"),
+    getCompanyIdentity(),
+  ]);
 
   const websiteSchema = generateWebSiteSchema();
   const organizationSchema = generateOrganizationSchema();

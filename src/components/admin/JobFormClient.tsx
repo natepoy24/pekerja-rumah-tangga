@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { createJobAction, updateJobAction } from "@/app/actions";
 import type { Job } from "@/lib/jobs";
+import NotificationModal from "@/components/ui/NotificationModal";
 
 interface JobFormClientProps {
   initialJob?: Job;
@@ -26,6 +27,8 @@ export default function JobFormClient({ initialJob, isEdit = false }: JobFormCli
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [statusMessage, setStatusMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [showNotificationModal, setShowNotificationModal] = useState(false);
+  const [notificationMessage, setNotificationMessage] = useState("");
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -44,17 +47,20 @@ export default function JobFormClient({ initialJob, isEdit = false }: JobFormCli
       if (res?.error) {
         setStatusMessage({ type: "error", text: res.error });
       } else {
-        setStatusMessage({
-          type: "success",
-          text: `Lowongan kerja berhasil ${isEdit ? "perbarui" : "tambahkan"}!`,
-        });
-        setTimeout(() => {
-          router.push("/admin/dashboard/lowongan");
-          router.refresh();
-        }, 1000);
+        setNotificationMessage(
+          `Lowongan kerja "${formData.get("title") || ""}" berhasil ${isEdit ? "diperbarui" : "ditambahkan"}!`
+        );
+        setShowNotificationModal(true);
       }
     });
   };
+
+  const handleNotificationClose = () => {
+    setShowNotificationModal(false);
+    router.push("/admin/dashboard/lowongan");
+    router.refresh();
+  };
+
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -366,6 +372,14 @@ export default function JobFormClient({ initialJob, isEdit = false }: JobFormCli
           </button>
         </div>
       </form>
+
+      <NotificationModal
+        isOpen={showNotificationModal}
+        title={isEdit ? "Lowongan Kerja Berhasil Diperbarui!" : "Lowongan Kerja Berhasil Ditambahkan!"}
+        message={notificationMessage}
+        autoCloseMs={1500}
+        onClose={handleNotificationClose}
+      />
     </div>
   );
 }

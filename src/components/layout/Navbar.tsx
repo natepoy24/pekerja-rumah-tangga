@@ -21,7 +21,7 @@ export function Navbar({ company }: NavbarProps) {
   const waNumber = company?.nomor_whatsapp || process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "6285111399962";
   const companyName = company?.nama_perusahaan || "PT Jasa Mandiri";
   const subtagline = company?.subtagline || "Premium Domestic Care";
-  const logoUrl = company?.logo_url || "/logo.png";
+  const logoUrl = company?.logo_url || "/logo-jm.webp";
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -191,19 +191,17 @@ export function Navbar({ company }: NavbarProps) {
 
           {/* Desktop CTA */}
           <div className="hidden lg:flex items-center gap-3">
-            <Link href="/admin/dashboard">
-              <Button variant="ghost" size="sm" className="gap-1.5 text-xs text-[#0B4F42] hover:bg-[#EBF4E7]">
-                <LayoutDashboard className="w-3.5 h-3.5" />
-                <span>Dashboard</span>
-              </Button>
-            </Link>
+            <Button href="/admin/dashboard" variant="ghost" size="sm" className="gap-1.5 text-xs text-[#0B4F42] hover:bg-[#EBF4E7]">
+              <LayoutDashboard className="w-3.5 h-3.5" />
+              <span>Dashboard</span>
+            </Button>
           </div>
 
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="lg:hidden p-2 rounded-lg text-[#14201D] hover:text-[#0B4F42] hover:bg-surface-container-low transition-colors"
-            aria-label="Toggle menu"
+            aria-label="Toggle Menu Navigation"
+            className="lg:hidden p-2 min-h-[44px] min-w-[44px] inline-flex items-center justify-center rounded-lg text-[#14201D] hover:text-[#0B4F42] hover:bg-surface-container-low transition-colors"
           >
             {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -216,7 +214,7 @@ export function Navbar({ company }: NavbarProps) {
           <Link
             href="/"
             onClick={() => setIsOpen(false)}
-            className="font-sans text-base py-2 px-3 rounded-lg text-[#14201D] hover:bg-[#EBF4E7]"
+            className="font-sans text-base py-2.5 px-3 min-h-[44px] inline-flex items-center rounded-lg text-[#14201D] hover:bg-[#EBF4E7]"
           >
             Beranda
           </Link>
@@ -228,7 +226,7 @@ export function Navbar({ company }: NavbarProps) {
             <Link
               href="/layanan"
               onClick={() => setIsOpen(false)}
-              className="block text-sm font-bold text-[#0B4F42] py-1.5 px-3 rounded-md hover:bg-[#EBF4E7]"
+              className="block text-sm font-bold text-[#0B4F42] py-2 px-3 min-h-[44px] inline-flex items-center rounded-md hover:bg-[#EBF4E7]"
             >
               ✦ Lihat Semua Layanan
             </Link>
@@ -237,7 +235,7 @@ export function Navbar({ company }: NavbarProps) {
                 key={item.href}
                 href={item.href}
                 onClick={() => setIsOpen(false)}
-                className="block text-sm font-medium text-[#14201D] hover:text-[#0B4F42] py-1.5 px-3 rounded-md hover:bg-[#EBF4E7]"
+                className="block text-sm font-medium text-[#14201D] hover:text-[#0B4F42] py-2 px-3 min-h-[44px] inline-flex items-center rounded-md hover:bg-[#EBF4E7]"
               >
                 {item.label}
               </Link>
@@ -247,15 +245,23 @@ export function Navbar({ company }: NavbarProps) {
           <Link
             href="/pekerja"
             onClick={() => setIsOpen(false)}
-            className="font-sans text-base py-2 px-3 rounded-lg text-[#14201D] hover:bg-[#EBF4E7]"
+            className="font-sans text-base py-2.5 px-3 min-h-[44px] inline-flex items-center rounded-lg text-[#14201D] hover:bg-[#EBF4E7]"
           >
-            List Pekerja
+            Katalog Pekerja
+          </Link>
+
+          <Link
+            href="/lowongan-kerja"
+            onClick={() => setIsOpen(false)}
+            className="font-sans text-base py-2.5 px-3 min-h-[44px] inline-flex items-center rounded-lg text-[#14201D] hover:bg-[#EBF4E7]"
+          >
+            Lowongan Kerja
           </Link>
 
           <Link
             href="/artikel"
             onClick={() => setIsOpen(false)}
-            className="font-sans text-base py-2 px-3 rounded-lg text-[#14201D] hover:bg-[#EBF4E7]"
+            className="font-sans text-base py-2.5 px-3 min-h-[44px] inline-flex items-center rounded-lg text-[#14201D] hover:bg-[#EBF4E7]"
           >
             Artikel
           </Link>
@@ -263,7 +269,7 @@ export function Navbar({ company }: NavbarProps) {
           <Link
             href="/tentang-kami"
             onClick={() => setIsOpen(false)}
-            className="font-sans text-base py-2 px-3 rounded-lg text-[#14201D] hover:bg-[#EBF4E7]"
+            className="font-sans text-base py-2.5 px-3 min-h-[44px] inline-flex items-center rounded-lg text-[#14201D] hover:bg-[#EBF4E7]"
           >
             Tentang Kami
           </Link>
@@ -271,35 +277,29 @@ export function Navbar({ company }: NavbarProps) {
           <Link
             href="/kontak"
             onClick={() => setIsOpen(false)}
-            className="font-sans text-base py-2 px-3 rounded-lg text-[#14201D] hover:bg-[#EBF4E7]"
+            className="font-sans text-base py-2.5 px-3 min-h-[44px] inline-flex items-center rounded-lg text-[#14201D] hover:bg-[#EBF4E7]"
           >
             Kontak Kami
           </Link>
 
-          <hr className="border-outline-variant/30 my-1" />
-
-          <div className="flex flex-col gap-2.5">
-            <Link href="/admin/dashboard" onClick={() => setIsOpen(false)} className="w-full">
-              <Button variant="ghost" className="w-full justify-center gap-2">
-                <LayoutDashboard className="w-4 h-4" />
-                <span>Dashboard Admin</span>
-              </Button>
-            </Link>
-            <a
+          <div className="flex flex-col gap-2.5 pt-2">
+            <Button href="/admin/dashboard" onClick={() => setIsOpen(false)} variant="ghost" className="w-full justify-center gap-2">
+              <LayoutDashboard className="w-4 h-4" />
+              <span>Dashboard Admin</span>
+            </Button>
+            <Button
               href={`https://wa.me/${waNumber}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full"
+              variant="compassionate"
+              className="w-full justify-center gap-2"
             >
-              <Button variant="compassionate" className="w-full justify-center gap-2">
-                <Phone className="w-4 h-4" />
-                <span>Konsultasi WA Sekarang</span>
-              </Button>
-            </a>
+              <Phone className="w-4 h-4" />
+              <span>Konsultasi WA Sekarang</span>
+            </Button>
           </div>
         </div>
       )}
     </nav>
   );
 }
-

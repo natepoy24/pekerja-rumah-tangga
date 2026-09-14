@@ -322,7 +322,7 @@ export default async function AdminDashboardPage() {
                   <tbody className="divide-y divide-outline-variant/15">
                     {recentWorkers.map((w) => {
                       const isAvailable = w.status === "Tersedia";
-                      const fotoSrc = w.foto_url || "/asisten rumah tangga.jpeg";
+                      const fotoSrc = w.foto_url || "/asisten-rumah-tangga.webp";
                       return (
                         <tr key={w.id} className="hover:bg-[#FAFAF7] transition-colors">
                           <td className="py-3 pl-2">
@@ -344,11 +344,10 @@ export default async function AdminDashboardPage() {
                           <td className="py-3 font-semibold text-[#14201D]">{formatRupiah(w.gaji)}</td>
                           <td className="py-3">
                             <span
-                              className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${
-                                isAvailable
-                                  ? "bg-emerald-50 text-emerald-800 border-emerald-200"
-                                  : "bg-amber-50 text-amber-800 border-amber-200"
-                              }`}
+                              className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${isAvailable
+                                ? "bg-emerald-50 text-emerald-800 border-emerald-200"
+                                : "bg-amber-50 text-amber-800 border-amber-200"
+                                }`}
                             >
                               <span
                                 className={`w-1.5 h-1.5 rounded-full ${isAvailable ? "bg-emerald-500" : "bg-amber-500"}`}
@@ -425,11 +424,10 @@ export default async function AdminDashboardPage() {
                             {j.category || "Umum"}
                           </span>
                           <span
-                            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border ${
-                              isActive
-                                ? "bg-emerald-50 text-emerald-800 border-emerald-200"
-                                : "bg-gray-100 text-gray-700 border-gray-200"
-                            }`}
+                            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border ${isActive
+                              ? "bg-emerald-50 text-emerald-800 border-emerald-200"
+                              : "bg-gray-100 text-gray-700 border-gray-200"
+                              }`}
                           >
                             <span className={`w-1.5 h-1.5 rounded-full ${isActive ? "bg-emerald-500" : "bg-gray-400"}`} />
                             {isActive ? "Aktif" : "Nonaktif"}
@@ -501,7 +499,7 @@ export default async function AdminDashboardPage() {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {recentArticles.map((a) => {
-                  const coverSrc = a.gambar_url || "/asisten rumah tangga.jpeg";
+                  const coverSrc = a.gambar_url || "/asisten-rumah-tangga.webp";
                   return (
                     <div
                       key={a.id}

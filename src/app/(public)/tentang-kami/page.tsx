@@ -14,7 +14,7 @@ import {
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { getPageSetting, getCompanyIdentity } from "@/lib/settings";
-import FaqSection from "@/components/common/FaqSection";
+import dynamic from "next/dynamic";
 import JsonLd from "@/components/seo/JsonLd";
 import {
   generateAboutPageSchema,
@@ -24,9 +24,17 @@ import {
 } from "@/lib/seo/schemaGenerator";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 
+const FaqSection = dynamic(() => import("@/components/common/FaqSection"), {
+  loading: () => <div className="h-64 animate-pulse bg-surface-container rounded-2xl" />,
+});
+
+export const revalidate = 3600;
+
 export async function generateMetadata(): Promise<Metadata> {
-  const setting = await getPageSetting("page_tentang_kami");
-  const company = await getCompanyIdentity();
+  const [setting, company] = await Promise.all([
+    getPageSetting("page_tentang_kami"),
+    getCompanyIdentity(),
+  ]);
 
   const title =
     setting.meta_title ||
@@ -60,8 +68,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function TentangKamiPage() {
-  const pageSetting = await getPageSetting("page_tentang_kami");
-  const company = await getCompanyIdentity();
+  const [pageSetting, company] = await Promise.all([
+    getPageSetting("page_tentang_kami"),
+    getCompanyIdentity(),
+  ]);
   const waNumber = company.nomor_whatsapp || SITE_CONFIG.whatsappPrimary;
 
   const aboutSchema = generateAboutPageSchema();
@@ -78,7 +88,7 @@ export default async function TentangKamiPage() {
   const heroSubtitle =
     pageSetting.hero_subtitle ||
     `${SITE_CONFIG.name} adalah perusahaan penempatan PRT, Baby Sitter, dan Perawat Lansia resmi berizin Disnaker sejak 2010.`;
-  const heroImage = pageSetting.hero_image || "/asisten rumah tangga.jpeg";
+  const heroImage = pageSetting.hero_image || "/asisten-rumah-tangga.webp";
   const heroImageAlt = pageSetting.hero_image_alt || "Tentang Kami";
 
   return (
@@ -92,8 +102,10 @@ export default async function TentangKamiPage() {
             src={heroImage}
             alt={heroImageAlt}
             fill
-            priority
-            sizes="100vw"
+            priority={true}
+            fetchPriority="high"
+            loading="eager"
+            sizes="(max-width: 768px) 100vw, 100vw"
             quality={75}
             className="object-cover opacity-25"
           />

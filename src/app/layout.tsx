@@ -8,7 +8,7 @@ import { SITE_CONFIG } from "@/lib/siteConfig";
 
 export async function generateMetadata(): Promise<Metadata> {
   const company = await getCompanyIdentity();
-  const favicon = company.favicon_url || "/logo.png";
+  const favicon = company.favicon_url || "/logo-jm.webp";
   const siteName = company.nama_perusahaan || SITE_CONFIG.name;
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || SITE_CONFIG.url;
 
@@ -42,7 +42,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const company = await getCompanyIdentity();
-  const favicon = company.favicon_url || "/logo.png";
+  const favicon = company.favicon_url || "/logo-jm.webp";
 
   return (
     <html lang="id" className={`${ebGaramond.variable} ${geist.variable}`}>

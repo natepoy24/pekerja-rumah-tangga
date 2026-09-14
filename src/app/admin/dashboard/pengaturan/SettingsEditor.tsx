@@ -3,6 +3,7 @@
 import { useState, useEffect, useTransition } from "react";
 import Image from "next/image";
 import { updateSiteSetting, seedDefaultSiteSettings } from "@/app/actions";
+import NotificationModal from "@/components/ui/NotificationModal";
 import {
   Building2,
   Home,
@@ -24,19 +25,76 @@ import {
   Plus,
   Trash2,
   Briefcase,
+  ZoomIn,
 } from "lucide-react";
+import ImageZoomModal from "@/components/ui/ImageZoomModal";
 import { FaqItem, DEFAULT_PAGE_SETTINGS } from "@/lib/settings-data";
 
 interface SettingsEditorProps {
   initialSettings: Record<string, any>;
 }
 
+const TAB_HASH_MAP: Record<string, string> = {
+  company_identity: "identitas",
+  page_home: "beranda",
+  page_layanan: "layanan",
+  page_art: "art",
+  page_baby_sitter: "baby-sitter",
+  page_perawat_lansia: "perawat-lansia",
+  page_tentang_kami: "tentang-kami",
+  page_kontak: "kontak",
+  page_pekerja: "pekerja",
+  page_artikel: "artikel",
+  page_lowongan_kerja: "lowongan-kerja",
+};
+
+const HASH_TAB_MAP: Record<string, string> = Object.fromEntries(
+  Object.entries(TAB_HASH_MAP).map(([tabId, hash]) => [hash, tabId])
+);
+
 export default function SettingsEditor({ initialSettings }: SettingsEditorProps) {
   const [activeTab, setActiveTab] = useState<string>("company_identity");
   const [settings, setSettings] = useState<Record<string, any>>(initialSettings);
   const [isPending, startTransition] = useTransition();
   const [statusMessage, setStatusMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [showNotificationModal, setShowNotificationModal] = useState(false);
+  const [notificationMessage, setNotificationMessage] = useState<string>("");
+
+  const [zoomImage, setZoomImage] = useState<{ src: string; alt: string } | null>(null);
   const [previews, setPreviews] = useState<Record<string, string>>({});
+
+  // Sync activeTab with URL hash on mount & hashchange
+  useEffect(() => {
+    const getTabFromHash = () => {
+      const rawHash = window.location.hash.replace("#", "").toLowerCase();
+      if (rawHash && HASH_TAB_MAP[rawHash]) {
+        return HASH_TAB_MAP[rawHash];
+      }
+      return null;
+    };
+
+    const initialTab = getTabFromHash();
+    if (initialTab) {
+      setActiveTab(initialTab);
+    }
+
+    const handleHashChange = () => {
+      const newTab = getTabFromHash();
+      if (newTab) {
+        setActiveTab(newTab);
+      }
+    };
+
+    window.addEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, []);
+
+  const changeTab = (tabId: string) => {
+    setActiveTab(tabId);
+    setStatusMessage(null);
+    const hash = TAB_HASH_MAP[tabId] || tabId;
+    window.history.replaceState(null, "", `#${hash}`);
+  };
 
   // Managed FAQ items state for the currently active tab
   const [faqsList, setFaqsList] = useState<FaqItem[]>([]);
@@ -93,26 +151,34 @@ export default function SettingsEditor({ initialSettings }: SettingsEditorProps)
     const form = e.currentTarget;
     const formData = new FormData(form);
 
+    // If activeTab is not company_identity, pass faqs_json
+    if (activeTab !== "company_identity") {
+      formData.set("faqs_json", JSON.stringify(faqsList));
+    }
+
     startTransition(async () => {
       const res = await updateSiteSetting(activeTab, formData);
       if (res?.error) {
         setStatusMessage({ type: "error", text: res.error });
       } else {
-        setStatusMessage({ type: "success", text: "Pengaturan berhasil disimpan & diperbarui secara live!" });
-        // Update local settings representation
-        const updatedEntries: Record<string, any> = { ...(settings[activeTab] || {}) };
-        for (const [k, v] of formData.entries()) {
-          if (typeof v === "string" && !k.endsWith("_file")) {
-            updatedEntries[k] = v;
-          }
+        const tabLabel = tabs.find((t) => t.id === activeTab)?.label || "Halaman";
+        if (res?.data) {
+          setSettings((prev) => ({ ...prev, [activeTab]: res.data }));
         }
-        if (activeTab !== "company_identity") {
-          updatedEntries.faqs = faqsList;
-        }
-        setSettings((prev) => ({ ...prev, [activeTab]: updatedEntries }));
+        setPreviews({});
+        setNotificationMessage(`Pengaturan ${tabLabel} berhasil disimpan & diperbarui secara live!`);
+        setShowNotificationModal(true);
       }
     });
   };
+
+  const handleNotificationClose = () => {
+    setShowNotificationModal(false);
+    const currentHash = TAB_HASH_MAP[activeTab] || activeTab;
+    window.location.hash = currentHash;
+    window.location.reload();
+  };
+
 
   const handleSeedDefaults = () => {
     if (!confirm("Apakah Anda yakin ingin menyinkronkan seluruh data default website ke database Supabase? Data yang ada di tabel site_settings akan diperbarui.")) {
@@ -165,8 +231,8 @@ export default function SettingsEditor({ initialSettings }: SettingsEditorProps)
       {statusMessage && (
         <div
           className={`p-4 rounded-2xl border text-sm font-medium flex items-center gap-3 animate-in fade-in duration-200 ${statusMessage.type === "success"
-              ? "bg-emerald-50 text-emerald-900 border-emerald-200"
-              : "bg-red-50 text-red-900 border-red-200"
+            ? "bg-emerald-50 text-emerald-900 border-emerald-200"
+            : "bg-red-50 text-red-900 border-red-200"
             }`}
         >
           {statusMessage.type === "success" ? (
@@ -192,13 +258,10 @@ export default function SettingsEditor({ initialSettings }: SettingsEditorProps)
               <button
                 key={tab.id}
                 type="button"
-                onClick={() => {
-                  setActiveTab(tab.id);
-                  setStatusMessage(null);
-                }}
+                onClick={() => changeTab(tab.id)}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-left text-xs font-semibold transition-all ${isActive
-                    ? "bg-[#0B4F42] text-white shadow-md shadow-[#0B4F42]/15 scale-[1.02]"
-                    : "text-[#14201D] hover:bg-[#EBF4E7] text-[#14201D]/80"
+                  ? "bg-[#0B4F42] text-white shadow-md shadow-[#0B4F42]/15 scale-[1.02]"
+                  : "text-[#14201D] hover:bg-[#EBF4E7] text-[#14201D]/80"
                   }`}
               >
                 <Icon className={`w-4 h-4 ${isActive ? "text-emerald-300" : "text-[#0B4F42]"}`} />
@@ -290,14 +353,26 @@ export default function SettingsEditor({ initialSettings }: SettingsEditorProps)
                     </div>
 
                     <div className="flex items-center gap-4">
-                      <div className="w-16 h-16 rounded-2xl bg-white border border-[#D5E8D0] p-1 flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
+                      <div
+                        onClick={() =>
+                          setZoomImage({
+                            src: previews.logo_file || currentData.logo_url || "/logo-jm.webp",
+                            alt: "Logo Perusahaan",
+                          })
+                        }
+                        className="w-16 h-16 rounded-2xl bg-white border border-[#D5E8D0] p-1 flex items-center justify-center overflow-hidden shrink-0 shadow-sm cursor-pointer group relative hover:border-[#0B4F42] transition-colors"
+                        title="Klik untuk Zoom"
+                      >
                         <Image
-                          src={previews.logo_file || currentData.logo_url || "/logo.png"}
+                          src={previews.logo_file || currentData.logo_url || "/logo-jm.webp"}
                           alt="Logo Preview"
                           width={64}
                           height={64}
-                          className="w-full h-full object-contain"
+                          className="w-full h-full object-contain group-hover:scale-105 transition-transform"
                         />
+                        <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity rounded-2xl">
+                          <ZoomIn className="w-4 h-4 text-white drop-shadow" />
+                        </div>
                       </div>
                       <div className="flex-1 min-w-0">
                         <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-[#0B4F42] text-[#0B4F42] text-xs font-semibold hover:bg-[#EBF4E7] transition-colors">
@@ -313,7 +388,7 @@ export default function SettingsEditor({ initialSettings }: SettingsEditorProps)
                         </label>
                         <input type="hidden" name="logo_url" value={currentData.logo_url || ""} />
                         <p className="text-[11px] text-on-surface-variant truncate mt-1">
-                          {currentData.logo_url || "/logo.png"}
+                          {currentData.logo_url || "/logo-jm.webp"}
                         </p>
                       </div>
                     </div>
@@ -329,14 +404,26 @@ export default function SettingsEditor({ initialSettings }: SettingsEditorProps)
                     </div>
 
                     <div className="flex items-center gap-4">
-                      <div className="w-16 h-16 rounded-2xl bg-white border border-[#D5E8D0] p-1 flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
+                      <div
+                        onClick={() =>
+                          setZoomImage({
+                            src: previews.favicon_file || currentData.favicon_url || "/logo-jm.webp",
+                            alt: "Favicon Website",
+                          })
+                        }
+                        className="w-16 h-16 rounded-2xl bg-white border border-[#D5E8D0] p-1 flex items-center justify-center overflow-hidden shrink-0 shadow-sm cursor-pointer group relative hover:border-[#0B4F42] transition-colors"
+                        title="Klik untuk Zoom"
+                      >
                         <Image
-                          src={previews.favicon_file || currentData.favicon_url || "/logo.png"}
+                          src={previews.favicon_file || currentData.favicon_url || "/logo-jm.webp"}
                           alt="Favicon Preview"
                           width={64}
                           height={64}
-                          className="w-8 h-8 object-contain"
+                          className="w-8 h-8 object-contain group-hover:scale-105 transition-transform"
                         />
+                        <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity rounded-2xl">
+                          <ZoomIn className="w-4 h-4 text-white drop-shadow" />
+                        </div>
                       </div>
                       <div className="flex-1 min-w-0">
                         <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-[#0B4F42] text-[#0B4F42] text-xs font-semibold hover:bg-[#EBF4E7] transition-colors">
@@ -352,7 +439,7 @@ export default function SettingsEditor({ initialSettings }: SettingsEditorProps)
                         </label>
                         <input type="hidden" name="favicon_url" value={currentData.favicon_url || ""} />
                         <p className="text-[11px] text-on-surface-variant truncate mt-1">
-                          {currentData.favicon_url || "/logo.png"}
+                          {currentData.favicon_url || "/logo-jm.webp"}
                         </p>
                       </div>
                     </div>
@@ -538,54 +625,68 @@ export default function SettingsEditor({ initialSettings }: SettingsEditorProps)
 
                   {/* Hero Image Box */}
                   <div className="p-6 rounded-2xl bg-[#FAFAF7] border border-[#D5E8D0] space-y-4">
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                       <div>
                         <p className="text-xs font-bold uppercase tracking-wider text-[#0B4F42]">
                           Gambar Latar Hero (Full-Width Header)
                         </p>
                         <p className="text-[11px] text-on-surface-variant">
-                          Format landscape disarankan (1920x1080 atau sebanding).
+                          Format landscape disarankan (1920x1080 atau sebanding). Klik gambar untuk zoom.
                         </p>
                       </div>
                     </div>
 
-                    <div className="relative w-full h-48 sm:h-64 rounded-2xl overflow-hidden bg-white border border-[#D5E8D0] group">
+                    <div
+                      onClick={() =>
+                        setZoomImage({
+                          src: previews.hero_image_file || currentData.hero_image || "/asisten-rumah-tangga.webp",
+                          alt: "Gambar Latar Hero",
+                        })
+                      }
+                      className="relative w-full h-48 sm:h-64 rounded-2xl overflow-hidden bg-white border border-[#D5E8D0] group cursor-pointer"
+                      title="Klik untuk Zoom Gambar Hero"
+                    >
                       <Image
-                        src={previews.hero_image_file || currentData.hero_image || "/asisten rumah tangga.jpeg"}
+                        src={previews.hero_image_file || currentData.hero_image || "/asisten-rumah-tangga.webp"}
                         alt="Hero Preview"
                         fill
                         sizes="(max-width: 1024px) 100vw, 800px"
-                        className="object-cover"
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
                       />
-                      <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                        <label className="cursor-pointer inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-[#0B4F42] text-xs font-bold shadow-lg hover:scale-105 transition-all">
-                          <UploadCloud className="w-4 h-4" />
-                          <span>Pilih Foto Hero Baru</span>
-                          <input
-                            type="file"
-                            name="hero_image_file"
-                            accept="image/*"
-                            className="hidden"
-                            onChange={(e) => handleFileChange("hero_image_file", e.target.files?.[0] || null)}
-                          />
-                        </label>
+                      <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                        <span className="px-4 py-2 rounded-xl bg-black/60 text-white text-xs font-bold shadow-lg flex items-center gap-2 backdrop-blur-sm">
+                          <ZoomIn className="w-4 h-4 text-emerald-400" />
+                          <span>Klik Gambar untuk Zoom In</span>
+                        </span>
                       </div>
+                      {previews.hero_image_file && (
+                        <div className="absolute top-3 right-3 bg-emerald-600 text-white text-xs px-3 py-1 rounded-full font-semibold shadow-md flex items-center gap-1 z-10">
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                          <span>Foto Baru Dipilih (Belum Disimpan)</span>
+                        </div>
+                      )}
                     </div>
 
-                    <div className="flex items-center justify-between text-xs text-on-surface-variant pt-1">
-                      <span className="truncate">URL: {currentData.hero_image || "-"}</span>
-                      <input type="hidden" name="hero_image" value={currentData.hero_image || ""} />
-                      <label className="cursor-pointer font-semibold text-[#0B4F42] hover:underline">
-                        Upload Dari Komputer
-                        <input
-                          type="file"
-                          name="hero_image_file"
-                          accept="image/*"
-                          className="hidden"
-                          onChange={(e) => handleFileChange("hero_image_file", e.target.files?.[0] || null)}
-                        />
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-on-surface-variant pt-1">
+                      <span className="truncate font-mono text-[11px]">URL Saat Ini: {currentData.hero_image || "-"}</span>
+                      <label
+                        htmlFor="hero_image_file_input"
+                        className="cursor-pointer inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-white border border-[#0B4F42] text-[#0B4F42] text-xs font-semibold hover:bg-[#EBF4E7] transition-colors shrink-0 shadow-sm"
+                      >
+                        <UploadCloud className="w-4 h-4" />
+                        <span>Ganti Foto Hero</span>
                       </label>
                     </div>
+
+                    <input
+                      id="hero_image_file_input"
+                      type="file"
+                      name="hero_image_file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => handleFileChange("hero_image_file", e.target.files?.[0] || null)}
+                    />
+                    <input type="hidden" name="hero_image" value={currentData.hero_image || ""} />
                   </div>
                 </div>
 
@@ -605,17 +706,29 @@ export default function SettingsEditor({ initialSettings }: SettingsEditorProps)
                       {/* Layanan ART */}
                       <div className="p-4 rounded-2xl bg-[#FAFAF7] border border-[#D5E8D0] space-y-3">
                         <p className="text-xs font-bold text-[#14201D]">Layanan ART (Depan)</p>
-                        <div className="relative w-full h-32 rounded-xl overflow-hidden bg-white border">
+                        <div
+                          onClick={() =>
+                            setZoomImage({
+                              src: previews.service_art_image_file || currentData.service_art_image || "/asisten-rumah-tangga.webp",
+                              alt: "Layanan ART",
+                            })
+                          }
+                          className="relative w-full h-32 rounded-xl overflow-hidden bg-white border cursor-pointer group"
+                          title="Klik untuk Zoom"
+                        >
                           <Image
-                            src={previews.service_art_image_file || currentData.service_art_image || "/asisten rumah tangga.jpeg"}
+                            src={previews.service_art_image_file || currentData.service_art_image || "/asisten-rumah-tangga.webp"}
                             alt="ART Card"
                             fill
                             sizes="(max-width: 768px) 100vw, 33vw"
-                            className="object-cover"
+                            className="object-cover group-hover:scale-105 transition-transform"
                           />
+                          <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                            <ZoomIn className="w-5 h-5 text-white drop-shadow" />
+                          </div>
                         </div>
                         <input type="hidden" name="service_art_image" value={currentData.service_art_image || ""} />
-                        <label className="w-full cursor-pointer py-2 rounded-lg bg-white border border-[#0B4F42] text-[#0B4F42] text-[11px] font-semibold flex items-center justify-center gap-1.5 hover:bg-[#EBF4E7] transition-colors">
+                        <label className="w-full cursor-pointer py-2 rounded-lg bg-white border border-[#0B4F42] text-[#0B4F42] text-[11px] font-semibold flex items-center justify-center gap-1.5 hover:bg-[#EBF4E7] transition-colors shadow-sm">
                           <UploadCloud className="w-3.5 h-3.5" />
                           <span>Ganti Foto ART</span>
                           <input
@@ -631,17 +744,29 @@ export default function SettingsEditor({ initialSettings }: SettingsEditorProps)
                       {/* Layanan Baby Sitter */}
                       <div className="p-4 rounded-2xl bg-[#FAFAF7] border border-[#D5E8D0] space-y-3">
                         <p className="text-xs font-bold text-[#14201D]">Layanan Baby Sitter (Depan)</p>
-                        <div className="relative w-full h-32 rounded-xl overflow-hidden bg-white border">
+                        <div
+                          onClick={() =>
+                            setZoomImage({
+                              src: previews.service_babysitter_image_file || currentData.service_babysitter_image || "/baby-sitter.webp",
+                              alt: "Layanan Baby Sitter",
+                            })
+                          }
+                          className="relative w-full h-32 rounded-xl overflow-hidden bg-white border cursor-pointer group"
+                          title="Klik untuk Zoom"
+                        >
                           <Image
-                            src={previews.service_babysitter_image_file || currentData.service_babysitter_image || "/baby sitter.jpeg"}
+                            src={previews.service_babysitter_image_file || currentData.service_babysitter_image || "/baby-sitter.webp"}
                             alt="Baby Sitter Card"
                             fill
                             sizes="(max-width: 768px) 100vw, 33vw"
-                            className="object-cover"
+                            className="object-cover group-hover:scale-105 transition-transform"
                           />
+                          <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                            <ZoomIn className="w-5 h-5 text-white drop-shadow" />
+                          </div>
                         </div>
                         <input type="hidden" name="service_babysitter_image" value={currentData.service_babysitter_image || ""} />
-                        <label className="w-full cursor-pointer py-2 rounded-lg bg-white border border-[#0B4F42] text-[#0B4F42] text-[11px] font-semibold flex items-center justify-center gap-1.5 hover:bg-[#EBF4E7] transition-colors">
+                        <label className="w-full cursor-pointer py-2 rounded-lg bg-white border border-[#0B4F42] text-[#0B4F42] text-[11px] font-semibold flex items-center justify-center gap-1.5 hover:bg-[#EBF4E7] transition-colors shadow-sm">
                           <UploadCloud className="w-3.5 h-3.5" />
                           <span>Ganti Foto Baby Sitter</span>
                           <input
@@ -657,17 +782,29 @@ export default function SettingsEditor({ initialSettings }: SettingsEditorProps)
                       {/* Layanan Perawat Lansia */}
                       <div className="p-4 rounded-2xl bg-[#FAFAF7] border border-[#D5E8D0] space-y-3">
                         <p className="text-xs font-bold text-[#14201D]">Layanan Perawat Lansia (Depan)</p>
-                        <div className="relative w-full h-32 rounded-xl overflow-hidden bg-white border">
+                        <div
+                          onClick={() =>
+                            setZoomImage({
+                              src: previews.service_perawat_image_file || currentData.service_perawat_image || "/perawat-lansia.webp",
+                              alt: "Layanan Perawat Lansia",
+                            })
+                          }
+                          className="relative w-full h-32 rounded-xl overflow-hidden bg-white border cursor-pointer group"
+                          title="Klik untuk Zoom"
+                        >
                           <Image
-                            src={previews.service_perawat_image_file || currentData.service_perawat_image || "/perawat lansia.jpeg"}
+                            src={previews.service_perawat_image_file || currentData.service_perawat_image || "/perawat-lansia.webp"}
                             alt="Perawat Lansia Card"
                             fill
                             sizes="(max-width: 768px) 100vw, 33vw"
-                            className="object-cover"
+                            className="object-cover group-hover:scale-105 transition-transform"
                           />
+                          <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                            <ZoomIn className="w-5 h-5 text-white drop-shadow" />
+                          </div>
                         </div>
                         <input type="hidden" name="service_perawat_image" value={currentData.service_perawat_image || ""} />
-                        <label className="w-full cursor-pointer py-2 rounded-lg bg-white border border-[#0B4F42] text-[#0B4F42] text-[11px] font-semibold flex items-center justify-center gap-1.5 hover:bg-[#EBF4E7] transition-colors">
+                        <label className="w-full cursor-pointer py-2 rounded-lg bg-white border border-[#0B4F42] text-[#0B4F42] text-[11px] font-semibold flex items-center justify-center gap-1.5 hover:bg-[#EBF4E7] transition-colors shadow-sm">
                           <UploadCloud className="w-3.5 h-3.5" />
                           <span>Ganti Foto Lansia</span>
                           <input
@@ -747,15 +884,26 @@ export default function SettingsEditor({ initialSettings }: SettingsEditorProps)
                     </div>
 
                     <div className="flex items-center gap-4">
-                      <div className="w-24 h-14 rounded-xl bg-white border border-[#D5E8D0] relative overflow-hidden shrink-0">
+                      <div
+                        onClick={() =>
+                          setZoomImage({
+                            src: previews.og_image_file || currentData.og_image || currentData.hero_image || "/asisten-rumah-tangga.webp",
+                            alt: "Gambar Social Share (OG)",
+                          })
+                        }
+                        className="w-24 h-14 rounded-xl bg-white border border-[#D5E8D0] relative overflow-hidden shrink-0 cursor-pointer group"
+                        title="Klik untuk Zoom"
+                      >
                         <Image
-                          src={previews.og_image_file || currentData.og_image || currentData.hero_image || "/asisten rumah tangga.jpeg"}
+                          src={previews.og_image_file || currentData.og_image || currentData.hero_image || "/asisten-rumah-tangga.webp"}
                           alt="OG Preview"
                           fill
                           sizes="120px"
-                          className="object-cover"
+                          className="object-cover group-hover:scale-105 transition-transform"
                         />
-
+                        <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                          <ZoomIn className="w-4 h-4 text-white drop-shadow" />
+                        </div>
                       </div>
                       <div className="flex-1 min-w-0">
                         <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-[#0B4F42] text-[#0B4F42] text-xs font-semibold hover:bg-[#EBF4E7] transition-colors">
@@ -771,7 +919,7 @@ export default function SettingsEditor({ initialSettings }: SettingsEditorProps)
                         </label>
                         <input type="hidden" name="og_image" value={currentData.og_image || ""} />
                         <p className="text-[11px] text-on-surface-variant truncate mt-1">
-                          {currentData.og_image || currentData.hero_image || "/asisten rumah tangga.jpeg"}
+                          {currentData.og_image || currentData.hero_image || "/asisten-rumah-tangga.webp"}
                         </p>
                       </div>
                     </div>
@@ -872,6 +1020,20 @@ export default function SettingsEditor({ initialSettings }: SettingsEditorProps)
           </form>
         </div>
       </div>
+
+      <NotificationModal
+        isOpen={showNotificationModal}
+        title="Pengaturan Berhasil Disimpan!"
+        message={notificationMessage}
+        autoCloseMs={1500}
+        onClose={handleNotificationClose}
+      />
+
+      <ImageZoomModal
+        src={zoomImage?.src || null}
+        alt={zoomImage?.alt}
+        onClose={() => setZoomImage(null)}
+      />
     </div>
   );
 }

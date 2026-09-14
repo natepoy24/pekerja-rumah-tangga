@@ -1,22 +1,29 @@
 import type { Metadata } from "next";
-import { createClient } from "@/lib/supabase/server";
+import { createPublicClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import Image from "next/image";
 import { Calendar, Eye, Tag, BookOpen, ArrowRight } from "lucide-react";
 import { getPageSetting, getCompanyIdentity } from "@/lib/settings";
-import FaqSection from "@/components/common/FaqSection";
-
+import dynamic from "next/dynamic";
+import JsonLd from "@/components/seo/JsonLd";
+import { generateCollectionPageSchema, generateBreadcrumbSchema } from "@/lib/seo/schemaGenerator";
 import { SITE_CONFIG } from "@/lib/siteConfig";
 
-export const revalidate = 0;
+const FaqSection = dynamic(() => import("@/components/common/FaqSection"), {
+  loading: () => <div className="h-64 animate-pulse bg-surface-container rounded-2xl" />,
+});
+
+export const revalidate = 3600;
 
 export async function generateMetadata(): Promise<Metadata> {
-  const setting = await getPageSetting("page_artikel");
-  const company = await getCompanyIdentity();
+  const [setting, company] = await Promise.all([
+    getPageSetting("page_artikel"),
+    getCompanyIdentity(),
+  ]);
 
-  const title = setting.meta_title || `Artikel & Edukasi Rumah Tangga | ${company.nama_perusahaan}`;
+  const title = setting.meta_title || `Artikel & Edukasi Rumah Tangga | ${company.nama_perusahaan || SITE_CONFIG.name}`;
   const description = setting.meta_description || "Panduan memilih ART, tips pengasuhan anak balita, dan edukasi perawatan lansia.";
-  const ogImage = setting.og_image || "/asisten rumah tangga.jpeg";
+  const ogImage = setting.og_image || "/asisten-rumah-tangga.webp";
   const canonicalUrl = `${SITE_CONFIG.url}/artikel`;
 
   return {
@@ -39,29 +46,37 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ArtikelPublicPage() {
-  const pageSetting = await getPageSetting("page_artikel");
-  const company = await getCompanyIdentity();
-  const supabase = await createClient();
-
-  let articles: any[] = [];
-  try {
-    const { data } = await supabase
+  const supabase = createPublicClient();
+  const [pageSetting, company, articlesRes] = await Promise.all([
+    getPageSetting("page_artikel"),
+    getCompanyIdentity(),
+    supabase
       .from("artikel")
       .select("*")
       .eq("kategori", true)
-      .order("created_at", { ascending: false });
+      .order("created_at", { ascending: false }),
+  ]);
 
-    if (data) articles = data;
-  } catch (err) {
-    console.error("Fetch artikel public error:", err);
-  }
+  const articles = articlesRes.data || [];
 
   const featuredArticle = articles[0];
   const regularArticles = articles.slice(1);
 
+  const collectionSchema = generateCollectionPageSchema(
+    "Pusat Edukasi & Informasi Rumah Tangga",
+    "Artikel terpercaya mengenai tips memilih ART, perawatan lansia, tumbuh kembang anak, dan aturan hak-kewajiban ketenagakerjaan.",
+    "/artikel"
+  );
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: "Beranda", url: "/" },
+    { name: "Artikel", url: "/artikel" },
+  ]);
+
   return (
     <main className="min-h-screen bg-[#FAFAF7] font-sans pb-20 pt-28">
+      <JsonLd schema={[collectionSchema, breadcrumbSchema]} />
       <div className="max-w-container mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+
         {/* Header Hero */}
         <div className="text-center max-w-3xl mx-auto space-y-4 pt-4">
           <span className="text-xs font-bold uppercase tracking-widest text-[#3E7B28] bg-[#EBF4E7] px-4 py-1.5 rounded-full border border-[#D5E8D0] inline-block">

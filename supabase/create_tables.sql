@@ -204,8 +204,8 @@ INSERT INTO public.site_settings (id, name, data) VALUES
     "nama_perusahaan": "PT Jasa Mandiri",
     "tagline": "Penyalur Resmi Berizin Kemnaker & Disnaker sejak 2010",
     "subtagline": "Premium Domestic Care",
-    "logo_url": "/logo.png",
-    "favicon_url": "/logo.png",
+    "logo_url": "/logo-jm.webp",
+    "favicon_url": "/logo-jm.webp",
     "nomor_whatsapp": "6285111399962",
     "nomor_telepon": "+62 851-1139-9962",
     "email": "info@pekerjarumahtangga.com",
@@ -224,14 +224,14 @@ INSERT INTO public.site_settings (id, name, data) VALUES
     "meta_title": "PT Jasa Mandiri — Penempatan Pekerja Rumah Tangga Resmi & Terpercaya",
     "meta_description": "Penyalur resmi Asisten Rumah Tangga, Baby Sitter, dan Perawat Lansia berizin Disnaker & Kemnaker sejak 2010. Garansi penempatan resmi, rekam medis bersih, dan bebas biaya penukaran.",
     "keywords": "penyalur art jakarta, yayasan baby sitter terpercaya, perawat lansia jabodetabek, pembantu rumah tangga bergaransi",
-    "og_image": "/asisten rumah tangga.jpeg",
+    "og_image": "/asisten-rumah-tangga.webp",
     "hero_title": "Kenyamanan & Ketenangan Rumah Dimulai dari Tangan yang Tepat.",
     "hero_subtitle": "PT Jasa Mandiri menyalurkan Asisten Rumah Tangga, Baby Sitter, dan Perawat Lansia terpercaya yang telah melewati verifikasi identitas ketat, pemeriksaan kesehatan medis, serta pelatihan etika kerja profesional.",
-    "hero_image": "/asisten rumah tangga.jpeg",
+    "hero_image": "/asisten-rumah-tangga.webp",
     "hero_image_alt": "Penyalur Asisten Rumah Tangga Resmi PT Jasa Mandiri",
-    "service_art_image": "/asisten rumah tangga.jpeg",
-    "service_babysitter_image": "/baby sitter.jpeg",
-    "service_perawat_image": "/perawat lansia.jpeg"
+    "service_art_image": "/asisten-rumah-tangga.webp",
+    "service_babysitter_image": "/baby-sitter.webp",
+    "service_perawat_image": "/perawat-lansia.webp"
   }'::jsonb
 ),
 (
@@ -241,7 +241,7 @@ INSERT INTO public.site_settings (id, name, data) VALUES
     "meta_title": "Layanan Penempatan PRT, Baby Sitter & Perawat Lansia Resmi | PT Jasa Mandiri",
     "meta_description": "Katalog resmi layanan PT Jasa Mandiri: penyalur PRT, Baby Sitter terdidik, dan Perawat Lansia profesional. Berizin resmi Disnaker, rekam medis bersih, dan garansi kontrak.",
     "keywords": "layanan penyalur tenaga kerja rumah tangga, yayasan prt baby sitter lansia resmi",
-    "og_image": "/asisten rumah tangga.jpeg",
+    "og_image": "/asisten-rumah-tangga.webp",
     "hero_title": "Solusi Tenaga Kerja Rumah Tangga Terpercaya & Profesional",
     "hero_subtitle": "Temukan tenaga kerja terlatih dan terverifikasi untuk mendukung kebersihan, kehangatan keluarga, dan kesehatan orang tercinta di rumah Anda."
   }'::jsonb
@@ -253,10 +253,10 @@ INSERT INTO public.site_settings (id, name, data) VALUES
     "meta_title": "Layanan Asisten Rumah Tangga (ART) Terlatih & Bergaransi | PT Jasa Mandiri",
     "meta_description": "Dapatkan tenaga ART terverifikasi dengan latar belakang bersih, uji kesehatan lengkap, serta etika kerja profesional untuk mendukung kelancaran aktivitas harian keluarga Anda.",
     "keywords": "jasa asisten rumah tangga, yayasan art jakarta, pembantu rumah tangga menginap, art pulang pergi",
-    "og_image": "/asisten rumah tangga.jpeg",
+    "og_image": "/asisten-rumah-tangga.webp",
     "hero_title": "Asisten Rumah Tangga Terlatih untuk Rumah yang Rapi, Bersih, dan Terawat.",
     "hero_subtitle": "Dapatkan tenaga ART terverifikasi dengan latar belakang bersih, uji kesehatan lengkap, serta etika kerja profesional untuk mendukung kelancaran aktivitas harian keluarga Anda.",
-    "hero_image": "/asisten rumah tangga.jpeg",
+    "hero_image": "/asisten-rumah-tangga.webp",
     "hero_image_alt": "Layanan Asisten Rumah Tangga PT Jasa Mandiri"
   }'::jsonb
 ),
@@ -267,10 +267,10 @@ INSERT INTO public.site_settings (id, name, data) VALUES
     "meta_title": "Layanan Baby Sitter & Nanny Profesional Terpercaya | PT Jasa Mandiri",
     "meta_description": "Layanan baby sitter premium dengan standar operasional ketat, skrining berlapis, dan dedikasi penuh untuk menghadirkan ketenangan pikiran bagi orang tua di rumah.",
     "keywords": "baby sitter jakarta, pengasuh bayi newborn, yayasan suster anak resmi, nanny terdidik jabodetabek",
-    "og_image": "/baby sitter.jpeg",
+    "og_image": "/baby-sitter.webp",
     "hero_title": "Pengasuhan Penuh Kasih & Rasa Aman untuk Tumbuh Kembang Buah Hati Anda.",
     "hero_subtitle": "Layanan baby sitter premium dengan standar operasional ketat, skrining berlapis, dan dedikasi penuh untuk menghadirkan ketenangan pikiran bagi orang tua di rumah.",
-    "hero_image": "/baby sitter.jpeg",
+    "hero_image": "/baby-sitter.webp",
     "hero_image_alt": "Layanan Baby Sitter Premium PT Jasa Mandiri"
   }'::jsonb
 ),
@@ -281,10 +281,10 @@ INSERT INTO public.site_settings (id, name, data) VALUES
     "meta_title": "Layanan Perawat Lansia & Caregiver Berpengalaman | PT Jasa Mandiri",
     "meta_description": "Dapatkan caregiver dan perawat lansia terseleksi yang sabar, teliti mengawal kebutuhan medis harian, serta hadir sebagai teman bicara yang memberikan kenyamanan emosional di rumah.",
     "keywords": "perawat lansia jakarta, caregiver orang tua, suster lansia bedridden, perawat lansia terpercaya",
-    "og_image": "/perawat lansia.jpeg",
+    "og_image": "/perawat-lansia.webp",
     "hero_title": "Pendampingan Penuh Empati, Martabat, & Perhatian Tulus untuk Orang Tua Tercinta.",
     "hero_subtitle": "Dapatkan caregiver dan perawat lansia terseleksi yang sabar, teliti mengawal kebutuhan medis harian, serta hadir sebagai teman bicara yang memberikan kenyamanan emosional di rumah.",
-    "hero_image": "/perawat lansia.jpeg",
+    "hero_image": "/perawat-lansia.webp",
     "hero_image_alt": "Layanan Perawat Lansia PT Jasa Mandiri"
   }'::jsonb
 ),
@@ -295,7 +295,7 @@ INSERT INTO public.site_settings (id, name, data) VALUES
     "meta_title": "Tentang PT Jasa Mandiri | Penyalur Tenaga Kerja Rumah Tangga Resmi Sejak 2010",
     "meta_description": "Pelajari legalitas resmi, standar pelatihan, dan komitmen PT Jasa Mandiri dalam menyalurkan pekerja rumah tangga berkualitas tinggi di bawah payung hukum Kemnaker RI.",
     "keywords": "legalitas pt jasa mandiri, izin kemnaker p3rt, sejarah pt jasa mandiri, yayasan prt terdaftar",
-    "og_image": "/asisten rumah tangga.jpeg",
+    "og_image": "/asisten-rumah-tangga.webp",
     "hero_title": "Integritas, Legalitas, & Ketenangan Pikiran untuk Setiap Keluarga.",
     "hero_subtitle": "Sejak 2010, PT Jasa Mandiri berdedikasi menjembatani keluarga dengan pekerja domestik beretika, terlatih, dan berpayung hukum jelas."
   }'::jsonb
@@ -307,7 +307,7 @@ INSERT INTO public.site_settings (id, name, data) VALUES
     "meta_title": "Hubungi PT Jasa Mandiri | Kantor Penyalur PRT, Baby Sitter & Perawat Lansia",
     "meta_description": "Konsultasikan kebutuhan PRT, baby sitter, dan perawat lansia bersama PT Jasa Mandiri. Layanan cepat via WhatsApp atau kunjungi kantor operasional resmi kami.",
     "keywords": "kantor penyalur pembantu Jakarta, alamat yayasan babysitter resmi, kontak penyalur PRT terpercaya",
-    "og_image": "/asisten rumah tangga.jpeg"
+    "og_image": "/asisten-rumah-tangga.webp"
   }'::jsonb
 ),
 (
@@ -317,7 +317,7 @@ INSERT INTO public.site_settings (id, name, data) VALUES
     "meta_title": "Katalog Pekerja Terverifikasi | ART, Baby Sitter & Perawat Lansia | PT Jasa Mandiri",
     "meta_description": "Penyalur resmi berizin Disnaker. Seluruh kandidat telah terverifikasi KTP, latar belakang, serta cek kesehatan berkala.",
     "keywords": "daftar pembantu siap kerja, cari baby sitter jakarta, lowongan suster lansia",
-    "og_image": "/asisten rumah tangga.jpeg"
+    "og_image": "/asisten-rumah-tangga.webp"
   }'::jsonb
 ),
 (
@@ -327,7 +327,7 @@ INSERT INTO public.site_settings (id, name, data) VALUES
     "meta_title": "Artikel & Edukasi Rumah Tangga | PT Jasa Mandiri",
     "meta_description": "Kumpulan tips, panduan hukum ketenagakerjaan rumah tangga, standar gaji PRT, dan panduan pengasuhan anak terpercaya dari tim ahli PT Jasa Mandiri.",
     "keywords": "tips memilih pembantu, standar gaji art 2026, panduan merawat lansia, artikel baby sitter",
-    "og_image": "/asisten rumah tangga.jpeg"
+    "og_image": "/asisten-rumah-tangga.webp"
   }'::jsonb
 )
 ON CONFLICT (id) DO NOTHING;

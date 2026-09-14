@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createPublicClient } from "@/lib/supabase/server";
 
 export interface Job {
   id?: string;
@@ -136,7 +136,7 @@ export const DEFAULT_JOBS: Job[] = [
 
 export async function getJobs(): Promise<Job[]> {
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     const { data, error } = await supabase
       .from("jobs")
       .select("*")
@@ -156,7 +156,7 @@ export async function getJobs(): Promise<Job[]> {
 
 export async function getJobBySlug(slug: string): Promise<Job | null> {
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     const { data, error } = await supabase
       .from("jobs")
       .select("*")

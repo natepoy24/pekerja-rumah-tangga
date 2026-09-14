@@ -16,7 +16,11 @@ import {
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import type { PageSetting, CompanyIdentity } from "@/lib/settings";
-import FaqSection from "@/components/common/FaqSection";
+import dynamic from "next/dynamic";
+
+const FaqSection = dynamic(() => import("@/components/common/FaqSection"), {
+  loading: () => <div className="h-64 animate-pulse bg-surface-container rounded-2xl" />,
+});
 
 interface HomeClientProps {
   pageSetting: PageSetting;
@@ -31,7 +35,7 @@ export default function HomeClient({ pageSetting, company }: HomeClientProps) {
   const heroSubtitle =
     pageSetting?.hero_subtitle ||
     "PT Jasa Mandiri menyalurkan Asisten Rumah Tangga, Baby Sitter, dan Perawat Lansia terpercaya yang telah melewati verifikasi identitas ketat, pemeriksaan kesehatan medis, serta pelatihan etika kerja profesional.";
-  const heroImage = pageSetting?.hero_image || "/asisten rumah tangga.jpeg";
+  const heroImage = pageSetting?.hero_image || "/asisten-rumah-tangga.webp";
   const heroImageAlt = pageSetting?.hero_image_alt || "Penyalur Asisten Rumah Tangga Resmi PT Jasa Mandiri";
 
   const scrollToSection = (id: "art" | "baby-sitter" | "elder-care") => {
@@ -78,7 +82,7 @@ export default function HomeClient({ pageSetting, company }: HomeClientProps) {
         "Penyetrikaan & Laundry Halus",
         "Masakan Rumahan Higienis",
       ],
-      image: pageSetting?.service_art_image || "/asisten rumah tangga.jpeg",
+      image: pageSetting?.service_art_image || "/asisten-rumah-tangga.webp",
     },
     {
       id: "baby-sitter",
@@ -92,7 +96,7 @@ export default function HomeClient({ pageSetting, company }: HomeClientProps) {
         "Penyiapan MPASI Higienis",
         "Sertifikasi Medis Dasar",
       ],
-      image: pageSetting?.service_babysitter_image || "/baby sitter.jpeg",
+      image: pageSetting?.service_babysitter_image || "/baby-sitter.webp",
     },
     {
       id: "elder-care",
@@ -106,7 +110,7 @@ export default function HomeClient({ pageSetting, company }: HomeClientProps) {
         "Bantuan Mobilitas & Pencegahan Jatuh",
         "Teman Bicara & Empati Tulus",
       ],
-      image: pageSetting?.service_perawat_image || "/perawat lansia.jpeg",
+      image: pageSetting?.service_perawat_image || "/perawat-lansia.webp",
     },
   ];
 
@@ -179,8 +183,10 @@ export default function HomeClient({ pageSetting, company }: HomeClientProps) {
             src={heroImage}
             alt={heroImageAlt}
             fill
-            priority
-            sizes="100vw"
+            priority={true}
+            fetchPriority="high"
+            loading="eager"
+            sizes="(max-width: 768px) 100vw, 100vw"
             quality={75}
             className="object-cover opacity-25"
           />
@@ -220,8 +226,8 @@ export default function HomeClient({ pageSetting, company }: HomeClientProps) {
                   <button
                     onClick={() => scrollToSection("art")}
                     className={`flex-1 py-3 px-4 rounded-lg font-sans text-xs sm:text-sm font-semibold transition-all ${activeTab === "art"
-                        ? "bg-brand-pine text-white shadow-sm"
-                        : "text-brand-charcoal hover:bg-surface-container-low"
+                      ? "bg-brand-pine text-white shadow-sm"
+                      : "text-brand-charcoal hover:bg-surface-container-low"
                       }`}
                   >
                     Asisten Rumah Tangga
@@ -229,8 +235,8 @@ export default function HomeClient({ pageSetting, company }: HomeClientProps) {
                   <button
                     onClick={() => scrollToSection("baby-sitter")}
                     className={`flex-1 py-3 px-4 rounded-lg font-sans text-xs sm:text-sm font-semibold transition-all ${activeTab === "baby-sitter"
-                        ? "bg-brand-pine text-white shadow-sm"
-                        : "text-brand-charcoal hover:bg-surface-container-low"
+                      ? "bg-brand-pine text-white shadow-sm"
+                      : "text-brand-charcoal hover:bg-surface-container-low"
                       }`}
                   >
                     Baby Sitter
@@ -238,8 +244,8 @@ export default function HomeClient({ pageSetting, company }: HomeClientProps) {
                   <button
                     onClick={() => scrollToSection("elder-care")}
                     className={`flex-1 py-3 px-4 rounded-lg font-sans text-xs sm:text-sm font-semibold transition-all ${activeTab === "elder-care"
-                        ? "bg-brand-pine text-white shadow-sm"
-                        : "text-brand-charcoal hover:bg-surface-container-low"
+                      ? "bg-brand-pine text-white shadow-sm"
+                      : "text-brand-charcoal hover:bg-surface-container-low"
                       }`}
                   >
                     Perawat Lansia

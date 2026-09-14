@@ -13,7 +13,7 @@ export function Footer({ company }: FooterProps) {
   const phone = company?.nomor_telepon || "+62 851-1139-9962";
   const email = company?.email || "info@pekerjarumahtangga.com";
   const companyName = company?.nama_perusahaan || "PT Jasa Mandiri";
-  const logoUrl = company?.logo_url || "/logo.png";
+  const logoUrl = company?.logo_url || "/logo-jm.webp";
   const address =
     company?.alamat_lengkap ||
     "Jl. Gunung Balong III No.78, RT.11/RW.4, Lb. Bulus, Kec. Cilandak, Kota Jakarta Selatan, DKI Jakarta 12440";

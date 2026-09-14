@@ -1,34 +1,76 @@
-import { createClient } from "@/lib/supabase/server";
+import type { Metadata } from "next";
+import { createPublicClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
 import {
-  ShieldCheck,
   MapPin,
-  Briefcase,
-  User,
   Phone,
   CheckCircle2,
   ArrowLeft,
-  GraduationCap,
-  Calendar,
   Languages,
   Utensils,
   Check,
-  X,
   Bike,
   Dog,
   Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import JsonLd from "@/components/seo/JsonLd";
+import { generateProfileSchema, generateBreadcrumbSchema } from "@/lib/seo/schemaGenerator";
+import { SITE_CONFIG } from "@/lib/siteConfig";
 
-export const revalidate = 0;
+import PekerjaProfilePhoto from "@/components/PekerjaApp/PekerjaProfilePhoto";
 
-export default async function PekerjaDetailPage(props: {
+export const revalidate = 3600;
+
+interface PageProps {
   params: Promise<{ kategori: string; slug: string }>;
-}) {
-  const { slug } = await props.params;
-  const supabase = await createClient();
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { kategori, slug } = await params;
+  const supabase = createPublicClient();
+  const { data: pekerja } = await supabase.from("pekerja").select("*").eq("slug", slug).single();
+
+  if (!pekerja) {
+    return {
+      title: `Profil Pekerja Tidak Ditemukan | ${SITE_CONFIG.name}`,
+    };
+  }
+
+  const title = `Profil ${pekerja.nama} - ${pekerja.kategori} Berpengalaman ${pekerja.pengalaman || 0} Tahun | ${SITE_CONFIG.name}`;
+  const description = pekerja.deskripsi || `Sewa kandidat ${pekerja.nama}, ${pekerja.kategori} terverifikasi resmi Disnaker asal ${pekerja.lokasi || "Jawa"}. Hasil cek medis & latar belakang aman.`;
+  const ogImage = pekerja.fotoUrl || pekerja.foto_url || SITE_CONFIG.logo;
+  const canonicalUrl = `${SITE_CONFIG.url}/pekerja/${kategori}/${pekerja.slug}`;
+
+  return {
+    title,
+    description,
+    keywords: [
+      pekerja.nama,
+      pekerja.kategori,
+      `jasa ${pekerja.kategori}`,
+      `penyalur ${pekerja.kategori} resmi`,
+      pekerja.lokasi ? `pekerja asal ${pekerja.lokasi}` : "pekerja terverifikasi",
+    ],
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      title,
+      description,
+      url: canonicalUrl,
+      siteName: SITE_CONFIG.name,
+      locale: "id_ID",
+      type: "profile",
+      images: [{ url: ogImage, alt: title }],
+    },
+  };
+}
+
+export default async function PekerjaDetailPage(props: PageProps) {
+  const { kategori, slug } = await props.params;
+  const supabase = createPublicClient();
 
   const { data: pekerja, error } = await supabase
     .from("pekerja")
@@ -40,11 +82,30 @@ export default async function PekerjaDetailPage(props: {
     notFound();
   }
 
-  const waNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "6285111399962";
+  const waNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || SITE_CONFIG.whatsappPrimary;
   const displayFoto = pekerja.fotoUrl || pekerja.foto_url || "/Image/placeholder.png";
 
+  const profileSchema = generateProfileSchema({
+    nama: pekerja.nama,
+    kategori: pekerja.kategori,
+    slug: pekerja.slug,
+    pengalaman: pekerja.pengalaman,
+    lokasi: pekerja.lokasi,
+    fotoUrl: displayFoto,
+    gaji: pekerja.gaji,
+    deskripsi: pekerja.deskripsi,
+    status: pekerja.status,
+  });
+
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: "Beranda", url: "/" },
+    { name: "Pekerja", url: "/pekerja" },
+    { name: pekerja.kategori, url: `/pekerja?kategori=${encodeURIComponent(pekerja.kategori)}` },
+    { name: pekerja.nama, url: `/pekerja/${kategori}/${pekerja.slug}` },
+  ]);
+
   const waMessage = encodeURIComponent(
-    `Halo Admin PT Jasa Mandiri, saya berminat untuk konsultasi / wawancara kandidat:\n\n` +
+    `Halo Admin ${SITE_CONFIG.name}, saya berminat untuk konsultasi / wawancara kandidat:\n\n` +
       `- Nama: ${pekerja.nama}\n` +
       `- Kategori: ${pekerja.kategori}\n` +
       `- ID Pekerja: #${pekerja.id}\n\n` +
@@ -63,6 +124,8 @@ export default async function PekerjaDetailPage(props: {
 
   return (
     <main className="min-h-screen bg-[#FAFAF7] font-sans pb-20 pt-28">
+      <JsonLd schema={[profileSchema, breadcrumbSchema]} />
+
       <div className="max-w-container mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         {/* Breadcrumb Back */}
         <Link
@@ -77,20 +140,11 @@ export default async function PekerjaDetailPage(props: {
         <div className="bg-white rounded-3xl border border-[#D5E8D0] shadow-sm overflow-hidden grid grid-cols-1 lg:grid-cols-12 gap-8 p-6 md:p-10">
           {/* Left Column: Foto & Status */}
           <div className="lg:col-span-5 flex flex-col items-center space-y-6">
-            <div className="relative w-full aspect-[4/5] rounded-2xl overflow-hidden border border-outline-variant/30 bg-surface-container-low shadow-sm">
-              <Image
-                src={displayFoto}
-                alt={`Foto ${pekerja.nama}`}
-                fill
-                sizes="(max-width: 1024px) 100vw, 450px"
-                priority
-                className="object-cover"
-              />
-
-              <span className="absolute top-4 left-4 bg-[#0B4F42]/90 backdrop-blur-md text-white text-xs font-semibold px-4 py-1.5 rounded-full shadow-sm">
-                {pekerja.kategori}
-              </span>
-            </div>
+            <PekerjaProfilePhoto
+              src={displayFoto}
+              nama={pekerja.nama}
+              kategori={pekerja.kategori}
+            />
 
             {/* Quick Verification Chips */}
             <div className="w-full bg-[#EBF4E7] p-4 rounded-2xl border border-[#D5E8D0] space-y-2">
@@ -306,17 +360,17 @@ export default async function PekerjaDetailPage(props: {
                 </span>
               </div>
 
-              <a
+              <Button
                 href={`https://wa.me/${waNumber}?text=${waMessage}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full sm:w-auto"
+                variant="compassionate"
+                size="lg"
+                className="w-full sm:w-auto gap-2 text-base px-8 py-3.5 shadow-md"
               >
-                <Button variant="compassionate" size="lg" className="w-full sm:w-auto gap-2 text-base px-8 py-3.5 shadow-md">
-                  <Phone className="w-5 h-5" />
-                  <span>Sewa / Wawancara Kandidat via WA</span>
-                </Button>
-              </a>
+                <Phone className="w-5 h-5" />
+                <span>Sewa / Wawancara Kandidat via WA</span>
+              </Button>
             </div>
           </div>
         </div>

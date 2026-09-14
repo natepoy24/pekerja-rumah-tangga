@@ -1,17 +1,20 @@
-import { createClient } from "@/lib/supabase/server";
+import { createPublicClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import ArticleRenderer from "@/components/ArtikelApp/ArticleRenderer";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import JsonLd from "@/components/seo/JsonLd";
+import { generateArticleSchema, generateBreadcrumbSchema } from "@/lib/seo/schemaGenerator";
+import { SITE_CONFIG } from "@/lib/siteConfig";
 
-export const revalidate = 0;
+export const revalidate = 3600;
 
 export async function generateMetadata(props: {
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await props.params;
-  const supabase = await createClient();
+  const supabase = createPublicClient();
 
   const { data: article } = await supabase
     .from("artikel")
@@ -21,21 +24,21 @@ export async function generateMetadata(props: {
 
   if (!article) {
     return {
-      title: "Artikel Tidak Ditemukan | PT Jasa Mandiri",
+      title: `Artikel Tidak Ditemukan | ${SITE_CONFIG.name}`,
     };
   }
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://jasamandiri.com";
+  const siteUrl = SITE_CONFIG.url;
   const canonicalUrl = `${siteUrl}/artikel/${article.slug}`;
 
-  const title = article.meta_title ? `${article.meta_title} | PT Jasa Mandiri` : `${article.judul} | PT Jasa Mandiri`;
+  const title = article.meta_title ? `${article.meta_title} | ${SITE_CONFIG.name}` : `${article.judul} | ${SITE_CONFIG.name}`;
   const description =
     article.meta_description ||
-    "Baca artikel edukasi seputar asisten rumah tangga, baby sitter, dan perawat lansia profesional dari PT Jasa Mandiri.";
+    `Baca artikel edukasi seputar ${article.judul} dari ${SITE_CONFIG.name}.`;
 
   const imageUrl = article.gambar_url?.startsWith("http")
     ? article.gambar_url
-    : `${siteUrl}${article.gambar_url || "/Image/placeholder.png"}`;
+    : `${siteUrl}${article.gambar_url || "/asisten-rumah-tangga.webp"}`;
 
   const imageAlt = article.alt_gambar || article.judul;
 
@@ -56,12 +59,12 @@ export async function generateMetadata(props: {
       title: article.meta_title || article.judul,
       description,
       url: canonicalUrl,
-      siteName: "PT Jasa Mandiri",
+      siteName: SITE_CONFIG.name,
       locale: "id_ID",
       type: "article",
       publishedTime: article.published_at || article.created_at,
       modifiedTime: article.created_at,
-      authors: ["PT Jasa Mandiri"],
+      authors: [SITE_CONFIG.name],
       images: [
         {
           url: imageUrl,
@@ -84,7 +87,7 @@ export default async function ArtikelDetailPage(props: {
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await props.params;
-  const supabase = await createClient();
+  const supabase = createPublicClient();
 
   const { data: article, error } = await supabase
     .from("artikel")
@@ -96,48 +99,16 @@ export default async function ArtikelDetailPage(props: {
     notFound();
   }
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://jasamandiri.com";
-  const canonicalUrl = `${siteUrl}/artikel/${article.slug}`;
-  const imageUrl = article.gambar_url?.startsWith("http")
-    ? article.gambar_url
-    : `${siteUrl}${article.gambar_url || "/Image/placeholder.png"}`;
-
-  // JSON-LD Structured Data for Google & AI Answer Engines (AEO)
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    headline: article.meta_title || article.judul,
-    description: article.meta_description || undefined,
-    image: [imageUrl],
-    datePublished: article.published_at || article.created_at,
-    dateModified: article.created_at,
-    author: {
-      "@type": "Organization",
-      name: "PT Jasa Mandiri",
-      url: siteUrl,
-    },
-    publisher: {
-      "@type": "Organization",
-      name: "PT Jasa Mandiri",
-      logo: {
-        "@type": "ImageObject",
-        url: `${siteUrl}/Image/placeholder.png`,
-      },
-    },
-    mainEntityOfPage: {
-      "@type": "WebPage",
-      "@id": canonicalUrl,
-    },
-    keywords: [article.focus_keyword, article.secondary_keyword, article.tags].filter(Boolean).join(", "),
-  };
+  const articleSchema = generateArticleSchema(article);
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: "Beranda", url: "/" },
+    { name: "Artikel", url: "/artikel" },
+    { name: article.judul, url: `/artikel/${article.slug}` },
+  ]);
 
   return (
     <main className="min-h-screen bg-[#FAFAF7] font-sans pb-20 pt-28">
-      {/* Schema.org JSON-LD */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+      <JsonLd schema={[articleSchema, breadcrumbSchema]} />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 mb-6">
         <Link
@@ -153,3 +124,4 @@ export default async function ArtikelDetailPage(props: {
     </main>
   );
 }
+

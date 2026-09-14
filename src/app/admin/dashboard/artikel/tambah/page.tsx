@@ -8,7 +8,8 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import TagSelector from "@/components/ArtikelApp/TagSelector";
 import SeoMetadataForm from "@/components/ArtikelApp/SeoMetadataForm";
-import { ArrowLeft, Save, Eye, Upload } from "lucide-react";
+import ImageZoomModal from "@/components/ui/ImageZoomModal";
+import { ArrowLeft, Save, Eye, ZoomIn } from "lucide-react";
 
 const LexicalEditor = dynamic(() => import("@/components/ArtikelApp/LexicalEditor"), {
   ssr: false,
@@ -33,21 +34,37 @@ function SubmitButton() {
   );
 }
 
+import { useRouter } from "next/navigation";
+import NotificationModal from "@/components/ui/NotificationModal";
+
 export default function TambahArtikelPage() {
-  const initialState = { error: undefined };
+  const router = useRouter();
+  const initialState = { error: undefined, success: undefined };
   const [state, formAction] = useActionState(addArtikel, initialState as any);
+  const [showNotificationModal, setShowNotificationModal] = useState(false);
 
   const editorContentRef = useRef("");
   const formRef = useRef<HTMLFormElement>(null);
 
   const [titleValue, setTitleValue] = useState("");
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
+  const [zoomImage, setZoomImage] = useState<{ src: string; alt: string } | null>(null);
 
   useEffect(() => {
     if (state?.error) {
       toast.error(state.error);
     }
+    if (state?.success) {
+      setShowNotificationModal(true);
+    }
   }, [state]);
+
+  const handleNotificationClose = () => {
+    setShowNotificationModal(false);
+    router.push("/admin/dashboard/artikel");
+    router.refresh();
+  };
+
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -143,9 +160,26 @@ export default function TambahArtikelPage() {
 
           {/* Gambar Cover */}
           <div className="bg-white p-6 rounded-2xl border border-[#D5E8D0] shadow-sm space-y-4">
-            <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant">
-              Gambar Cover Utama Artikel
-            </label>
+            <div className="flex justify-between items-center">
+              <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant">
+                Gambar Cover Utama Artikel
+              </label>
+              {coverPreview && <span className="text-[11px] text-on-surface-variant">Klik gambar untuk zoom</span>}
+            </div>
+
+            {coverPreview && (
+              <div
+                onClick={() => setZoomImage({ src: coverPreview, alt: "Pratinjau Cover Artikel" })}
+                className="relative w-full aspect-video rounded-xl overflow-hidden border border-outline-variant/30 mt-2 cursor-pointer group"
+                title="Klik untuk Zoom"
+              >
+                <img src={coverPreview} alt="Cover Preview" className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                  <ZoomIn className="w-6 h-6 text-white drop-shadow" />
+                </div>
+              </div>
+            )}
+
             <div className="flex items-center gap-4">
               <input
                 type="file"
@@ -155,12 +189,6 @@ export default function TambahArtikelPage() {
                 className="w-full text-sm text-on-surface file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-[#EBF4E7] file:text-[#3E7B28] hover:file:bg-[#D5E8D0] transition-colors cursor-pointer"
               />
             </div>
-
-            {coverPreview && (
-              <div className="relative w-full aspect-video rounded-xl overflow-hidden border border-outline-variant/30 mt-2">
-                <img src={coverPreview} alt="Cover Preview" className="w-full h-full object-cover" />
-              </div>
-            )}
           </div>
 
           {/* Rich Text Editor */}
@@ -195,6 +223,20 @@ export default function TambahArtikelPage() {
             <SubmitButton />
           </div>
         </form>
-      </div>
+
+      <NotificationModal
+        isOpen={showNotificationModal}
+        title="Artikel Berhasil Diterbitkan!"
+        message={`Artikel "${titleValue || 'baru'}" telah berhasil disimpan dan dipublikasikan.`}
+        autoCloseMs={1500}
+        onClose={handleNotificationClose}
+      />
+
+      <ImageZoomModal
+        src={zoomImage?.src || null}
+        alt={zoomImage?.alt}
+        onClose={() => setZoomImage(null)}
+      />
+    </div>
   );
 }
