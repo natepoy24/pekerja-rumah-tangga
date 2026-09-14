@@ -13,6 +13,11 @@ export default function ImageZoomModal({ src, alt = "Pratinjau Gambar", onClose 
   const [scale, setScale] = useState(1);
 
   useEffect(() => {
+    if (!src) return;
+
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         onClose();
@@ -23,14 +28,13 @@ export default function ImageZoomModal({ src, alt = "Pratinjau Gambar", onClose 
       }
     };
 
-    document.body.style.overflow = "hidden";
     window.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = originalOverflow || "unset";
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [onClose]);
+  }, [src, onClose]);
 
   if (!src) return null;
 
@@ -122,15 +126,6 @@ export default function ImageZoomModal({ src, alt = "Pratinjau Gambar", onClose 
             className="max-w-[85vw] max-h-[72vh] object-contain rounded-2xl shadow-2xl border border-[#D5E8D0]/40 bg-white/5"
           />
         </div>
-      </div>
-
-      {/* Footer Hint */}
-      <div
-        className="text-xs font-medium text-[#14201D] font-sans text-center bg-white/95 backdrop-blur-md px-5 py-2.5 rounded-full border border-[#D5E8D0] shadow-lg flex items-center gap-2 select-none"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <span className="w-2 h-2 rounded-full bg-[#3E7B28] animate-pulse" />
-        <span>Klik gambar untuk toggle zoom 100% / 180% &nbsp;|&nbsp; Tekan <kbd className="bg-[#EBF4E7] text-[#0B4F42] px-1.5 py-0.5 rounded text-[11px] font-mono font-bold border border-[#D5E8D0]">ESC</kbd> untuk menutup</span>
       </div>
     </div>
   );
