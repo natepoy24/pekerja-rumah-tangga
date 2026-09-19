@@ -38,6 +38,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 import { Suspense } from "react";
 import PageTransitionLoader from "@/components/layout/PageTransitionLoader";
+import WebMCPProvider from "@/components/common/WebMCPProvider";
 
 export default async function RootLayout({
   children,
@@ -53,11 +54,14 @@ export default async function RootLayout({
         <link rel="icon" href={favicon} />
         <link rel="shortcut icon" href={favicon} />
         <link rel="apple-touch-icon" href={favicon} />
+        <link rel="alternate" type="text/markdown" href="/llms.txt" title="LLMs.txt" />
+        <link rel="help" type="text/markdown" href="/llms-full.txt" title="LLMs Full Documentation" />
       </head>
       <body className="min-h-screen flex flex-col bg-brand-offwhite text-brand-charcoal antialiased selection:bg-brand-sage-tint selection:text-brand-pine">
         <Suspense fallback={null}>
           <PageTransitionLoader />
         </Suspense>
+        <WebMCPProvider />
         {children}
         <Analytics />
         <SpeedInsights />

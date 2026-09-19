@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import { ContactFormClient } from "./ContactFormClient";
+import LazyGoogleMap from "@/components/common/LazyGoogleMap";
 import { getPageSetting, getCompanyIdentity } from "@/lib/settings";
 import JsonLd from "@/components/seo/JsonLd";
 import {
@@ -311,18 +312,14 @@ export default async function ContactPage() {
             </a>
           </div>
 
-          {/* Map Embed Frame */}
-          <div className="lg:col-span-7 min-h-[380px] lg:min-h-[460px] rounded-2xl overflow-hidden border border-[#D5E8D0] shadow-sm relative bg-[#FAFAF7]">
-            <iframe
-              title="Peta Lokasi PT Jasa Mandiri Lebak Bulus Jakarta Selatan"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3134.3387853597533!2d106.78843769999999!3d-6.304753400000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69efd022e06d2b%3A0xfc3df798e49f58fb!2sJasa%20ART!5e1!3m2!1sid!2sid!4v1788849970996!5m2!1sid!2sid"
-              width="100%"
-              height="100%"
-              style={{ border: 0, minHeight: "380px" }}
-              allowFullScreen={true}
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              className="w-full h-full filter saturate-[0.85] contrast-[1.05]"
+          {/* Map Embed Frame with Lazy-load Interactive Placeholder */}
+          <div className="lg:col-span-7 flex flex-col h-full">
+            <LazyGoogleMap
+              embedUrl="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3134.3387853597533!2d106.78843769999999!3d-6.304753400000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69efd022e06d2b%3A0xfc3df798e49f58fb!2sJasa%20ART!5e1!3m2!1sid!2sid!4v1788849970996!5m2!1sid!2sid"
+              staticImageSrc="/maps-placeholder.webp"
+              locationName="Peta Lokasi Kantor PT Jasa Mandiri Lebak Bulus Jakarta Selatan"
+              address={address}
+              className="w-full h-full min-h-[380px] lg:min-h-[460px]"
             />
           </div>
         </div>

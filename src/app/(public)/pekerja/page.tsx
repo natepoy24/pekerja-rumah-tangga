@@ -71,7 +71,7 @@ export default async function PekerjaPublicPage(props: {
       <JsonLd schema={[collectionSchema, breadcrumbSchema]} />
       <div className="max-w-container mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         {/* Header Hero */}
-        <div className="text-[#14201D] text-center max-w-3xl mx-auto space-y-4 pt-4">
+        <div className="text-[#14201D] text-center max-w-3xl mx-auto space-y-4 pt-4 animate-hero-in">
           <span className="text-xs font-bold uppercase tracking-widest text-[#3E7B28] bg-[#EBF4E7] px-4 py-1.5 rounded-full border border-[#D5E8D0] inline-block">
             Katalog Pekerja Terverifikasi
           </span>

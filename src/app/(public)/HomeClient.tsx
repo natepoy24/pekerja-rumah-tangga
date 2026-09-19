@@ -1,20 +1,16 @@
-"use client";
-
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
-import { motion } from "framer-motion";
 import {
   ShieldCheck,
   PhoneCall,
   CheckCircle2,
   RefreshCw,
-  ChevronDown,
   Quote,
   ArrowRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
+import HeroServiceTabs from "@/components/home/HeroServiceTabs";
 import type { PageSetting, CompanyIdentity } from "@/lib/settings";
 import dynamic from "next/dynamic";
 
@@ -28,8 +24,6 @@ interface HomeClientProps {
 }
 
 export default function HomeClient({ pageSetting, company }: HomeClientProps) {
-  const [activeTab, setActiveTab] = useState<"art" | "baby-sitter" | "elder-care">("art");
-
   const waNumber = company?.nomor_whatsapp || process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "6285111399962";
   const heroTitle = pageSetting?.hero_title || "Kenyamanan & Ketenangan Rumah Dimulai dari Tangan yang Tepat.";
   const heroSubtitle =
@@ -37,37 +31,6 @@ export default function HomeClient({ pageSetting, company }: HomeClientProps) {
     "PT Jasa Mandiri menyalurkan Asisten Rumah Tangga, Baby Sitter, dan Perawat Lansia terpercaya yang telah melewati verifikasi identitas ketat, pemeriksaan kesehatan medis, serta pelatihan etika kerja profesional.";
   const heroImage = pageSetting?.hero_image || "/asisten-rumah-tangga.webp";
   const heroImageAlt = pageSetting?.hero_image_alt || "Penyalur Asisten Rumah Tangga Resmi PT Jasa Mandiri";
-
-  const scrollToSection = (id: "art" | "baby-sitter" | "elder-care") => {
-    setActiveTab(id);
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.15,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 25 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        type: "spring" as const,
-        stiffness: 80,
-        damping: 15,
-      },
-    },
-  };
 
   const services = [
     {
@@ -150,34 +113,15 @@ export default function HomeClient({ pageSetting, company }: HomeClientProps) {
     { service: "Perawat Lansia", range: "Rp 3,0jt – Rp 6,5jt+", note: "Tergantung kondisi medis & lansia" },
   ];
 
-  const faqItems = [
-    {
-      q: "Berapa lama proses penyaluran tenaga kerja memakan waktu?",
-      a: "Proses seleksi hingga penempatan umumnya membutuhkan 1-3 hari kerja. Jika Anda memerlukan kandidat spesifik, kami menyediakan sesi wawancara hingga Anda merasa cocok.",
-    },
-    {
-      q: "Bagaimana mekanisme garansi penggantian pekerja?",
-      a: "Setiap penempatan dilengkapi garansi penggantian pekerja hingga 3 kali dalam masa kontrak tanpa biaya administrasi tambahan.",
-    },
-    {
-      q: "Apakah melayani penempatan di luar Jabodetabek?",
-      a: "Fokus utama kami adalah area Jabodetabek. Namun kami dapat melayani penempatan ke seluruh wilayah Indonesia dengan ketentuan biaya transportasi ditanggung pemesan.",
-    },
-    {
-      q: "Dokumen apa saja yang diperlukan oleh calon majikan?",
-      a: "Cukup melampirkan fotokopi KTP dan Kartu Keluarga (KK) penanggung jawab untuk keperluan identitas dalam Perjanjian Kerja Legal.",
-    },
-  ];
-
   return (
     <div className="overflow-hidden min-h-screen bg-brand-offwhite">
-      {/* Background Decorative Lighting */}
-      <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-brand-sage-tint/40 blur-[130px] pointer-events-none -z-10" />
-      <div className="absolute top-[500px] -left-40 w-[600px] h-[600px] rounded-full bg-primary-fixed-dim/20 blur-[150px] pointer-events-none -z-10" />
+      {/* Background Decorative Lighting using GPU-accelerated radial gradients (No expensive Gaussian filter blur) */}
+      <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full ambient-glow-sage pointer-events-none -z-10" />
+      <div className="absolute top-[500px] -left-40 w-[600px] h-[600px] rounded-full ambient-glow-primary pointer-events-none -z-10" />
 
       {/* Hero Section */}
       <section className="relative w-full min-h-[80vh] flex items-center justify-center overflow-hidden pt-8 pb-16 md:py-24">
-        {/* Background Image Overlay */}
+        {/* Background Image Overlay with AVIF/WebP & tuned compression factor */}
         <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
           <Image
             src={heroImage}
@@ -186,78 +130,36 @@ export default function HomeClient({ pageSetting, company }: HomeClientProps) {
             priority={true}
             fetchPriority="high"
             loading="eager"
-            sizes="(max-width: 768px) 100vw, 100vw"
-            quality={75}
+            sizes="100vw"
+            quality={55}
             className="object-cover opacity-25"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-brand-offwhite/40 via-brand-offwhite/75 to-brand-offwhite" />
         </div>
 
         <div className="w-full max-w-container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center w-full"
-          >
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center w-full">
             {/* Left Column */}
-            <div className="lg:col-span-7 flex flex-col items-start text-left gap-6">
-              <motion.div variants={itemVariants}>
+            <div className="lg:col-span-7 flex flex-col items-start text-left gap-6 animate-hero-in">
+              <div>
                 <Chip label={company?.tagline || "Penyalur Resmi Berizin Kemnaker & Disnaker"} />
-              </motion.div>
+              </div>
 
-              <motion.h1
-                variants={itemVariants}
-                className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.1] text-brand-charcoal"
-              >
+              <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.1] text-brand-charcoal">
                 {heroTitle}
-              </motion.h1>
+              </h1>
 
-              <motion.p
-                variants={itemVariants}
-                className="font-sans text-lg text-on-surface-variant leading-relaxed max-w-2xl"
-              >
+              <p className="font-sans text-lg text-on-surface-variant leading-relaxed max-w-2xl">
                 {heroSubtitle}
-              </motion.p>
+              </p>
 
-              {/* Quick Interactive Service Tabs */}
-              <motion.div variants={itemVariants} className="w-full">
-                <div className="glass-surface p-2 rounded-xl flex flex-wrap sm:flex-nowrap gap-2 border border-outline-subtle/50 shadow-sm">
-                  <button
-                    onClick={() => scrollToSection("art")}
-                    className={`flex-1 py-3 px-4 rounded-lg font-sans text-xs sm:text-sm font-semibold transition-all ${activeTab === "art"
-                      ? "bg-brand-pine text-white shadow-sm"
-                      : "text-brand-charcoal hover:bg-surface-container-low"
-                      }`}
-                  >
-                    Asisten Rumah Tangga
-                  </button>
-                  <button
-                    onClick={() => scrollToSection("baby-sitter")}
-                    className={`flex-1 py-3 px-4 rounded-lg font-sans text-xs sm:text-sm font-semibold transition-all ${activeTab === "baby-sitter"
-                      ? "bg-brand-pine text-white shadow-sm"
-                      : "text-brand-charcoal hover:bg-surface-container-low"
-                      }`}
-                  >
-                    Baby Sitter
-                  </button>
-                  <button
-                    onClick={() => scrollToSection("elder-care")}
-                    className={`flex-1 py-3 px-4 rounded-lg font-sans text-xs sm:text-sm font-semibold transition-all ${activeTab === "elder-care"
-                      ? "bg-brand-pine text-white shadow-sm"
-                      : "text-brand-charcoal hover:bg-surface-container-low"
-                      }`}
-                  >
-                    Perawat Lansia
-                  </button>
-                </div>
-              </motion.div>
+              {/* Quick Interactive Service Tabs (Lightweight client island) */}
+              <div className="w-full">
+                <HeroServiceTabs />
+              </div>
 
               {/* CTAs */}
-              <motion.div
-                variants={itemVariants}
-                className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto pt-2"
-              >
+              <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto pt-2">
                 <a
                   href={`https://wa.me/${waNumber}`}
                   target="_blank"
@@ -269,17 +171,12 @@ export default function HomeClient({ pageSetting, company }: HomeClientProps) {
                     <span>Konsultasi WA Sekarang</span>
                   </Button>
                 </a>
-              </motion.div>
+              </div>
             </div>
 
             {/* Right Column: Hero Floating Trust Card */}
-            <div className="lg:col-span-5 relative">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                className="glass-surface p-6 sm:p-8 rounded-2xl space-y-6 shadow-ambient border border-outline-subtle"
-              >
+            <div className="lg:col-span-5 relative animate-hero-in [animation-delay:150ms]">
+              <div className="glass-surface p-6 sm:p-8 rounded-2xl space-y-6 shadow-ambient border border-outline-subtle">
                 <div className="flex items-start gap-4 pb-5 border-b border-outline-subtle">
                   <div className="p-3 rounded-full bg-brand-sage-tint text-brand-sage shrink-0">
                     <ShieldCheck className="w-6 h-6" />
@@ -321,9 +218,9 @@ export default function HomeClient({ pageSetting, company }: HomeClientProps) {
                     </p>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
 
@@ -344,8 +241,9 @@ export default function HomeClient({ pageSetting, company }: HomeClientProps) {
             <div
               key={service.id}
               id={service.id}
-              className={`scroll-mt-28 grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-14 items-center ${idx % 2 === 1 ? "md:flex-row-reverse" : ""
-                }`}
+              className={`scroll-mt-28 grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-14 items-center ${
+                idx % 2 === 1 ? "md:flex-row-reverse" : ""
+              }`}
             >
               <div className={`space-y-6 ${idx % 2 === 1 ? "md:order-2" : "md:order-1"}`}>
                 <span className="font-sans text-xs font-semibold text-brand-sage bg-brand-sage-tint px-3 py-1 rounded-full uppercase tracking-wider">
@@ -382,7 +280,8 @@ export default function HomeClient({ pageSetting, company }: HomeClientProps) {
                     alt={service.title}
                     fill
                     sizes="(max-width: 768px) 100vw, 50vw"
-                    quality={75}
+                    quality={60}
+                    loading="lazy"
                     className="object-cover hover:scale-105 transition-transform duration-700"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-brand-pine/30 to-transparent opacity-60" />
@@ -495,7 +394,7 @@ export default function HomeClient({ pageSetting, company }: HomeClientProps) {
             <div className="bg-white p-8 rounded-2xl border border-outline-variant/30 shadow-sm relative">
               <Quote className="w-10 h-10 text-brand-pine/10 absolute top-6 left-6" />
               <p className="font-serif text-lg text-brand-charcoal italic mb-6 relative z-10 pt-4 leading-relaxed">
-                "Ketenangan luar biasa bisa fokus bekerja karena tahu anak diasuh oleh Baby Sitter yang paham medis dasar dan gizi MPASI. Latar belakangnya terverifikasi dan sangat sopan."
+                &ldquo;Ketenangan luar biasa bisa fokus bekerja karena tahu anak diasuh oleh Baby Sitter yang paham medis dasar dan gizi MPASI. Latar belakangnya terverifikasi dan sangat sopan.&rdquo;
               </p>
               <div className="font-sans text-sm font-bold text-brand-pine">
                 — Ibu Vania S. (Menteng, Jakarta Pusat)
@@ -505,7 +404,7 @@ export default function HomeClient({ pageSetting, company }: HomeClientProps) {
             <div className="bg-white p-8 rounded-2xl border border-outline-variant/30 shadow-sm relative">
               <Quote className="w-10 h-10 text-brand-pine/10 absolute top-6 left-6" />
               <p className="font-serif text-lg text-brand-charcoal italic mb-6 relative z-10 pt-4 leading-relaxed">
-                "Merawat orang tua pasca stroke butuh kesabaran dan keahlian khusus. Perawat lansia dari PT Jasa Mandiri sangat sigap mengukur tensi, medikasi, dan telaten menemani."
+                &ldquo;Merawat orang tua pasca stroke butuh kesabaran dan keahlian khusus. Perawat lansia dari PT Jasa Mandiri sangat sigap mengukur tensi, medikasi, dan telaten menemani.&rdquo;
               </p>
               <div className="font-sans text-sm font-bold text-brand-pine">
                 — Bpk. Hendra K. (Pondok Indah, Jakarta Selatan)

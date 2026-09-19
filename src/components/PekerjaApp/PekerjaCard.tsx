@@ -89,6 +89,7 @@ export default function PekerjaCard({ pekerja }: { pekerja: PekerjaProps }) {
           alt={`Foto ${pekerja.nama}`}
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          quality={60}
           loading="lazy"
           className={`object-cover group-hover:scale-105 transition-transform duration-500 ${
             pekerja.status === "Akan Tersedia" ? "grayscale opacity-80" : ""

@@ -8,6 +8,25 @@ import {
 
 export * from "./settings-data";
 
+const LEGACY_IMAGE_MAP: Record<string, string> = {
+  "/asisten rumah tangga.jpeg": "/asisten-rumah-tangga.webp",
+  "/asisten%20rumah%20tangga.jpeg": "/asisten-rumah-tangga.webp",
+  "/baby sitter.jpeg": "/baby-sitter.webp",
+  "/baby%20sitter.jpeg": "/baby-sitter.webp",
+  "/perawat lansia.jpeg": "/perawat-lansia.webp",
+  "/perawat%20lansia.jpeg": "/perawat-lansia.webp",
+  "/logo.png": "/logo-jm.webp",
+};
+
+export function normalizeImagePath<T extends string | undefined>(path: T): T {
+  if (!path || typeof path !== "string") return path;
+  const trimmed = path.trim();
+  if (LEGACY_IMAGE_MAP[trimmed]) {
+    return LEGACY_IMAGE_MAP[trimmed] as T;
+  }
+  return path;
+}
+
 export async function getCompanyIdentity(): Promise<CompanyIdentity> {
   try {
     const supabase = createPublicClient();
@@ -18,7 +37,10 @@ export async function getCompanyIdentity(): Promise<CompanyIdentity> {
       .single();
 
     if (data && data.data) {
-      return { ...DEFAULT_COMPANY_IDENTITY, ...data.data };
+      const normalized = { ...data.data };
+      if (normalized.logo_url) normalized.logo_url = normalizeImagePath(normalized.logo_url);
+      if (normalized.favicon_url) normalized.favicon_url = normalizeImagePath(normalized.favicon_url);
+      return { ...DEFAULT_COMPANY_IDENTITY, ...normalized };
     }
   } catch (err) {
     // Graceful fallback to default
@@ -37,7 +59,13 @@ export async function getPageSetting(pageKey: string): Promise<PageSetting> {
       .single();
 
     if (data && data.data) {
-      return { ...fallback, ...data.data };
+      const normalized = { ...data.data };
+      if (normalized.hero_image) normalized.hero_image = normalizeImagePath(normalized.hero_image);
+      if (normalized.og_image) normalized.og_image = normalizeImagePath(normalized.og_image);
+      if (normalized.service_art_image) normalized.service_art_image = normalizeImagePath(normalized.service_art_image);
+      if (normalized.service_babysitter_image) normalized.service_babysitter_image = normalizeImagePath(normalized.service_babysitter_image);
+      if (normalized.service_perawat_image) normalized.service_perawat_image = normalizeImagePath(normalized.service_perawat_image);
+      return { ...fallback, ...normalized };
     }
   } catch (err) {
     // Graceful fallback to default

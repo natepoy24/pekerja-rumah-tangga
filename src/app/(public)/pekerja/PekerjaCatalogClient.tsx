@@ -78,16 +78,39 @@ export default function PekerjaCatalogClient({
         })}
       </div>
 
-      {/* Filter bar */}
-      <div className="bg-white p-4 sm:p-6 rounded-2xl border border-[#D5E8D0] shadow-sm flex flex-col md:flex-row gap-4 justify-between items-center">
+      {/* Filter bar with Declarative WebMCP Form */}
+      <form
+        toolname="cariKatalogPekerja"
+        tooldescription="Cari dan saring katalog pekerja rumah tangga (ART, Baby Sitter, Perawat Lansia) berdasarkan kata kunci nama, keahlian khusus, dan status ketersediaan."
+        onSubmit={(e) => {
+          e.preventDefault();
+          const native = e.nativeEvent as any;
+          if (native?.agentInvoked && typeof native?.respondWith === "function") {
+            native.respondWith(
+              Promise.resolve({
+                status: "success",
+                totalDitemukan: filteredWorkers.length,
+                kriteria: {
+                  kategori: selectedCategory,
+                  kataKunci: searchQuery || "Semua",
+                  status: selectedStatus,
+                },
+              })
+            );
+          }
+        }}
+        className="bg-white p-4 sm:p-6 rounded-2xl border border-[#D5E8D0] shadow-sm flex flex-col md:flex-row gap-4 justify-between items-center"
+      >
         {/* Search */}
         <div className="relative w-full md:w-96">
           <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant/60" />
           <input
             type="text"
+            name="searchQuery"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Cari berdasarkan nama, keahlian, atau lokasi..."
+            toolparamdescription="Kata kunci pencarian keahlian khusus (contoh: masak masakan rumahan, rawat newborn, lansia stroke), nama pekerja, atau lokasi"
             className="w-full bg-surface-container-low border border-outline-variant/40 rounded-xl py-2.5 pl-10 pr-4 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-[#0B4F42]/20 transition-all"
           />
         </div>
@@ -99,7 +122,9 @@ export default function PekerjaCatalogClient({
           </label>
           <select
             id="statusKetersediaan"
+            name="statusKetersediaan"
             aria-label="Filter Status Ketersediaan Pekerja"
+            toolparamdescription="Pilihan filter status ketersediaan kandidat tenaga kerja: Semua, Tersedia Siap Kerja, atau Akan Tersedia"
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
             className="bg-surface-container-low border border-outline-variant/40 rounded-xl px-4 py-2.5 text-xs font-semibold text-on-surface focus:outline-none focus:ring-2 focus:ring-[#0B4F42]/20 cursor-pointer w-full md:w-auto"
@@ -111,6 +136,7 @@ export default function PekerjaCatalogClient({
 
           {(searchQuery || selectedCategory !== "Semua" || selectedStatus !== "Semua") && (
             <button
+              type="button"
               onClick={() => {
                 setSelectedCategory("Semua");
                 setSelectedStatus("Semua");
@@ -123,7 +149,7 @@ export default function PekerjaCatalogClient({
             </button>
           )}
         </div>
-      </div>
+      </form>
 
       {/* Grid Workers */}
       {filteredWorkers.length > 0 ? (

@@ -8,13 +8,21 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: "*",
-        allow: "/",
+        allow: ["/", "/llms.txt", "/llms-full.txt"],
         disallow: ["/admin/", "/api/", "/(auth)/"],
       },
-      // AI Crawlers & Answer Engines - Allow indexing/citation for AEO readiness
+      // AI Crawlers & Answer Engines - Allow full indexing & citation for AEO readiness
       {
-        userAgent: ["GPTBot", "ChatGPT-User", "ClaudeBot", "PerplexityBot", "Google-Extended"],
-        allow: "/",
+        userAgent: [
+          "GPTBot",
+          "ChatGPT-User",
+          "ClaudeBot",
+          "PerplexityBot",
+          "Google-Extended",
+          "Applebot-Extended",
+          "cohere-ai",
+        ],
+        allow: ["/", "/llms.txt", "/llms-full.txt"],
         disallow: ["/admin/", "/api/"],
       },
     ],

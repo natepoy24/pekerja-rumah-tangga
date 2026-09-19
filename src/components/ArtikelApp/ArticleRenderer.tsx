@@ -108,6 +108,7 @@ export default function ArticleRenderer({ article }: { article: Artikel }) {
               alt={article.alt_gambar || `Cover ${article.judul}`}
               fill
               sizes="(max-width: 1024px) 100vw, 800px"
+              quality={60}
               className="object-cover group-hover:scale-105 transition-transform duration-500"
               priority
             />

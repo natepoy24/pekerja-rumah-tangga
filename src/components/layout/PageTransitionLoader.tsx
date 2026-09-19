@@ -8,14 +8,19 @@ export default function PageTransitionLoader() {
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [mounted, setMounted] = useState(false);
 
-  // Stop loading on route change complete
+  // Stop loading on route change complete (skip initial mount)
   useEffect(() => {
+    if (!mounted) {
+      setMounted(true);
+      return;
+    }
     setIsLoading(false);
     setProgress(100);
     const timer = setTimeout(() => setProgress(0), 300);
     return () => clearTimeout(timer);
-  }, [pathname, searchParams]);
+  }, [pathname, searchParams, mounted]);
 
   // Intercept click on internal links
   useEffect(() => {

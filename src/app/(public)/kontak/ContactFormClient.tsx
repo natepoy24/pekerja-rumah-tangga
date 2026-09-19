@@ -12,8 +12,24 @@ export function ContactFormClient() {
 
   const waNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "6285111399962";
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const native = e.nativeEvent as any;
+    if (native && native.agentInvoked && typeof native.respondWith === "function") {
+      native.respondWith(
+        Promise.resolve({
+          status: "success",
+          message: "Formulir kriteria pekerja berhasil disiapkan dan diteruskan ke WhatsApp konsultan PT Jasa Mandiri.",
+          data: {
+            layanan,
+            tipePenempatan,
+            tanggalMulai: tanggalMulai || "Secepatnya",
+            catatan: catatan || "-",
+          },
+        })
+      );
+    }
 
     const formattedMessage =
       `Halo PT Jasa Mandiri, saya ingin berkonsultasi mengenai kebutuhan tenaga kerja:\n\n` +
@@ -58,7 +74,12 @@ export function ContactFormClient() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form
+          onSubmit={handleSubmit}
+          toolname="konsultasiKebutuhanPekerja"
+          tooldescription="Kirim formulir kurasi kebutuhan dan kriteria pekerja rumah tangga (PRT, Baby Sitter, atau Perawat Lansia) ke konsultan resmi PT Jasa Mandiri."
+          className="space-y-5"
+        >
           {/* Pilihan Layanan */}
           <div className="space-y-2">
             <label htmlFor="pilihanLayanan" className="block font-sans text-xs font-semibold uppercase tracking-wider text-[#14201D] flex items-center gap-1.5">
@@ -67,7 +88,9 @@ export function ContactFormClient() {
             </label>
             <select
               id="pilihanLayanan"
+              name="pilihanLayanan"
               aria-label="Pilihan Layanan"
+              toolparamdescription="Pilihan kategori profesi pekerja: Asisten Rumah Tangga (PRT), Baby Sitter / Pengasuh Anak, atau Perawat Lansia (Elder Care)"
               value={layanan}
               onChange={(e) => setLayanan(e.target.value)}
               className="w-full px-4 py-3 bg-[#FAFAF7] border border-[#D5E8D0] rounded-lg text-sm text-[#14201D] focus:outline-none focus:ring-2 focus:ring-[#0B4F42] focus:border-transparent transition-all"
@@ -96,6 +119,7 @@ export function ContactFormClient() {
                   type="radio"
                   name="tipePenempatan"
                   value="Menginap (Live-in)"
+                  toolparamdescription="Tipe penempatan waktu kerja: Menginap (Live-in) di rumah majikan"
                   checked={tipePenempatan.includes("Menginap")}
                   onChange={(e) => setTipePenempatan(e.target.value)}
                   className="sr-only"
@@ -114,6 +138,7 @@ export function ContactFormClient() {
                   type="radio"
                   name="tipePenempatan"
                   value="Pulang-Pergi (Live-out)"
+                  toolparamdescription="Tipe penempatan waktu kerja: Pulang-Pergi (Live-out) harian"
                   checked={tipePenempatan.includes("Pulang-Pergi")}
                   onChange={(e) => setTipePenempatan(e.target.value)}
                   className="sr-only"
@@ -131,8 +156,10 @@ export function ContactFormClient() {
             </label>
             <input
               id="tanggalMulai"
+              name="tanggalMulai"
               type="date"
               aria-label="Perkiraan Tanggal Mulai"
+              toolparamdescription="Perkiraan tanggal pekerja mulai aktif bekerja di kediaman majikan"
               value={tanggalMulai}
               onChange={(e) => setTanggalMulai(e.target.value)}
               className="w-full px-4 py-3 bg-[#FAFAF7] border border-[#D5E8D0] rounded-lg text-sm text-[#14201D] focus:outline-none focus:ring-2 focus:ring-[#0B4F42] focus:border-transparent transition-all"
@@ -147,7 +174,9 @@ export function ContactFormClient() {
             </label>
             <textarea
               id="catatanKhusus"
+              name="catatanKhusus"
               aria-label="Catatan Kriteria Khusus"
+              toolparamdescription="Catatan kriteria khusus kualifikasi pekerja (contoh: bisa memasak, rawat bayi, tidak takut anjing/kucing)"
               rows={3}
               value={catatan}
               onChange={(e) => setCatatan(e.target.value)}

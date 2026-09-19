@@ -101,7 +101,7 @@ export default async function LowonganKerjaHubPage() {
     hiringOrganization: {
       name: companyName,
       sameAs: "https://pekerjarumahtangga.com",
-      logo: `https://pekerjarumahtangga.com${company?.logo_url || "/logo.png"}`,
+      logo: `https://pekerjarumahtangga.com${company?.logo_url || "/logo-jm.webp"}`,
     },
     jobLocation: {
       addressLocality: "Jakarta",
@@ -150,7 +150,7 @@ export default async function LowonganKerjaHubPage() {
       {/* Hero Section */}
       <section className="px-4 sm:px-6 lg:px-8 max-w-container mx-auto py-10 md:py-16">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-          <div className="lg:col-span-7 space-y-6">
+          <div className="lg:col-span-7 space-y-6 animate-hero-in">
             <Chip label="PUSAT LOWONGAN KERJA RESMI DISNAKER" />
             <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#0B4F42] leading-tight">
               {heroTitle}

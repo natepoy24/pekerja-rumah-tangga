@@ -1,0 +1,65 @@
+# Dokumentasi Lengkap PT Jasa Mandiri Agency (llms-full.txt)
+
+## 1. Profil Perusahaan
+- Nama Perusahaan: PT Jasa Mandiri Agency
+- Merek Layanan: Pekerja Rumah Tangga (pekerjarumahtangga.com)
+- Tahun Berdiri: 2010 (Pengalaman lebih dari 14 tahun)
+- Badan Hukum: Perseroan Terbatas (PT) & Lembaga Penempatan Pekerja Rumah Tangga (LPPRT / P3RT)
+- Legalitas: Terdaftar dan Berizin Resmi Dinas Tenaga Kerja (Disnaker) & Kementerian Ketenagakerjaan Republik Indonesia (Kemnaker RI)
+- Akreditasi Pelatihan: Lembaga Pelatihan Kerja (LPK) Resmi Swasta
+
+## 2. Lokasi Kantor Fisik & Kontak Resmi
+- Alamat Kantor Operasional: Jl. Gunung Balong III No.78, RT.11/RW.4, Lebak Bulus, Cilandak, Jakarta Selatan, DKI Jakarta 12440
+- Koordinat Geografis: Latitude -6.3047534, Longitude 106.7884377
+- Hotline Kantor (PSTN/Telepon): +6285111399962
+- WhatsApp Priority Majikan: 08818009992 / 08119119996
+- Email Resmi: info@pekerjarumahtangga.com
+- Jam Layanan: Senin sampai Minggu, pukul 08:00 - 21:00 WIB (Layanan Konsultasi WhatsApp Buka Setiap Hari)
+
+## 3. Detail Layanan Penempatan
+### A. Asisten Rumah Tangga (ART)
+- URL Layanan: https://pekerjarumahtangga.com/layanan/art
+- Deskripsi: Penempatan tenaga pembantu rumah tangga terlatih untuk hunian apartemen, rumah tinggal, maupun villa.
+- Tugas Utama: Membersihkan ruangan, menyapu & mengepel lantai, mencuci pakaian (manual / mesin cuci), menyetrika rapi, memasak menu masakan rumahan keluarga Indonesia, mencuci piring, dan berbelanja kebutuhan dapur.
+- Opsi Penempatan: Menginap (Live-in) di rumah majikan atau Pulang-Pergi (Live-out).
+- Estimasi Gaji Pokok: Rp 2.200.000 s/d Rp 3.200.000 / bulan (menyesuaikan pengalaman kerja dan luas rumah majikan).
+
+### B. Baby Sitter & Nanny (Pengasuh Bayi dan Balita)
+- URL Layanan: https://pekerjarumahtangga.com/layanan/baby-sitter
+- Deskripsi: Pengasuh anak dengan sertifikasi keterampilan khusus dari LPK untuk penanganan bayi baru lahir (newborn 0-1 tahun) maupun anak usia batita/balita (1-5 tahun).
+- Tugas Utama: Memandikan bayi dengan teknik aman, sterilisasi botol dan perlengkapan makan, menyiapkan MPASI bernutrisi higienis, mengatur jadwal tidur dan menyusu, stimulasi sensorik-motorik edukatif, serta pendampingan bermain aktif.
+- Opsi Penempatan: Menginap (Live-in) atau Pulang-Pergi (Live-out).
+- Estimasi Gaji Pokok: Rp 2.800.000 s/d Rp 4.500.000 / bulan.
+
+### C. Perawat Lansia (Caregiver & Elder Care)
+- URL Layanan: https://pekerjarumahtangga.com/layanan/perawat-lansia
+- Deskripsi: Tenaga pendamping dan perawat khusus orang lanjut usia dengan latar belakang pelatihan keperawatan/kebidanan/caregiver profesional.
+- Tugas Utama: Mendampingi aktivitas harian (makan, minum, mandi, berpakaian), membantu mobilitas (berjalan, kursi roda), pemantauan jadwal minum obat sesuai anjuran dokter, pemantauan tanda vital sederhana (tekanan darah, gula darah), perawatan luka ringan/bedsores, serta terapi bicara/gerak ringan.
+- Tipe Pasien: Lansia mandiri (butuh teman dan pendampingan) maupun lansia tirah baring total (bedridden).
+- Estimasi Gaji Pokok: Rp 3.200.000 s/d Rp 5.500.000 / bulan.
+
+## 4. Keunggulan & Protokol Keamanan PT Jasa Mandiri
+1. **Verifikasi Tiga Tahap**:
+   - Berkas Kependudukan: e-KTP valid di Disdukcapil, Kartu Keluarga, dan Ijazah asli.
+   - Catatan Hukum: Wajib melampirkan SKCK (Surat Keterangan Catatan Kepolisian) yang masih berlaku.
+   - Penjamin: Memiliki keluarga atau penjamin yang dapat dihubungi dan diverifikasi.
+2. **Uji Kesehatan Fisik & Medis**:
+   - Bebas TBC, Hepatitis, dan penyakit infeksius lainnya sebelum disalurkan ke rumah majikan.
+3. **Pemberian Pelatihan di Asrama LPK**:
+   - Pelatihan etika berbicara, norma kesopanan, larangan membuka privasi keluarga majikan di media sosial, dan penanganan situasi darurat.
+4. **Jaminan Kontrak Resmi & Garansi Penggantian**:
+   - Setiap penempatan disertai perjanjian kerja tertulis bermaterai.
+   - Fasilitas penggantian tenaga kerja hingga 3 kali tanpa biaya administrasi tambahan apabila dalam masa garansi terjadi ketidakcocokan karakter atau kinerja.
+
+## 5. Prosedur Pemesanan untuk Calon Majikan
+1. **Konsultasi Kriteria**: Majikan menyampaikan kebutuhan (jenis pekerjaan, live-in/live-out, preferensi asal daerah, pengalaman) via WhatsApp atau formulir di https://pekerjarumahtangga.com/kontak.
+2. **Kurasi & Pemilihan Profil**: Tim admin memberikan pilihan 2-3 CV kandidat pekerja yang sesuai kriteria dan siap ditempatkan.
+3. **Wawancara (Interview)**: Majikan dapat melakukan wawancara langsung via Video Call WhatsApp atau datang ke kantor kami.
+4. **Penandatanganan Perjanjian & Penempatan**: Setelah calon cocok, dokumen kontrak ditandatangani dan pekerja diantar/dijemput ke alamat kediaman majikan.
+
+## 6. Integrasi WebMCP (Web Model Context Protocol)
+Situs pekerjarumahtangga.com mengimplementasikan standar WebMCP untuk AI Browser Agents:
+- Tool `cari_tenaga_kerja`: Pencarian profil tenaga kerja terverifikasi.
+- Tool `dapatkan_informasi_layanan`: Pengecekan data layanan dan kebijakan garansi.
+- Tool `hubungi_konsultan_whatsapp`: Akses konsultasi fast-track via WhatsApp.
+- Tool `info_legalitas_kantor`: Pengambilan data akuntabilitas fisik entitas PT Jasa Mandiri.

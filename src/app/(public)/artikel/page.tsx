@@ -78,7 +78,7 @@ export default async function ArtikelPublicPage() {
       <div className="max-w-container mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
 
         {/* Header Hero */}
-        <div className="text-center max-w-3xl mx-auto space-y-4 pt-4">
+        <div className="text-center max-w-3xl mx-auto space-y-4 pt-4 animate-hero-in">
           <span className="text-xs font-bold uppercase tracking-widest text-[#3E7B28] bg-[#EBF4E7] px-4 py-1.5 rounded-full border border-[#D5E8D0] inline-block">
             Pusat Edukasi & Informasi
           </span>
@@ -99,6 +99,7 @@ export default async function ArtikelPublicPage() {
                 alt={featuredArticle.judul}
                 fill
                 sizes="(max-width: 1024px) 100vw, 60vw"
+                quality={60}
                 priority
                 className="object-cover"
               />
@@ -157,6 +158,7 @@ export default async function ArtikelPublicPage() {
                       alt={article.judul}
                       fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      quality={60}
                       className="object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                   </div>

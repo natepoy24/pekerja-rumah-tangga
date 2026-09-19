@@ -29,6 +29,7 @@ export default function PekerjaProfilePhoto({ src, nama, kategori }: PekerjaProf
           fetchPriority="high"
           loading="eager"
           sizes="(max-width: 1024px) 100vw, 450px"
+          quality={65}
           className="object-cover group-hover:scale-105 transition-transform duration-500"
         />
 

@@ -105,15 +105,15 @@ export default async function TentangKamiPage() {
             priority={true}
             fetchPriority="high"
             loading="eager"
-            sizes="(max-width: 768px) 100vw, 100vw"
-            quality={75}
+            sizes="100vw"
+            quality={55}
             className="object-cover opacity-25"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-brand-offwhite/40 via-brand-offwhite/75 to-brand-offwhite" />
         </div>
 
         <div className="w-full max-w-container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex justify-center">
-          <div className="max-w-3xl text-center flex flex-col items-center gap-6">
+          <div className="max-w-3xl text-center flex flex-col items-center gap-6 animate-hero-in">
             <Chip label="PROFIL & LEGALITAS RESMI" />
             <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-brand-pine leading-tight">
               {heroTitle}

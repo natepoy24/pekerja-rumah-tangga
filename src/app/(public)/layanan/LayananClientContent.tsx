@@ -197,8 +197,8 @@ export function LayananClientContent({ pageSetting, company }: LayananClientCont
             priority={true}
             fetchPriority="high"
             loading="eager"
-            sizes="(max-width: 768px) 100vw, 100vw"
-            quality={75}
+            sizes="100vw"
+            quality={55}
             className="object-cover opacity-20"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-brand-offwhite/40 via-brand-offwhite/80 to-brand-offwhite" />
@@ -207,12 +207,7 @@ export function LayananClientContent({ pageSetting, company }: LayananClientCont
         <div className="absolute inset-0 pointer-events-none opacity-40 bg-[radial-gradient(#0b4f42_1px,transparent_1px)] [background-size:24px_24px]" />
 
         <div className="relative z-10 max-w-container mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="max-w-4xl mx-auto text-center"
-          >
+          <div className="max-w-4xl mx-auto text-center animate-hero-in">
             {/* Eyebrow Tag */}
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-sage-tint/80 border border-brand-sage/30 text-brand-pine text-xs sm:text-sm font-semibold tracking-wide uppercase mb-6 shadow-xs">
               <span>LAYANAN RESMI PENEMPATAN TENAGA KERJA DOMESTIK</span>
@@ -257,7 +252,7 @@ export function LayananClientContent({ pageSetting, company }: LayananClientCont
                 <span>Bandingkan Semua Layanan ↓</span>
               </Button>
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
 
