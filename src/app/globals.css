@@ -2,6 +2,9 @@
 @config "../../tailwind.config.ts";
 
 @layer base {
+  html, body {
+    overflow-x: hidden;
+  }
   body {
     background-color: #fafaf7;
     color: #14201d;

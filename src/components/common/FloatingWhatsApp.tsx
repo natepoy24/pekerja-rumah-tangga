@@ -19,7 +19,25 @@ export default function FloatingWhatsApp({
 }: FloatingWhatsAppProps) {
   const [showTooltip, setShowTooltip] = useState(false);
   const [dismissed, setDismissed] = useState(false);
+  // Only show tooltip on non-mobile screens
+  const [isMobile, setIsMobile] = useState(true);
   const pathname = usePathname();
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 640);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  // Show tooltip after 2.5s — only on desktop
+  useEffect(() => {
+    if (isMobile) return;
+    const timer = setTimeout(() => {
+      setShowTooltip(true);
+    }, 2500);
+    return () => clearTimeout(timer);
+  }, [isMobile]);
 
   // Do not show on admin routes
   if (pathname?.startsWith("/admin") || pathname?.startsWith("/login")) {
@@ -38,22 +56,14 @@ export default function FloatingWhatsApp({
 
   const waUrl = `https://wa.me/${finalNumber}?text=${encodeURIComponent(finalMessage)}`;
 
-  // Show friendly tooltip after 2.5 seconds on first visit
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowTooltip(true);
-    }, 2500);
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
     <aside
       aria-label="Kontak Cepat WhatsApp"
-      className="fixed bottom-6 right-6 z-[999] flex flex-col items-end pointer-events-auto select-none"
+      className="fixed bottom-5 right-4 sm:bottom-6 sm:right-6 z-[999] flex flex-col items-end pointer-events-auto select-none"
     >
-      {/* Friendly Tooltip Bubble */}
-      {showTooltip && !dismissed && (
-        <div className="mb-3 bg-white text-[#14201D] px-4 py-3 rounded-2xl shadow-2xl border border-[#D5E8D0] max-w-xs text-xs font-sans relative flex items-start gap-2 animate-bounce-short">
+      {/* Tooltip — ONLY shown on sm+ screens, never on mobile */}
+      {!isMobile && showTooltip && !dismissed && (
+        <div className="mb-3 bg-white text-[#14201D] px-4 py-3 rounded-2xl shadow-2xl border border-[#D5E8D0] w-60 text-xs font-sans relative flex items-start gap-2">
           <button
             onClick={() => setDismissed(true)}
             aria-label="Tutup pesan bantuan WhatsApp"
@@ -62,7 +72,7 @@ export default function FloatingWhatsApp({
             <X className="w-3 h-3" />
           </button>
           <div>
-            <p className="font-bold text-[#0B4F42] mb-0.5">Butuh Pekerja Cepat & Terpercaya?</p>
+            <p className="font-bold text-[#0B4F42] mb-0.5">Butuh Pekerja Cepat &amp; Terpercaya?</p>
             <p className="text-gray-600 leading-relaxed">
               Konsultasikan kriteria rumah tangga Anda langsung via WhatsApp sekarang.
             </p>
@@ -84,7 +94,7 @@ export default function FloatingWhatsApp({
           <span className="relative inline-flex rounded-full h-3 w-3 bg-white"></span>
         </span>
 
-        {/* WhatsApp Icon from public/whatsapp-svgrepo-com.svg */}
+        {/* WhatsApp Icon */}
         <div className="relative w-6 h-6 shrink-0 flex items-center justify-center">
           <Image
             src="/whatsapp-svgrepo-com.svg"

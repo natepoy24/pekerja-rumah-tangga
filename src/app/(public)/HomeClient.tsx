@@ -116,10 +116,12 @@ export default function HomeClient({ pageSetting, company }: HomeClientProps) {
   ];
 
   return (
-    <div className="overflow-hidden min-h-screen bg-brand-offwhite">
-      {/* Background Decorative Lighting using GPU-accelerated radial gradients (No expensive Gaussian filter blur) */}
-      <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full ambient-glow-sage pointer-events-none -z-10" />
-      <div className="absolute top-[500px] -left-40 w-[600px] h-[600px] rounded-full ambient-glow-primary pointer-events-none -z-10" />
+    <div className="relative overflow-hidden min-h-screen bg-brand-offwhite">
+      {/* Background Decorative Lighting — wrapped in a clipping layer so 600px circles don't overflow mobile */}
+      <div aria-hidden="true" className="absolute inset-0 pointer-events-none overflow-hidden -z-10">
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full ambient-glow-sage" />
+        <div className="absolute top-[500px] -left-40 w-[600px] h-[600px] rounded-full ambient-glow-primary" />
+      </div>
 
       {/* Hero Section */}
       <section className="relative w-full min-h-[80vh] flex items-center justify-center overflow-hidden pt-8 pb-16 md:py-24">

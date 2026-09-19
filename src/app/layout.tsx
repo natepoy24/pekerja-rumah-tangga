@@ -72,7 +72,7 @@ export default async function RootLayout({
         <link rel="alternate" type="text/markdown" href="/llms.txt" title="LLMs.txt" />
         <link rel="help" type="text/markdown" href="/llms-full.txt" title="LLMs Full Documentation" />
       </head>
-      <body className="min-h-screen flex flex-col bg-brand-offwhite text-brand-charcoal antialiased selection:bg-brand-sage-tint selection:text-brand-pine">
+      <body className="min-h-screen flex flex-col bg-brand-offwhite text-brand-charcoal antialiased selection:bg-brand-sage-tint selection:text-brand-pine overflow-x-hidden w-full max-w-[100vw]">
         <Suspense fallback={null}>
           <PageTransitionLoader />
         </Suspense>

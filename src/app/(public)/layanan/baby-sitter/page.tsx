@@ -338,9 +338,9 @@ export default async function BabySitterLayananPage() {
             </div>
 
             {/* Right Visual Column */}
-            <div className="lg:col-span-5 relative">
+            <div className="lg:col-span-5 relative overflow-hidden">
               <div className="relative mx-auto max-w-md lg:max-w-none">
-                {/* Background decorative tone glow */}
+                {/* Background decorative tone glow — clipped by overflow-hidden parent */}
                 <div
                   className="absolute -inset-2 bg-[#9E232A]/10 rounded-3xl blur-xl -z-10"
                   aria-hidden="true"

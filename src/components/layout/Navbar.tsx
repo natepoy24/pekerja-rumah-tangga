@@ -61,19 +61,19 @@ export function Navbar({ company }: NavbarProps) {
       <div className="max-w-container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 group">
+          <Link href="/" className="flex items-center gap-2 sm:gap-3 group max-w-[75%] sm:max-w-none">
             <Image
               src={logoUrl}
               alt={`Logo ${companyName}`}
               width={48}
               height={48}
-              className="w-11 h-11 object-contain group-hover:scale-105 transition-transform rounded-md"
+              className="w-9 h-9 sm:w-11 sm:h-11 object-contain group-hover:scale-105 transition-transform rounded-md shrink-0"
             />
-            <div className="flex flex-col">
-              <span className="font-serif text-xl sm:text-2xl font-bold tracking-tight text-[#0B4F42] leading-tight">
+            <div className="flex flex-col min-w-0">
+              <span className="font-serif text-lg sm:text-2xl font-bold tracking-tight text-[#0B4F42] leading-tight truncate">
                 {companyName}
               </span>
-              <span className="font-sans text-[10px] tracking-[0.18em] uppercase text-on-surface-variant font-medium">
+              <span className="font-sans text-[8px] sm:text-[10px] tracking-[0.1em] sm:tracking-[0.18em] uppercase text-on-surface-variant font-medium line-clamp-2 sm:line-clamp-1 leading-tight mt-0.5">
                 {subtagline}
               </span>
             </div>
