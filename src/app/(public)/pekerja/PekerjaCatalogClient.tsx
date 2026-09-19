@@ -25,6 +25,8 @@ export default function PekerjaCatalogClient({
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [searchQuery, setSearchQuery] = useState(initialSearch);
   const [selectedStatus, setSelectedStatus] = useState("Semua");
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 9;
 
   const filteredWorkers = useMemo(() => {
     return initialWorkers.filter((worker) => {
@@ -56,6 +58,34 @@ export default function PekerjaCatalogClient({
     });
   }, [initialWorkers, selectedCategory, selectedStatus, searchQuery]);
 
+  const totalPages = Math.ceil(filteredWorkers.length / ITEMS_PER_PAGE);
+  const paginatedWorkers = filteredWorkers.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
+  const handleCategoryChange = (cat: string) => {
+    setSelectedCategory(cat);
+    setCurrentPage(1);
+  };
+
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query);
+    setCurrentPage(1);
+  };
+
+  const handleStatusChange = (status: string) => {
+    setSelectedStatus(status);
+    setCurrentPage(1);
+  };
+
+  const resetFilters = () => {
+    setSelectedCategory("Semua");
+    setSelectedStatus("Semua");
+    setSearchQuery("");
+    setCurrentPage(1);
+  };
+
   return (
     <div className="space-y-8 font-sans">
       {/* Category Tabs */}
@@ -65,7 +95,7 @@ export default function PekerjaCatalogClient({
           return (
             <button
               key={cat}
-              onClick={() => setSelectedCategory(cat)}
+              onClick={() => handleCategoryChange(cat)}
               className={`px-5 py-2.5 rounded-full text-xs font-semibold transition-all ${
                 isActive
                   ? "bg-[#0B4F42] text-white shadow-sm"
@@ -108,7 +138,7 @@ export default function PekerjaCatalogClient({
             type="text"
             name="searchQuery"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => handleSearchChange(e.target.value)}
             placeholder="Cari berdasarkan nama, keahlian, atau lokasi..."
             toolparamdescription="Kata kunci pencarian keahlian khusus (contoh: masak masakan rumahan, rawat newborn, lansia stroke), nama pekerja, atau lokasi"
             className="w-full bg-surface-container-low border border-outline-variant/40 rounded-xl py-2.5 pl-10 pr-4 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-[#0B4F42]/20 transition-all"
@@ -126,7 +156,7 @@ export default function PekerjaCatalogClient({
             aria-label="Filter Status Ketersediaan Pekerja"
             toolparamdescription="Pilihan filter status ketersediaan kandidat tenaga kerja: Semua, Tersedia Siap Kerja, atau Akan Tersedia"
             value={selectedStatus}
-            onChange={(e) => setSelectedStatus(e.target.value)}
+            onChange={(e) => handleStatusChange(e.target.value)}
             className="bg-surface-container-low border border-outline-variant/40 rounded-xl px-4 py-2.5 text-xs font-semibold text-on-surface focus:outline-none focus:ring-2 focus:ring-[#0B4F42]/20 cursor-pointer w-full md:w-auto"
           >
             <option value="Semua">Semua Status Ketersediaan</option>
@@ -137,11 +167,7 @@ export default function PekerjaCatalogClient({
           {(searchQuery || selectedCategory !== "Semua" || selectedStatus !== "Semua") && (
             <button
               type="button"
-              onClick={() => {
-                setSelectedCategory("Semua");
-                setSelectedStatus("Semua");
-                setSearchQuery("");
-              }}
+              onClick={resetFilters}
               className="p-2 text-[#0B4F42] hover:bg-[#EBF4E7] rounded-xl transition-colors shrink-0"
               title="Reset Filter"
             >
@@ -153,11 +179,54 @@ export default function PekerjaCatalogClient({
 
       {/* Grid Workers */}
       {filteredWorkers.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredWorkers.map((worker) => (
-            <PekerjaCard key={worker.id} pekerja={worker} />
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {paginatedWorkers.map((worker) => (
+              <PekerjaCard key={worker.id} pekerja={worker} />
+            ))}
+          </div>
+
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-center gap-2 pt-8">
+              <button
+                onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                disabled={currentPage === 1}
+                className="px-4 py-2 text-sm font-medium text-on-surface-variant bg-white border border-outline-variant/40 rounded-xl hover:bg-surface-container-low disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                Sebelumnya
+              </button>
+              
+              <div className="flex items-center gap-1">
+                {Array.from({ length: totalPages }).map((_, idx) => {
+                  const page = idx + 1;
+                  const isActive = page === currentPage;
+                  return (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`w-9 h-9 rounded-xl text-sm font-semibold transition-colors ${
+                        isActive
+                          ? "bg-[#0B4F42] text-white border border-[#0B4F42]"
+                          : "bg-white text-on-surface-variant border border-outline-variant/40 hover:bg-surface-container-low"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <button
+                onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                disabled={currentPage === totalPages}
+                className="px-4 py-2 text-sm font-medium text-on-surface-variant bg-white border border-outline-variant/40 rounded-xl hover:bg-surface-container-low disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                Selanjutnya
+              </button>
+            </div>
+          )}
+        </>
       ) : (
         <div className="bg-white rounded-3xl p-12 text-center border border-[#D5E8D0] shadow-sm space-y-3">
           <h2 className="font-serif text-2xl font-bold text-[#14201D]">Kandidat Tidak Ditemukan</h2>
@@ -165,11 +234,7 @@ export default function PekerjaCatalogClient({
             Maaf, tidak ada kandidat pekerja yang sesuai dengan kriteria filter saat ini. Coba sesuaikan kata kunci pencarian Anda.
           </p>
           <button
-            onClick={() => {
-              setSelectedCategory("Semua");
-              setSelectedStatus("Semua");
-              setSearchQuery("");
-            }}
+            onClick={resetFilters}
             className="px-6 py-2.5 rounded-xl bg-[#0B4F42] text-white text-xs font-semibold hover:bg-[#00372d] transition-colors mt-2"
           >
             Tampilkan Semua Kandidat

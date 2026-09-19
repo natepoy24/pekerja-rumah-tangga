@@ -29,6 +29,41 @@ const nextConfig: NextConfig = {
         destination: "/robots.txt",
         permanent: true,
       },
+      {
+        source: "/baby-sitter",
+        destination: "/layanan/baby-sitter",
+        permanent: true,
+      },
+      {
+        source: "/perawat-lansia",
+        destination: "/layanan/perawat-lansia",
+        permanent: true,
+      },
+      {
+        source: "/perawat%20lansia",
+        destination: "/layanan/perawat-lansia",
+        permanent: true,
+      },
+      {
+        source: "/art",
+        destination: "/layanan/art",
+        permanent: true,
+      },
+      {
+        source: "/prt",
+        destination: "/layanan/art",
+        permanent: true,
+      },
+      {
+        source: "/asisten-rumah-tangga",
+        destination: "/layanan/art",
+        permanent: true,
+      },
+      {
+        source: "/pekerja-rumah-tangga",
+        destination: "/layanan/art",
+        permanent: true,
+      }
     ];
   },
   async headers() {
