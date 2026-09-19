@@ -7,7 +7,7 @@ export function generateWebSiteSchema() {
     "@id": `${SITE_CONFIG.url}/#website`,
     "name": SITE_CONFIG.name,
     "url": SITE_CONFIG.url,
-    "description": "PT Jasa Mandiri Agency - Penyalur ART, Baby Sitter, dan Perawat Lansia Resmi Terpercaya.",
+    "description": `${SITE_CONFIG.name} - Penyalur ART, Baby Sitter, dan Perawat Lansia Resmi Terpercaya.`,
     "publisher": {
       "@id": `${SITE_CONFIG.url}/#organization`
     },

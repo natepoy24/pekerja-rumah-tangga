@@ -2,25 +2,41 @@
 
 import { useState } from "react";
 import { Send, Calendar, Briefcase, Home, FileText, CheckCircle2 } from "lucide-react";
+import { SITE_CONFIG } from "@/lib/siteConfig";
 
-export function ContactFormClient() {
+interface ContactFormClientProps {
+  waNumber?: string;
+  companyName?: string;
+}
+
+export function ContactFormClient({
+  waNumber: customWa,
+  companyName = SITE_CONFIG.name,
+}: ContactFormClientProps) {
   const [layanan, setLayanan] = useState("PRT");
   const [tipePenempatan, setTipePenempatan] = useState("Menginap (Live-in)");
   const [tanggalMulai, setTanggalMulai] = useState("");
   const [catatan, setCatatan] = useState("");
+  const [honeypot, setHoneypot] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
-  const waNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "6285111399962";
+  const waNumber = customWa || process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "6285111399962";
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    // Antispam Honeypot check: reject if automated bot filled hidden field
+    if (honeypot) {
+      console.warn("Spam submission blocked by honeypot.");
+      return;
+    }
 
     const native = e.nativeEvent as any;
     if (native && native.agentInvoked && typeof native.respondWith === "function") {
       native.respondWith(
         Promise.resolve({
           status: "success",
-          message: "Formulir kriteria pekerja berhasil disiapkan dan diteruskan ke WhatsApp konsultan PT Jasa Mandiri.",
+          message: `Formulir kriteria pekerja berhasil disiapkan dan diteruskan ke WhatsApp konsultan ${companyName}.`,
           data: {
             layanan,
             tipePenempatan,
@@ -32,7 +48,7 @@ export function ContactFormClient() {
     }
 
     const formattedMessage =
-      `Halo PT Jasa Mandiri, saya ingin berkonsultasi mengenai kebutuhan tenaga kerja:\n\n` +
+      `Halo ${companyName}, saya ingin berkonsultasi mengenai kebutuhan tenaga kerja:\n\n` +
       `📌 *Pilihan Layanan:* ${layanan}\n` +
       `🏡 *Tipe Penempatan:* ${tipePenempatan}\n` +
       `📅 *Perkiraan Mulai:* ${tanggalMulai || "Secepatnya"}\n` +
@@ -69,7 +85,7 @@ export function ContactFormClient() {
             <CheckCircle2 className="w-5 h-5 text-[#3E7B28] shrink-0 mt-0.5" />
             <div className="text-xs text-[#14201D] leading-relaxed">
               <span className="font-bold block text-[#0B4F42] mb-0.5">Formulir Terkirim!</span>
-              Sistem telah membuka percakapan WhatsApp resmi PT Jasa Mandiri. Jika halaman WhatsApp tidak terbuka otomatis, silakan klik tombol di bawah lagi.
+              Sistem telah membuka percakapan WhatsApp resmi {companyName}. Jika halaman WhatsApp tidak terbuka otomatis, silakan klik tombol di bawah lagi.
             </div>
           </div>
         )}
@@ -77,9 +93,23 @@ export function ContactFormClient() {
         <form
           onSubmit={handleSubmit}
           toolname="konsultasiKebutuhanPekerja"
-          tooldescription="Kirim formulir kurasi kebutuhan dan kriteria pekerja rumah tangga (PRT, Baby Sitter, atau Perawat Lansia) ke konsultan resmi PT Jasa Mandiri."
+          tooldescription={`Kirim formulir kurasi kebutuhan dan kriteria pekerja rumah tangga (PRT, Baby Sitter, atau Perawat Lansia) ke konsultan resmi ${companyName}.`}
           className="space-y-5"
         >
+          {/* Honeypot anti-bot trap */}
+          <div className="hidden" aria-hidden="true">
+            <label htmlFor="website_hp">Jangan isi kolom ini</label>
+            <input
+              type="text"
+              id="website_hp"
+              name="website_hp"
+              value={honeypot}
+              onChange={(e) => setHoneypot(e.target.value)}
+              tabIndex={-1}
+              autoComplete="off"
+            />
+          </div>
+
           {/* Pilihan Layanan */}
           <div className="space-y-2">
             <label htmlFor="pilihanLayanan" className="block font-sans text-xs font-semibold uppercase tracking-wider text-[#14201D] flex items-center gap-1.5">

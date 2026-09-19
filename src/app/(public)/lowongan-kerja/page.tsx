@@ -22,6 +22,7 @@ import dynamic from "next/dynamic";
 import EvergreenJobJsonLd from "@/components/seo/EvergreenJobJsonLd";
 import JsonLd from "@/components/seo/JsonLd";
 import { generateBreadcrumbSchema } from "@/lib/seo/schemaGenerator";
+import { SITE_CONFIG } from "@/lib/siteConfig";
 import type { JobSchemaInput } from "@/types/job-schema";
 
 const FaqSection = dynamic(() => import("@/components/common/FaqSection"), {
@@ -53,7 +54,7 @@ export async function generateMetadata(): Promise<Metadata> {
       title,
       description,
       url: "https://pekerjarumahtangga.com/lowongan-kerja",
-      siteName: company.nama_perusahaan || "PT Jasa Mandiri Agency",
+      siteName: company.nama_perusahaan || SITE_CONFIG.name,
       type: "website",
       locale: "id_ID",
       images: [{ url: ogImage, alt: setting.hero_image_alt || title }],
@@ -74,7 +75,7 @@ export default async function LowonganKerjaHubPage() {
   ]);
 
 
-  const companyName = company?.nama_perusahaan || "PT Jasa Mandiri";
+  const companyName = company?.nama_perusahaan || SITE_CONFIG.name;
   const recruiterWa =
     process.env.NEXT_PUBLIC_RECRUITER_WHATSAPP_NUMBER ||
     company?.nomor_whatsapp ||
@@ -412,7 +413,7 @@ export default async function LowonganKerjaHubPage() {
       </section>
 
       {/* FAQ Calon Pekerja (CMS Driven) */}
-      <FaqSection items={pageSetting?.faqs} whatsappNumber={recruiterWa} />
+      <FaqSection items={pageSetting?.faqs} whatsappNumber={recruiterWa} companyName={companyName} />
 
       {/* Bottom CTA Recruitment Banner */}
       <section className="px-4 sm:px-6 lg:px-8 max-w-container mx-auto my-12">

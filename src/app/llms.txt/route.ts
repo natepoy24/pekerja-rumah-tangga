@@ -2,6 +2,8 @@ import { promises as fs } from "fs";
 import path from "path";
 import { NextResponse } from "next/server";
 
+import { SITE_CONFIG } from "@/lib/siteConfig";
+
 export async function GET() {
   try {
     const filePath = path.join(process.cwd(), "public", "llms.txt");
@@ -14,7 +16,7 @@ export async function GET() {
       },
     });
   } catch (err) {
-    return new NextResponse("# PT Jasa Mandiri Agency\n\nLayanan penyalur pekerja rumah tangga terpercaya.", {
+    return new NextResponse(`# ${SITE_CONFIG.name}\n\nLayanan penyalur pekerja rumah tangga terpercaya.`, {
       status: 200,
       headers: { "Content-Type": "text/markdown; charset=utf-8" },
     });

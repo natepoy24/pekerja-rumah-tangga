@@ -7,6 +7,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, KeyRound, Mail, LogIn, Loader2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { createClient } from "@/lib/supabase/client";
+import { SITE_CONFIG } from "@/lib/siteConfig";
 
 function LoginForm() {
   const [email, setEmail] = useState("");
@@ -66,13 +67,13 @@ function LoginForm() {
         <div className="text-center flex flex-col items-center gap-2 mb-8">
           <Image
             src="/logo-jm.webp"
-            alt="Logo PT Jasa Mandiri"
+            alt={`Logo ${SITE_CONFIG.name}`}
             width={64}
             height={64}
             className="w-16 h-16 object-contain mb-1"
           />
           <span className="font-serif text-3xl font-bold tracking-tight text-brand-charcoal">
-            PT Jasa Mandiri
+            {SITE_CONFIG.name}
           </span>
           <p className="font-sans text-xs text-on-surface-variant uppercase tracking-widest font-semibold">
             Portal Akun Admin & Pengguna

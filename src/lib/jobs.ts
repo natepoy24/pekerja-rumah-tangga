@@ -1,4 +1,5 @@
 import { createPublicClient } from "@/lib/supabase/server";
+import { SITE_CONFIG } from "@/lib/siteConfig";
 
 export interface Job {
   id?: string;
@@ -53,7 +54,7 @@ export const DEFAULT_JOBS: Job[] = [
       "Kontrak kerja resmi berpayung hukum Kemenaker & Disnaker",
       "Pendampingan mediasi dan perlindungan keselamatan kerja",
     ],
-    meta_title: "Lowongan Kerja Asisten Rumah Tangga (ART) Resmi Gaji Utuh | PT Jasa Mandiri",
+    meta_title: `Lowongan Kerja Asisten Rumah Tangga (ART) Resmi Gaji Utuh | ${SITE_CONFIG.name}`,
     meta_description:
       "Lowongan kerja ART resmi penempatan Jabodetabek. Gaji utuh Rp2-4 juta/bulan, kamar pribadi, makan gratis 3x, tanpa potongan calo. Berizin Kemnaker.",
     is_active: true,
@@ -90,7 +91,7 @@ export const DEFAULT_JOBS: Job[] = [
       "Asrama transit nyaman selama proses interview majikan",
       "Jaminan perlindungan hukum dan jembatan komunikasi tim mediasi",
     ],
-    meta_title: "Lowongan Kerja Baby Sitter & Pengasuh Anak Resmi | PT Jasa Mandiri",
+    meta_title: `Lowongan Kerja Baby Sitter & Pengasuh Anak Resmi | ${SITE_CONFIG.name}`,
     meta_description:
       "Lowongan kerja suster baby sitter dan nanny resmi. Gaji Rp3-5,5 juta/bulan, fasilitas menginap, bonus & THR, berizin Disnaker & Kemnaker.",
     is_active: true,
@@ -125,9 +126,9 @@ export const DEFAULT_JOBS: Job[] = [
       "Makan 3x sehari gratis & kamar pribadi menginap",
       "Insentif lembur libur (uang infal) jika tidak mengambil libur",
       "Pembekalan fisioterapi ringan dan penanganan medis dasar",
-      "Mediasi penuh dari lembaga resmi PT Jasa Mandiri",
+      "Mediasi penuh dari lembaga resmi penyalur tenaga kerja",
     ],
-    meta_title: "Lowongan Kerja Perawat Lansia & Caregiver Resmi | PT Jasa Mandiri",
+    meta_title: `Lowongan Kerja Perawat Lansia & Caregiver Resmi | ${SITE_CONFIG.name}`,
     meta_description:
       "Lowongan perawat lansia dan suster jompo resmi. Gaji Rp3-6,5 juta/bulan, kamar pribadi, perlindungan hukum Kemnaker.",
     is_active: true,

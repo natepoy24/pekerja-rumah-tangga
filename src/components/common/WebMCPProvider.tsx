@@ -88,11 +88,11 @@ export default function WebMCPProvider() {
       };
     }
 
-    // Define WebMCP tools according to PT Jasa Mandiri domain
+    // Define WebMCP tools according to company domain
     const tools: WebMCPTool[] = [
       {
         name: "cari_tenaga_kerja",
-        description: "Cari katalog tenaga kerja rumah tangga (ART, Baby Sitter, Perawat Lansia) yang terverifikasi dan siap kerja di PT Jasa Mandiri.",
+        description: `Cari katalog tenaga kerja rumah tangga (ART, Baby Sitter, Perawat Lansia) yang terverifikasi dan siap kerja di ${SITE_CONFIG.name}.`,
         inputSchema: {
           type: "object",
           properties: {
@@ -138,7 +138,7 @@ export default function WebMCPProvider() {
       },
       {
         name: "dapatkan_informasi_layanan",
-        description: "Dapatkan informasi resmi mengenai layanan PRT, Baby Sitter, Perawat Lansia, garansi penggantian 3x, dan legalitas izin Disnaker PT Jasa Mandiri.",
+        description: `Dapatkan informasi resmi mengenai layanan PRT, Baby Sitter, Perawat Lansia, garansi penggantian 3x, dan legalitas izin Disnaker ${SITE_CONFIG.name}.`,
         inputSchema: {
           type: "object",
           properties: {
@@ -205,7 +205,7 @@ export default function WebMCPProvider() {
       },
       {
         name: "hubungi_konsultan_whatsapp",
-        description: "Hubungi konsultan penempatan PT Jasa Mandiri via WhatsApp untuk konsultasi cepat, penentuan kriteria, atau pemesanan pekerja.",
+        description: `Hubungi konsultan penempatan ${SITE_CONFIG.name} via WhatsApp untuk konsultasi cepat, penentuan kriteria, atau pemesanan pekerja.`,
         inputSchema: {
           type: "object",
           properties: {
@@ -229,7 +229,7 @@ export default function WebMCPProvider() {
         execute: async ({ layanan, catatan }) => {
           const waNumber = SITE_CONFIG.whatsappPrimary.replace(/\D/g, "");
           const text = encodeURIComponent(
-            `Halo PT Jasa Mandiri, saya ingin berkonsultasi mengenai penempatan ${layanan}.\nCatatan kebutuhan: ${catatan || "-"}\nMohon informasi profil kandidat yang siap kerja. Terima kasih!`
+            `Halo ${SITE_CONFIG.name}, saya ingin berkonsultasi mengenai penempatan ${layanan}.\nCatatan kebutuhan: ${catatan || "-"}\nMohon informasi profil kandidat yang siap kerja. Terima kasih!`
           );
           const waUrl = `https://wa.me/62${waNumber.startsWith("0") ? waNumber.slice(1) : waNumber}?text=${text}`;
 
@@ -239,14 +239,14 @@ export default function WebMCPProvider() {
 
           return {
             status: "success",
-            message: "Membuka WhatsApp konsultan PT Jasa Mandiri.",
+            message: `Membuka WhatsApp konsultan ${SITE_CONFIG.name}.`,
             whatsappUrl: waUrl,
           };
         },
       },
       {
         name: "info_legalitas_kantor",
-        description: "Dapatkan identitas legal, alamat fisik kantor resmi, nomor telepon tetap, dan jam operasional PT Jasa Mandiri.",
+        description: `Dapatkan identitas legal, alamat fisik kantor resmi, nomor telepon tetap, dan jam operasional ${SITE_CONFIG.name}.`,
         inputSchema: {
           type: "object",
           properties: {},
@@ -303,7 +303,7 @@ export default function WebMCPProvider() {
   const webmcpJsonLd = {
     "@context": "https://schema.org",
     "@type": "WebAPI",
-    "name": "PT Jasa Mandiri WebMCP Agent Tools",
+    "name": `${SITE_CONFIG.name} WebMCP Agent Tools`,
     "description": "Chrome WebMCP AI Agent tools for searching workers, accessing service info, contacting official consultants, and retrieving verifiable company accreditation.",
     "documentation": "https://developer.chrome.com/docs/ai/webmcp",
     "provider": {

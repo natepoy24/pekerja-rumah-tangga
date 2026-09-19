@@ -17,7 +17,29 @@ function isFormFile(file: any): boolean {
   );
 }
 
-// Helper to upload files to Supabase Storage
+const ALLOWED_MIME_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/gif",
+];
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
+
+// Centralized admin authentication guard for mutating Server Actions
+export async function requireAdminAuth() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+
+  if (error || !user) {
+    throw new Error("Akses ditolak: Anda harus login sebagai admin untuk melakukan tindakan ini.");
+  }
+  return { user, supabase };
+}
+
+// Helper to upload files to Supabase Storage with strict security validation
 async function uploadFile(
   bucket: string,
   file: any,
@@ -25,10 +47,34 @@ async function uploadFile(
 ): Promise<{ url: string | null; error: string | null }> {
   if (!isFormFile(file)) return { url: null, error: null };
 
+  // 1. File size restriction (5MB max)
+  if (file.size > MAX_FILE_SIZE) {
+    return { url: null, error: "Ukuran file terlalu besar. Maksimal ukuran file adalah 5 MB." };
+  }
+
+  // 2. MIME type restriction
+  const mimeType = (file.type || "").toLowerCase();
+  if (mimeType && !ALLOWED_MIME_TYPES.includes(mimeType)) {
+    return {
+      url: null,
+      error: "Format file tidak didukung. Hanya gambar (JPEG, PNG, WebP, GIF) yang diizinkan.",
+    };
+  }
+
+  // 3. Extension sanitization (strictly alphanumeric known image extensions)
+  let fileExt = "jpg";
+  if (file.name && typeof file.name === "string") {
+    const rawExt = file.name.split(".").pop()?.toLowerCase() || "jpg";
+    if (["jpg", "jpeg", "png", "webp", "gif"].includes(rawExt)) {
+      fileExt = rawExt === "jpeg" ? "jpg" : rawExt;
+    }
+  }
+
   try {
     const supabase = createAdminClient();
-    const fileExt = file.name ? file.name.split(".").pop() : "jpg";
-    const fileName = `${folder ? folder + "/" : ""}${Date.now()}_${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
+    const cleanFolder = folder.replace(/[^a-zA-Z0-9_-]/g, "");
+    const safeRandom = Math.random().toString(36).substring(2, 9);
+    const fileName = `${cleanFolder ? cleanFolder + "/" : ""}${Date.now()}_${safeRandom}.${fileExt}`;
 
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
@@ -49,21 +95,20 @@ async function uploadFile(
         data = retry.data;
         error = retry.error;
       } catch (bErr: any) {
-        console.error("Bucket creation failed:", bErr);
+        console.error("Bucket creation failed:", bErr?.message || bErr);
       }
     }
 
     if (error || !data) {
-      const msg = error?.message || "Gagal mengunggah foto ke storage";
-      console.error(`Upload error to ${bucket}:`, msg);
-      return { url: null, error: msg };
+      console.error(`Upload error to ${bucket}:`, error?.message);
+      return { url: null, error: "Gagal mengunggah foto ke storage." };
     }
 
     const { data: publicUrlData } = supabase.storage.from(bucket).getPublicUrl(data.path);
     return { url: publicUrlData.publicUrl, error: null };
   } catch (err: any) {
-    console.error(`Upload error to ${bucket}:`, err.message);
-    return { url: null, error: err.message || "Terjadi kesalahan saat upload foto" };
+    console.error(`Upload error to ${bucket}:`, err?.message || err);
+    return { url: null, error: "Terjadi kesalahan saat mengunggah foto." };
   }
 }
 
@@ -123,7 +168,7 @@ export async function addMasterKeahlian(nama_keahlian: string, kategori_keahlian
   const cleanNama = nama_keahlian.trim();
 
   try {
-    const supabase = await createClient();
+    const { supabase } = await requireAdminAuth();
     const { data, error } = await supabase
       .from("master_keahlian")
       .insert([{ nama_keahlian: cleanNama, kategori_keahlian }])
@@ -142,6 +187,9 @@ export async function addMasterKeahlian(nama_keahlian: string, kategori_keahlian
     revalidatePath("/admin/dashboard/pekerja");
     return { success: true, data };
   } catch (err: any) {
+    if (err?.message?.includes("Akses ditolak")) {
+      return { success: false, error: err.message };
+    }
     return {
       success: true,
       data: { id: Date.now(), nama_keahlian: cleanNama, kategori_keahlian },
@@ -153,7 +201,7 @@ export async function updateMasterKeahlian(idOrNama: string | number, newNama: s
   if (!newNama || !newNama.trim()) return { success: false, error: "Nama keahlian baru tidak boleh kosong." };
   const cleanNama = newNama.trim();
   try {
-    const supabase = await createClient();
+    const { supabase } = await requireAdminAuth();
     let query = supabase.from("master_keahlian").update({ nama_keahlian: cleanNama });
     if (typeof idOrNama === "number" || !isNaN(Number(idOrNama))) {
       query = query.eq("id", Number(idOrNama));
@@ -165,13 +213,16 @@ export async function updateMasterKeahlian(idOrNama: string | number, newNama: s
     revalidatePath("/admin/dashboard/pekerja");
     return { success: true, newNama: cleanNama };
   } catch (err: any) {
+    if (err?.message?.includes("Akses ditolak")) {
+      return { success: false, error: err.message };
+    }
     return { success: true, newNama: cleanNama };
   }
 }
 
 export async function deleteMasterKeahlian(idOrNama: string | number) {
   try {
-    const supabase = await createClient();
+    const { supabase } = await requireAdminAuth();
     let query = supabase.from("master_keahlian").delete();
     if (typeof idOrNama === "number" || !isNaN(Number(idOrNama))) {
       query = query.eq("id", Number(idOrNama));
@@ -183,6 +234,9 @@ export async function deleteMasterKeahlian(idOrNama: string | number) {
     revalidatePath("/admin/dashboard/pekerja");
     return { success: true };
   } catch (err: any) {
+    if (err?.message?.includes("Akses ditolak")) {
+      return { success: false, error: err.message };
+    }
     return { success: true };
   }
 }
@@ -193,7 +247,7 @@ export async function deleteMasterKeahlian(idOrNama: string | number) {
 
 export async function addPekerja(prevState: any, formData: FormData) {
   try {
-    const supabase = await createClient();
+    const { supabase } = await requireAdminAuth();
 
     const nama = formData.get("nama") as string;
     const kategori = formData.get("kategori") as string;
@@ -280,7 +334,7 @@ export async function addPekerja(prevState: any, formData: FormData) {
           error: "Tabel 'pekerja' belum dibuat di Supabase. Silakan jalankan script SQL di file 'supabase/create_tables.sql' pada SQL Editor Supabase Dashboard Anda.",
         };
       }
-      return { success: false, error: `Gagal menyimpan data: ${error.message}` };
+      return { success: false, error: `Gagal menyimpan data pekerja.` };
     }
 
     revalidatePath("/admin/dashboard/pekerja");
@@ -293,7 +347,7 @@ export async function addPekerja(prevState: any, formData: FormData) {
 
 export async function updatePekerja(prevState: any, formData: FormData) {
   try {
-    const supabase = await createClient();
+    const { supabase } = await requireAdminAuth();
 
     const id = formData.get("id");
     if (!id) return { success: false, error: "ID Pekerja tidak ditemukan." };
@@ -377,7 +431,7 @@ export async function updatePekerja(prevState: any, formData: FormData) {
           error: "Tabel 'pekerja' belum dibuat di Supabase. Silakan jalankan script SQL di file 'supabase/create_tables.sql' pada SQL Editor Supabase Dashboard Anda.",
         };
       }
-      return { success: false, error: `Gagal memperbarui data: ${error.message}` };
+      return { success: false, error: `Gagal memperbarui data pekerja.` };
     }
 
     revalidatePath("/admin/dashboard/pekerja");
@@ -389,7 +443,7 @@ export async function updatePekerja(prevState: any, formData: FormData) {
 }
 
 export async function deletePekerjaById(id: number, fotoUrl: string | null) {
-  const supabase = await createClient();
+  const { supabase } = await requireAdminAuth();
 
   if (fotoUrl) {
     await deleteStorageFile("foto-pekerja", fotoUrl);
@@ -397,7 +451,7 @@ export async function deletePekerjaById(id: number, fotoUrl: string | null) {
 
   const { error } = await supabase.from("pekerja").delete().eq("id", id);
   if (error) {
-    throw new Error(`Gagal menghapus pekerja: ${error.message}`);
+    throw new Error(`Gagal menghapus pekerja.`);
   }
 
   revalidatePath("/admin/dashboard/pekerja");
@@ -411,7 +465,7 @@ export async function deletePekerjaById(id: number, fotoUrl: string | null) {
 
 export async function addArtikel(prevState: any, formData: FormData) {
   try {
-    const supabase = await createClient();
+    const { supabase } = await requireAdminAuth();
 
     const judul = formData.get("judul") as string;
     const konten = formData.get("konten") as string;
@@ -473,20 +527,20 @@ export async function addArtikel(prevState: any, formData: FormData) {
             "Kolom SEO belum dibuat di tabel 'artikel' Supabase. Silakan jalankan script ALTER TABLE di SQL Editor Supabase Dashboard Anda (bisa disalin dari file supabase/create_tables.sql).",
         };
       }
-      return { error: `Gagal menyimpan artikel: ${error.message}` };
+      return { error: `Gagal menyimpan artikel ke sistem.` };
     }
 
     revalidatePath("/admin/dashboard/artikel");
     revalidatePath("/artikel");
     return { success: true };
   } catch (err: any) {
-    return { error: err.message || "Terjadi kesalahan server" };
+    return { error: err.message || "Terjadi kesalahan server saat menyimpan artikel." };
   }
 }
 
 export async function updateArtikel(prevState: any, formData: FormData) {
   try {
-    const supabase = await createClient();
+    const { supabase } = await requireAdminAuth();
 
     const id = formData.get("id");
     if (!id) return { error: "ID Artikel tidak ditemukan." };
@@ -550,19 +604,19 @@ export async function updateArtikel(prevState: any, formData: FormData) {
             "Kolom SEO belum dibuat di tabel 'artikel' Supabase. Silakan jalankan script ALTER TABLE di SQL Editor Supabase Dashboard Anda (bisa disalin dari file supabase/create_tables.sql).",
         };
       }
-      return { error: `Gagal memperbarui artikel: ${error.message}` };
+      return { error: `Gagal memperbarui artikel.` };
     }
 
     revalidatePath("/admin/dashboard/artikel");
     revalidatePath("/artikel");
     return { success: true };
   } catch (err: any) {
-    return { error: err.message || "Terjadi kesalahan server" };
+    return { error: err.message || "Terjadi kesalahan server saat memperbarui artikel." };
   }
 }
 
 export async function deleteArtikel(id: number, gambar_url: string | null) {
-  const supabase = await createClient();
+  const { supabase } = await requireAdminAuth();
 
   if (gambar_url) {
     await deleteStorageFile("gambar-artikel", gambar_url);
@@ -570,7 +624,7 @@ export async function deleteArtikel(id: number, gambar_url: string | null) {
 
   const { error } = await supabase.from("artikel").delete().eq("id", id);
   if (error) {
-    throw new Error(`Gagal menghapus artikel: ${error.message}`);
+    throw new Error(`Gagal menghapus artikel.`);
   }
 
   revalidatePath("/admin/dashboard/artikel");
@@ -596,6 +650,7 @@ export async function incrementViews(slug: string) {
 
 export async function updateSiteSetting(settingId: string, formData: FormData) {
   try {
+    await requireAdminAuth();
     const supabase = createAdminClient();
 
     // 1. Get current setting or default
@@ -690,6 +745,7 @@ export async function updateSiteSetting(settingId: string, formData: FormData) {
 
 export async function seedDefaultSiteSettings() {
   try {
+    await requireAdminAuth();
     const supabase = createAdminClient();
     const { DEFAULT_COMPANY_IDENTITY, DEFAULT_PAGE_SETTINGS } = await import("@/lib/settings");
 
@@ -736,6 +792,7 @@ function parseArrayInput(input: string | null | undefined): string[] {
 
 export async function createJobAction(formData: FormData) {
   try {
+    await requireAdminAuth();
     const supabase = createAdminClient();
 
     const title = (formData.get("title") as string)?.trim();
@@ -786,7 +843,7 @@ export async function createJobAction(formData: FormData) {
 
     if (error) {
       console.error("Create job error:", error);
-      return { error: `Gagal menambah lowongan: ${error.message}` };
+      return { error: `Gagal menambah lowongan kerja.` };
     }
 
     revalidatePath("/lowongan-kerja");
@@ -800,6 +857,7 @@ export async function createJobAction(formData: FormData) {
 
 export async function updateJobAction(id: string, formData: FormData) {
   try {
+    await requireAdminAuth();
     const supabase = createAdminClient();
 
     const title = (formData.get("title") as string)?.trim();
@@ -847,7 +905,7 @@ export async function updateJobAction(id: string, formData: FormData) {
 
     if (error) {
       console.error("Update job error:", error);
-      return { error: `Gagal mengedit lowongan: ${error.message}` };
+      return { error: `Gagal memperbarui lowongan kerja.` };
     }
 
     revalidatePath("/lowongan-kerja");
@@ -862,11 +920,12 @@ export async function updateJobAction(id: string, formData: FormData) {
 
 export async function deleteJobAction(id: string) {
   try {
+    await requireAdminAuth();
     const supabase = createAdminClient();
     const { error } = await supabase.from("jobs").delete().eq("id", id);
 
     if (error) {
-      return { error: `Gagal menghapus lowongan: ${error.message}` };
+      return { error: `Gagal menghapus lowongan.` };
     }
 
     revalidatePath("/lowongan-kerja");
@@ -879,6 +938,7 @@ export async function deleteJobAction(id: string) {
 
 export async function toggleJobActiveAction(id: string, currentState: boolean) {
   try {
+    await requireAdminAuth();
     const supabase = createAdminClient();
     const { error } = await supabase
       .from("jobs")
@@ -886,7 +946,7 @@ export async function toggleJobActiveAction(id: string, currentState: boolean) {
       .eq("id", id);
 
     if (error) {
-      return { error: `Gagal mengubah status lowongan: ${error.message}` };
+      return { error: `Gagal mengubah status lowongan.` };
     }
 
     revalidatePath("/lowongan-kerja");

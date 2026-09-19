@@ -23,6 +23,7 @@ import {
   Briefcase,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { SITE_CONFIG } from "@/lib/siteConfig";
 
 interface AdminLayoutClientProps {
   children: React.ReactNode;
@@ -171,7 +172,7 @@ export default function AdminLayoutClient({ children }: AdminLayoutClientProps) 
               <div className="w-10 h-10 rounded-xl bg-[#EBF4E7] p-1 flex items-center justify-center shrink-0 border border-[#D5E8D0]">
                 <Image
                   src="/logo-jm.webp"
-                  alt="Logo PT Jasa Mandiri"
+                  alt={`Logo ${SITE_CONFIG.name}`}
                   width={36}
                   height={36}
                   className="w-8 h-8 object-contain"
@@ -180,7 +181,7 @@ export default function AdminLayoutClient({ children }: AdminLayoutClientProps) 
               {!isCollapsed && (
                 <div className="flex flex-col min-w-0">
                   <span className="font-serif font-bold text-base text-[#0B4F42] leading-tight truncate">
-                    PT Jasa Mandiri
+                    {SITE_CONFIG.shortName || SITE_CONFIG.name}
                   </span>
                   <span className="text-[10px] tracking-widest uppercase font-semibold text-on-surface-variant/70">
                     CMS Management

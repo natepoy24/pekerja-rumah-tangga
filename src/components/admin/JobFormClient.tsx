@@ -341,7 +341,7 @@ export default function JobFormClient({ initialJob, isEdit = false }: JobFormCli
               type="text"
               name="meta_title"
               defaultValue={initialJob?.meta_title || ""}
-              placeholder="Lowongan Kerja Asisten Rumah Tangga (ART) Resmi Gaji Utuh | PT Jasa Mandiri"
+              placeholder="Lowongan Kerja Asisten Rumah Tangga (ART) Resmi Gaji Utuh"
               className="w-full px-4 py-3 rounded-xl border border-outline-variant/50 focus:border-[#0B4F42] focus:ring-1 focus:ring-[#0B4F42] outline-none text-sm font-sans"
             />
           </div>

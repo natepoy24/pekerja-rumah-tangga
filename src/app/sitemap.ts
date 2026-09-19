@@ -71,6 +71,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly",
       priority: 0.7,
     },
+    {
+      url: `${baseUrl}/faq`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/kebijakan-privasi`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.5,
+    },
+    {
+      url: `${baseUrl}/syarat-ketentuan`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.5,
+    },
   ];
 
   // Dynamic jobs

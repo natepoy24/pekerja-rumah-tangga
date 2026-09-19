@@ -87,7 +87,7 @@ export default async function PekerjaPublicPage(props: {
         <PekerjaCatalogClient initialWorkers={workers} initialCategory={kategori || "Semua"} initialSearch={q || ""} />
 
         {/* FAQ Section (CMS Driven) */}
-        <FaqSection items={pageSetting?.faqs} whatsappNumber={company.nomor_whatsapp} />
+        <FaqSection items={pageSetting?.faqs} whatsappNumber={company.nomor_whatsapp} companyName={company.nama_perusahaan} />
       </div>
     </main>
   );

@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Mail, MapPin, Phone, CheckCircle2 } from "lucide-react";
 import type { CompanyIdentity } from "@/lib/settings";
+import { SITE_CONFIG } from "@/lib/siteConfig";
 
 interface FooterProps {
   company?: CompanyIdentity;
@@ -12,7 +13,7 @@ export function Footer({ company }: FooterProps) {
   const waNumber = company?.nomor_whatsapp || process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "6285111399962";
   const phone = company?.nomor_telepon || "+62 851-1139-9962";
   const email = company?.email || "info@pekerjarumahtangga.com";
-  const companyName = company?.nama_perusahaan || "PT Jasa Mandiri";
+  const companyName = company?.nama_perusahaan || SITE_CONFIG.name;
   const logoUrl = company?.logo_url || "/logo-jm.webp";
   const address =
     company?.alamat_lengkap ||
@@ -98,11 +99,11 @@ export function Footer({ company }: FooterProps) {
               <Link href="/tentang-kami" className="text-sm text-surface-dim/80 hover:text-white transition-colors">
                 Tentang Kami
               </Link>
+              <Link href="/faq" className="text-sm text-surface-dim/80 hover:text-white transition-colors">
+                FAQ & Bantuan
+              </Link>
               <Link href="/kontak" className="text-sm text-surface-dim/80 hover:text-white transition-colors">
                 Hubungi Kami (Kontak)
-              </Link>
-              <Link href="/admin/dashboard" className="text-sm text-surface-dim/80 hover:text-white transition-colors font-medium">
-                Portal Admin Dashboard
               </Link>
             </div>
           </div>
@@ -135,10 +136,12 @@ export function Footer({ company }: FooterProps) {
 
         <div className="border-t border-white/10 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-surface-dim/60">
           <p>© {currentYear} {companyName}. Hak Cipta Dilindungi Undang-Undang.</p>
-          <div className="flex gap-6">
+          <div className="flex flex-wrap gap-4 sm:gap-6 justify-center md:justify-end">
+            <Link href="/faq" className="hover:text-white transition-colors">FAQ</Link>
+            <Link href="/kebijakan-privasi" className="hover:text-white transition-colors">Kebijakan Privasi</Link>
+            <Link href="/syarat-ketentuan" className="hover:text-white transition-colors">Syarat & Ketentuan</Link>
             <Link href="/tentang-kami" className="hover:text-white transition-colors">Tentang Kami</Link>
             <Link href="/kontak" className="hover:text-white transition-colors">Kontak</Link>
-            <Link href="/layanan" className="hover:text-white transition-colors">Layanan</Link>
           </div>
         </div>
       </div>

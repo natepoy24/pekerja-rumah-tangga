@@ -153,7 +153,7 @@ export default async function ContactPage() {
                   Hadirkan Ketenangan di Kediaman Anda Hari Ini.
                 </h1>
                 <p className="font-sans text-base sm:text-lg text-[#404945] leading-relaxed max-w-2xl">
-                  Tim konsultan PT Jasa Mandiri siap mendampingi Anda memetakan kriteria pekerja rumah tangga, pengasuh anak, hingga perawat lansia yang tepat dan siap kerja.
+                  Tim konsultan {company.nama_perusahaan} siap mendampingi Anda memetakan kriteria pekerja rumah tangga, pengasuh anak, hingga perawat lansia yang tepat dan siap kerja.
                 </p>
               </div>
 
@@ -226,7 +226,7 @@ export default async function ContactPage() {
 
             {/* Right Column: Needs Curation Form */}
             <div className="lg:col-span-5">
-              <ContactFormClient />
+              <ContactFormClient waNumber={waNumber} companyName={company.nama_perusahaan} />
             </div>
           </div>
         </div>
@@ -256,7 +256,7 @@ export default async function ContactPage() {
                   <span>Izin LPTKS Resmi Kemnaker & Disnaker</span>
                 </div>
                 <h3 className="font-serif text-2xl font-bold text-[#0B4F42]">
-                  PT Jasa Mandiri Agency
+                  {company.nama_perusahaan}
                 </h3>
                 <p className="font-sans text-xs text-[#404945]">
                   PJTKI & Yayasan Penyalur Tenaga Kerja Terdaftar Sejak 2010
@@ -317,7 +317,7 @@ export default async function ContactPage() {
             <LazyGoogleMap
               embedUrl="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3134.3387853597533!2d106.78843769999999!3d-6.304753400000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69efd022e06d2b%3A0xfc3df798e49f58fb!2sJasa%20ART!5e1!3m2!1sid!2sid!4v1788849970996!5m2!1sid!2sid"
               staticImageSrc="/maps-placeholder.webp"
-              locationName="Peta Lokasi Kantor PT Jasa Mandiri Lebak Bulus Jakarta Selatan"
+              locationName={`Peta Lokasi Kantor ${company.nama_perusahaan} Lebak Bulus Jakarta Selatan`}
               address={address}
               className="w-full h-full min-h-[380px] lg:min-h-[460px]"
             />
@@ -336,7 +336,7 @@ export default async function ContactPage() {
               Cakupan Wilayah Jabodetabek & Nasional
             </h2>
             <p className="font-sans text-base text-[#404945] max-w-2xl mx-auto">
-              Layanan pengantaran dan penempatan tenaga kerja resmi PT Jasa Mandiri mencakup area perumahan dan komersial utama.
+              Layanan pengantaran dan penempatan tenaga kerja resmi {company.nama_perusahaan} mencakup area perumahan dan komersial utama.
             </p>
           </div>
 
@@ -378,7 +378,7 @@ export default async function ContactPage() {
               <span>Aftercare & Compliance Division</span>
             </div>
             <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#0B4F42] leading-tight">
-              Sudah Menggunakan Layanan PT Jasa Mandiri?
+              Sudah Menggunakan Layanan {company.nama_perusahaan}?
             </h2>
             <p className="font-sans text-base text-[#14201D] leading-relaxed">
               Untuk perpanjangan kontrak kerja, mediasi penyesuaian kerja, atau klaim garansi penggantian pekerja, hubungi divisi Aftercare & Compliance kami melalui nomor khusus purna jual.
@@ -399,7 +399,7 @@ export default async function ContactPage() {
       </section>
 
       {/* SECTION 5: FAQ SEBELUM BERKUNJUNG ATAU KONSULTASI (CMS Driven) */}
-      <FaqSection items={pageSetting?.faqs} whatsappNumber={waNumber} />
+      <FaqSection items={pageSetting?.faqs} whatsappNumber={waNumber} companyName={company.nama_perusahaan} />
     </div>
   );
 }

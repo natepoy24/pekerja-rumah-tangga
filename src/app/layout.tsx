@@ -32,6 +32,20 @@ export async function generateMetadata(): Promise<Metadata> {
       url: siteUrl,
       locale: "id_ID",
       type: "website",
+      images: [
+        {
+          url: "/asisten-rumah-tangga.webp",
+          width: 1200,
+          height: 630,
+          alt: `${siteName} — Penyalur Pekerja Rumah Tangga Resmi`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${siteName} — Penempatan Pekerja Rumah Tangga Resmi & Terpercaya`,
+      description: company.deskripsi,
+      images: ["/asisten-rumah-tangga.webp"],
     },
   };
 }
@@ -39,6 +53,7 @@ export async function generateMetadata(): Promise<Metadata> {
 import { Suspense } from "react";
 import PageTransitionLoader from "@/components/layout/PageTransitionLoader";
 import WebMCPProvider from "@/components/common/WebMCPProvider";
+import FloatingWhatsApp from "@/components/common/FloatingWhatsApp";
 
 export default async function RootLayout({
   children,
@@ -63,6 +78,10 @@ export default async function RootLayout({
         </Suspense>
         <WebMCPProvider />
         {children}
+        <FloatingWhatsApp
+          whatsappNumber={company?.nomor_whatsapp}
+          companyName={company?.nama_perusahaan}
+        />
         <Analytics />
         <SpeedInsights />
       </body>

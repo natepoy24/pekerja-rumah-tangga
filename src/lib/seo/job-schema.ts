@@ -4,11 +4,12 @@ import type {
   HaringOrganization,
   JobLocationAddress,
 } from "@/types/job-schema";
+import { SITE_CONFIG } from "@/lib/siteConfig";
 
 const DEFAULT_ORGANIZATION: HaringOrganization = {
-  name: "PT Jasa Mandiri Agency",
-  sameAs: "https://pekerjarumahtangga.com",
-  logo: "https://pekerjarumahtangga.com/logo.png",
+  name: SITE_CONFIG.name,
+  sameAs: SITE_CONFIG.url,
+  logo: SITE_CONFIG.logo,
 };
 
 const DEFAULT_LOCATION: JobLocationAddress = {

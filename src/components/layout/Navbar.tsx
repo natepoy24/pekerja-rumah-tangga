@@ -7,6 +7,7 @@ import { useState, useRef, useEffect } from "react";
 import { Menu, X, Phone, ChevronDown, HeartHandshake, Baby, HeartPulse, LayoutDashboard, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import type { CompanyIdentity } from "@/lib/settings";
+import { SITE_CONFIG } from "@/lib/siteConfig";
 
 interface NavbarProps {
   company?: CompanyIdentity;
@@ -19,7 +20,7 @@ export function Navbar({ company }: NavbarProps) {
   const pathname = usePathname();
 
   const waNumber = company?.nomor_whatsapp || process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "6285111399962";
-  const companyName = company?.nama_perusahaan || "PT Jasa Mandiri";
+  const companyName = company?.nama_perusahaan || SITE_CONFIG.name;
   const subtagline = company?.subtagline || "Premium Domestic Care";
   const logoUrl = company?.logo_url || "/logo-jm.webp";
 

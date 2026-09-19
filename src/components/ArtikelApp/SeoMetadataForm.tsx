@@ -16,6 +16,7 @@ import {
   Wand2,
   RotateCcw,
 } from "lucide-react";
+import { SITE_CONFIG } from "@/lib/siteConfig";
 
 export interface SeoData {
   slug?: string;
@@ -116,10 +117,10 @@ export default function SeoMetadataForm({
     return { text: `${metaDescLength}/160 karakter (terlalu panjang, mungkin terpotong)`, color: "text-rose-600" };
   };
 
-  const currentEffectiveTitle = metaTitle || titleValue || "Judul Artikel Edukasi PT Jasa Mandiri";
+  const currentEffectiveTitle = metaTitle || titleValue || `Judul Artikel Edukasi ${SITE_CONFIG.name}`;
   const currentEffectiveDesc =
     metaDescription ||
-    "Panduan komprehensif dari PT Jasa Mandiri mengenai layanan penyaluran tenaga kerja rumah tangga resmi dan bergaransi.";
+    `Panduan komprehensif dari ${SITE_CONFIG.name} mengenai layanan penyaluran tenaga kerja rumah tangga resmi dan bergaransi.`;
   const effectiveSlug = slug || "judul-artikel";
 
   // Pure Client-Side Auto Generator (No External API / No AI)
@@ -136,7 +137,7 @@ export default function SeoMetadataForm({
     // 2. Meta Title
     if (titleValue) {
       if (titleValue.length <= 48) {
-        setMetaTitle(`${titleValue} | Jasa Mandiri`);
+        setMetaTitle(`${titleValue} | ${SITE_CONFIG.shortName || SITE_CONFIG.name}`);
       } else {
         setMetaTitle(titleValue.slice(0, 60).trim());
       }
@@ -153,7 +154,7 @@ export default function SeoMetadataForm({
       setMetaDescription(desc);
     } else if (titleValue) {
       setMetaDescription(
-        `Pelajari panduan lengkap mengenai ${titleValue.toLowerCase()} dari PT Jasa Mandiri, penyalur resmi tenaga kerja rumah tangga bergaransi.`
+        `Pelajari panduan lengkap mengenai ${titleValue.toLowerCase()} dari ${SITE_CONFIG.name}, penyalur resmi tenaga kerja rumah tangga bergaransi.`
       );
     }
 
@@ -286,10 +287,10 @@ export default function SeoMetadataForm({
               </div>
               <div className="flex flex-col">
                 <span className="font-semibold text-slate-800 text-xs leading-none">
-                  PT Jasa Mandiri
+                  {SITE_CONFIG.name}
                 </span>
                 <span className="text-[11px] text-slate-500 truncate max-w-sm sm:max-w-md">
-                  https://jasamandiri.com › artikel › {effectiveSlug}
+                  https://{SITE_CONFIG.domain} › artikel › {effectiveSlug}
                 </span>
               </div>
             </div>

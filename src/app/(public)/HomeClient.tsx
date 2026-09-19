@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import HeroServiceTabs from "@/components/home/HeroServiceTabs";
 import type { PageSetting, CompanyIdentity } from "@/lib/settings";
+import { SITE_CONFIG } from "@/lib/siteConfig";
 import dynamic from "next/dynamic";
 
 const FaqSection = dynamic(() => import("@/components/common/FaqSection"), {
@@ -25,12 +26,13 @@ interface HomeClientProps {
 
 export default function HomeClient({ pageSetting, company }: HomeClientProps) {
   const waNumber = company?.nomor_whatsapp || process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "6285111399962";
+  const companyName = company?.nama_perusahaan || SITE_CONFIG.name;
   const heroTitle = pageSetting?.hero_title || "Kenyamanan & Ketenangan Rumah Dimulai dari Tangan yang Tepat.";
   const heroSubtitle =
     pageSetting?.hero_subtitle ||
-    "PT Jasa Mandiri menyalurkan Asisten Rumah Tangga, Baby Sitter, dan Perawat Lansia terpercaya yang telah melewati verifikasi identitas ketat, pemeriksaan kesehatan medis, serta pelatihan etika kerja profesional.";
+    `${companyName} menyalurkan Asisten Rumah Tangga, Baby Sitter, dan Perawat Lansia terpercaya yang telah melewati verifikasi identitas ketat, pemeriksaan kesehatan medis, serta pelatihan etika kerja profesional.`;
   const heroImage = pageSetting?.hero_image || "/asisten-rumah-tangga.webp";
-  const heroImageAlt = pageSetting?.hero_image_alt || "Penyalur Asisten Rumah Tangga Resmi PT Jasa Mandiri";
+  const heroImageAlt = pageSetting?.hero_image_alt || `Penyalur Asisten Rumah Tangga Resmi ${companyName}`;
 
   const services = [
     {
@@ -404,7 +406,7 @@ export default function HomeClient({ pageSetting, company }: HomeClientProps) {
             <div className="bg-white p-8 rounded-2xl border border-outline-variant/30 shadow-sm relative">
               <Quote className="w-10 h-10 text-brand-pine/10 absolute top-6 left-6" />
               <p className="font-serif text-lg text-brand-charcoal italic mb-6 relative z-10 pt-4 leading-relaxed">
-                &ldquo;Merawat orang tua pasca stroke butuh kesabaran dan keahlian khusus. Perawat lansia dari PT Jasa Mandiri sangat sigap mengukur tensi, medikasi, dan telaten menemani.&rdquo;
+                &ldquo;Merawat orang tua pasca stroke butuh kesabaran dan keahlian khusus. Perawat lansia dari {companyName} sangat sigap mengukur tensi, medikasi, dan telaten menemani.&rdquo;
               </p>
               <div className="font-sans text-sm font-bold text-brand-pine">
                 — Bpk. Hendra K. (Pondok Indah, Jakarta Selatan)
@@ -415,7 +417,7 @@ export default function HomeClient({ pageSetting, company }: HomeClientProps) {
       </section>
 
       {/* FAQ Section (CMS Driven) */}
-      <FaqSection items={pageSetting?.faqs} whatsappNumber={waNumber} />
+      <FaqSection items={pageSetting?.faqs} whatsappNumber={waNumber} companyName={companyName} />
 
       {/* Final Call to Action */}
       <section className="bg-brand-pine py-16 md:py-20 px-4 sm:px-6 lg:px-8 text-center text-white">

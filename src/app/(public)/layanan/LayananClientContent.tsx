@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import type { PageSetting, CompanyIdentity } from "@/lib/settings";
+import { SITE_CONFIG } from "@/lib/siteConfig";
 import dynamic from "next/dynamic";
 
 const FaqSection = dynamic(() => import("@/components/common/FaqSection"), {
@@ -41,11 +42,12 @@ export function LayananClientContent({ pageSetting, company }: LayananClientCont
   const heroSubtitle =
     pageSetting?.hero_subtitle ||
     "Dari tata kelola hunian yang bersih, pengasuhan balita penuh kasih, hingga pendampingan lansia bermartabat. Seluruh tenaga kerja telah melewati kurasi identitas, skrining medis, dan berpayung hukum resmi sejak 2010.";
+  const companyName = company?.nama_perusahaan || SITE_CONFIG.name;
   const heroImage = pageSetting?.hero_image || "/asisten-rumah-tangga.webp";
-  const heroImageAlt = pageSetting?.hero_image_alt || "Layanan Penempatan PRT PT Jasa Mandiri";
+  const heroImageAlt = pageSetting?.hero_image_alt || `Layanan Penempatan PRT ${companyName}`;
 
   const waMessage = encodeURIComponent(
-    `Halo ${company?.nama_perusahaan || "PT Jasa Mandiri"}, saya ingin berkonsultasi mengenai kebutuhan layanan tenaga kerja rumah tangga untuk keluarga kami.`
+    `Halo ${companyName}, saya ingin berkonsultasi mengenai kebutuhan layanan tenaga kerja rumah tangga untuk keluarga kami.`
   );
   const waUrl = `https://wa.me/${waNumber}?text=${waMessage}`;
 
@@ -153,7 +155,7 @@ export function LayananClientContent({ pageSetting, company }: LayananClientCont
     {
       step: "03",
       title: "Penempatan Resmi & Masa Adaptasi",
-      desc: "Pekerja mulai bertugas dengan pendampingan operasional dan perlindungan garansi dari tim PT Jasa Mandiri.",
+      desc: `Pekerja mulai bertugas dengan pendampingan operasional dan perlindungan garansi dari tim ${companyName}.`,
     },
   ];
 
@@ -178,7 +180,7 @@ export function LayananClientContent({ pageSetting, company }: LayananClientCont
     },
     {
       param: "Rentang Biaya",
-      art: "Rp1.500.000 – Rp4.000.000",
+      art: "Rp2.500.000 – Rp4.000.000",
       babySitter: "Rp2.500.000 – Rp5.000.000",
       lansia: "Rp2.500.000 – Rp6.000.000",
     },
@@ -471,7 +473,7 @@ export function LayananClientContent({ pageSetting, company }: LayananClientCont
               Standar Perlindungan & Mutu Seragam
             </h2>
             <p className="text-on-surface-variant text-sm sm:text-base">
-              Apapun pilihan layanan yang Anda butuhkan, seluruh penempatan tenaga kerja PT Jasa Mandiri dilindungi oleh 4 pilar garansi keselamatan resmi.
+              Apapun pilihan layanan yang Anda butuhkan, seluruh penempatan tenaga kerja {companyName} dilindungi oleh 4 pilar garansi keselamatan resmi.
             </p>
           </div>
 
@@ -501,7 +503,7 @@ export function LayananClientContent({ pageSetting, company }: LayananClientCont
 
                   <div className="mt-4 pt-3 border-t border-brand-sage/20 flex items-center gap-1.5 text-brand-sage text-xs font-semibold">
                     <ShieldCheck className="w-4 h-4" />
-                    <span>Jaminan Jasa Mandiri</span>
+                    <span>Jaminan {companyName}</span>
                   </div>
                 </motion.div>
               );
@@ -564,7 +566,7 @@ export function LayananClientContent({ pageSetting, company }: LayananClientCont
       </section>
 
       {/* FAQ Section (CMS Managed) */}
-      <FaqSection items={pageSetting?.faqs} whatsappNumber={waNumber} />
+      <FaqSection items={pageSetting?.faqs} whatsappNumber={waNumber} companyName={companyName} />
 
       {/* 6. BOTTOM CONVERSION CTA BANNER */}
       <section className="py-16 md:py-24 bg-surface-bright">
@@ -589,7 +591,7 @@ export function LayananClientContent({ pageSetting, company }: LayananClientCont
                 Masih Ragu Menentukan Layanan yang Tepat?
               </h2>
               <p className="text-white/80 text-sm sm:text-base leading-relaxed">
-                Konsultasikan dinamika hunian, jumlah anggota keluarga, atau kondisi kesehatan orang tua Anda secara gratis bersama konsultan PT Jasa Mandiri.
+                Konsultasikan dinamika hunian, jumlah anggota keluarga, atau kondisi kesehatan orang tua Anda secara gratis bersama konsultan {companyName}.
               </p>
             </div>
 

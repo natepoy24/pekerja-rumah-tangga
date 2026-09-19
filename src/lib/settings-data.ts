@@ -152,62 +152,67 @@ export const DEFAULT_PAGE_SETTINGS: Record<string, PageSetting> = {
     ],
   },
   page_baby_sitter: {
-    meta_title: "Layanan Baby Sitter & Nanny Profesional Terpercaya | PT Jasa Mandiri",
+    meta_title: "Penyalur Baby Sitter Resmi & Terlatih | PT Jasa Mandiri",
     meta_description:
-      "Layanan baby sitter premium dengan standar operasional ketat, skrining berlapis, dan dedikasi penuh untuk menghadirkan ketenangan pikiran bagi orang tua di rumah.",
+      "Penyalur baby sitter dan suster anak resmi berizin Disnaker. Pengasuh sabar, teruji medis, beretika, siap menginap atau pulang-pergi dengan garansi.",
     keywords:
-      "baby sitter jakarta, pengasuh bayi newborn, yayasan suster anak resmi, nanny terdidik jabodetabek",
+      "yayasan babysitter resmi, penyalur baby sitter terpercaya, jasa perawat bayi Jakarta, gaji baby sitter menginap, suster bayi baru lahir",
     og_image: "/baby-sitter.webp",
-    hero_title: "Pengasuhan Penuh Kasih & Rasa Aman untuk Tumbuh Kembang Buah Hati Anda.",
+    hero_title:
+      "Pengasuhan Penuh Kasih dan Rasa Aman untuk Tumbuh Kembang Buah Hati Anda.",
     hero_subtitle:
-      "Layanan baby sitter premium dengan standar operasional ketat, skrining berlapis, dan dedikasi penuh untuk menghadirkan ketenangan pikiran bagi orang tua di rumah.",
+      "Dapatkan baby sitter terseleksi ketat yang sabar, terlatih, dan terverifikasi medis—memberikan perhatian optimal saat Anda bekerja dan beraktivitas.",
     hero_image: "/baby-sitter.webp",
-    hero_image_alt: "Layanan Baby Sitter Premium PT Jasa Mandiri",
+    hero_image_alt: "Layanan Baby Sitter PT Jasa Mandiri",
     faqs: [
       {
-        question: "Apa kualifikasi khusus dari Baby Sitter di PT Jasa Mandiri?",
+        question: "Apakah orang tua bisa mewawancarai calon suster terlebih dahulu?",
         answer:
-          "Suster pengasuh kami telah dibekali pelatihan memandikan bayi baru lahir (newborn), pembuatan & sterilisasi botol susu, penyiapan MPASI bergizi, stimulasi tumbuh kembang anak, serta pelatihan kesabaran & pertolongan pertama.",
+          "Sangat disarankan. Kami menjadwalkan sesi interview langsung melalui video call atau di kantor PT Jasa Mandiri agar orang tua dapat menguji kecocokan karakter secara langsung.",
       },
       {
-        question: "Apakah Baby Sitter bisa fokus khusus mengurus anak tanpa tugas rumah lain?",
+        question: "Apakah suster bersedia menginap dan siaga di malam hari untuk bayi newborn?",
         answer:
-          "Ya, fokus utama Baby Sitter adalah 100% pada keselamatan, higienitas, dan pendampingan anak. Tugas terkait perlengkapan anak (mencuci baju bayi, merapikan kamar anak, menyuci botol) termasuk dalam tanggung jawabnya.",
+          "Ya, kami menyediakan kategori khusus Baby Sitter Newborn Live-in yang terbiasa dengan jadwal bangun malam dan penanganan bayi baru lahir.",
       },
       {
-        question: "Bagaimana cara memastikan kecocokan Baby Sitter sebelum penempatan?",
+        question: "Bagaimana jika anak merasa kurang cocok dengan pengasuh yang ditempatkan?",
         answer:
-          "Anda dapat melakukan sesi wawancara mendalam via Video Call atau bertatap muka langsung untuk menanyakan pengalaman pengasuhan dan pembawaan kandidat suster.",
+          "Kami memberikan garansi penggantian resmi tanpa biaya administrasi tambahan selama masa garansi kontrak berlangsung.",
       },
     ],
   },
   page_perawat_lansia: {
-    meta_title: "Layanan Perawat Lansia & Caregiver Berpengalaman | PT Jasa Mandiri",
+    meta_title: "Penyalur Perawat & Pendamping Lansia Resmi | PT Jasa Mandiri",
     meta_description:
-      "Dapatkan caregiver dan perawat lansia terseleksi yang sabar, teliti mengawal kebutuhan medis harian, serta hadir sebagai teman bicara yang memberikan kenyamanan emosional di rumah.",
+      "Penyalur perawat lansia dan caregiver profesional berizin Disnaker. Perawatan sabar, pengawasan jadwal obat, pendampingan mobilitas, dan garansi resmi.",
     keywords:
-      "perawat lansia jakarta, caregiver orang tua, suster lansia bedridden, perawat lansia terpercaya",
+      "penyalur perawat lansia resmi, jasa caregiver lansia, perawat orang tua menginap Jakarta, pendamping lansia terpercaya, yayasan perawat lansia",
     og_image: "/perawat-lansia.webp",
-    hero_title: "Pendampingan Penuh Empati, Martabat, & Perhatian Tulus untuk Orang Tua Tercinta.",
+    hero_title:
+      "Pendampingan Penuh Empati, Martabat, dan Perhatian Tulus untuk Orang Tua Tercinta.",
     hero_subtitle:
       "Dapatkan caregiver dan perawat lansia terseleksi yang sabar, teliti mengawal kebutuhan medis harian, serta hadir sebagai teman bicara yang memberikan kenyamanan emosional di rumah.",
     hero_image: "/perawat-lansia.webp",
-    hero_image_alt: "Layanan Perawat Lansia PT Jasa Mandiri",
+    hero_image_alt: "Layanan Perawat dan Pendamping Lansia PT Jasa Mandiri",
     faqs: [
       {
-        question: "Apa perbedaan Caregiver Lansia non-medis dan Perawat Medis?",
+        question:
+          "Apakah perawat bersedia menginap di kamar yang sama dengan lansia?",
         answer:
-          "Caregiver non-medis berfokus pada pendampingan aktivitas harian lansia (memandikan, menyuapi, meminumkan obat rutin, teman bicara). Perawat lansia berpengalaman medis memiliki kemampuan khusus menangani pasien bedridden, alat bantu NGT/kateter, serta pengukuran vital sign secara berkala.",
+          "Ya, untuk lansia yang membutuhkan pengawasan malam hari atau bantuan ke kamar mandi saat malam, perawat live-in siap ditempatkan di kamar yang sama atau bersebelahan sesuai kesepakatan.",
       },
       {
-        question: "Apakah perawat lansia dilatih menangani penderita Alzheimer atau Demensia?",
+        question:
+          "Bisakah perawat mendampingi saat orang tua harus kontrol ke rumah sakit?",
         answer:
-          "Ya, kandidat perawat lansia kami diberi pembekalan ekstra mengenai psikologi lansia, kesabaran dalam menghadapi emosi atau kepikunan (demensia), serta teknik fisioterapi ringan.",
+          "Sangat bisa. Pendampingan ke faskes, membantu antrean kursi roda, dan koordinasi instruksi dokter merupakan bagian dari tugas perawat kami.",
       },
       {
-        question: "Bagaimana pemantauan jadwal obat lansia di rumah?",
+        question:
+          "Bagaimana jika orang tua merasa kurang cocok dengan kepribadian perawat?",
         answer:
-          "Perawat lansia wajib mencatat jurnal harian mencakup jam minum obat, tekanan darah, suhu tubuh, intake makanan, dan perubahan kondisi fisik lansia untuk dilaporkan kepada keluarga.",
+          "Kami memahami kenyamanan lansia sangat personal. PT Jasa Mandiri menyediakan fasilitas garansi penukaran tenaga kerja tanpa biaya administrasi tambahan selama masa garansi aktif.",
       },
     ],
   },

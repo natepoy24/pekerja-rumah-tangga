@@ -210,7 +210,7 @@ export default async function TentangKamiPage() {
         </div>
       </section>
 
-      <FaqSection items={pageSetting?.faqs} whatsappNumber={waNumber} />
+      <FaqSection items={pageSetting?.faqs} whatsappNumber={waNumber} companyName={company.nama_perusahaan} />
     </div>
   );
 }

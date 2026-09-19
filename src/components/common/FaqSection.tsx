@@ -9,15 +9,21 @@ interface FaqSectionProps {
   title?: string;
   subtitle?: string;
   whatsappNumber?: string;
+  companyName?: string;
 }
 
 export default function FaqSection({
   items = [],
   title = "Pertanyaan yang Sering Diajukan (FAQ)",
-  subtitle = "Temukan jawaban cepat untuk pertanyaan umum mengenai kejelasan legalitas, prosedur garansi penempatan, dan standar seleksi pekerja di PT Jasa Mandiri.",
+  subtitle,
   whatsappNumber = "6285111399962",
+  companyName = "kami",
 }: FaqSectionProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
+
+  const finalSubtitle =
+    subtitle ||
+    `Temukan jawaban cepat untuk pertanyaan umum mengenai kejelasan legalitas, prosedur garansi penempatan, dan standar seleksi pekerja di ${companyName}.`;
 
   if (!items || items.length === 0) return null;
 
@@ -40,7 +46,7 @@ export default function FaqSection({
   };
 
   const waLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
-    "Halo PT Jasa Mandiri, saya memiliki pertanyaan seputar penyaluran pekerja rumah tangga."
+    `Halo ${companyName}, saya memiliki pertanyaan seputar penyaluran pekerja rumah tangga.`
   )}`;
 
   return (
@@ -68,7 +74,7 @@ export default function FaqSection({
           </h2>
 
           <p className="text-sm md:text-base text-on-surface-variant leading-relaxed">
-            {subtitle}
+            {finalSubtitle}
           </p>
         </div>
 
@@ -79,32 +85,22 @@ export default function FaqSection({
             return (
               <div
                 key={idx}
-                className={`rounded-2xl border transition-all duration-200 overflow-hidden ${
-                  isOpen
-                    ? "bg-white border-[#0B4F42]/30 shadow-md shadow-[#0B4F42]/5 ring-1 ring-[#0B4F42]/20"
-                    : "bg-white/80 hover:bg-white border-[#D5E8D0] shadow-xs"
-                }`}
+                className="bg-white rounded-2xl border border-outline-variant/40 shadow-xs overflow-hidden transition-all duration-200 hover:border-[#0B4F42]/30"
               >
                 <button
                   type="button"
                   onClick={() => toggleIndex(idx)}
-                  className="w-full p-5 sm:p-6 text-left flex items-center justify-between gap-4 font-semibold text-[#14201D] focus:outline-none"
+                  className="w-full text-left p-5 sm:p-6 flex items-center justify-between gap-4 select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0B4F42]"
                   aria-expanded={isOpen}
                 >
-                  <span className="flex items-center gap-3 text-base sm:text-lg font-serif">
-                    <span className="w-7 h-7 rounded-xl bg-[#EBF4E7] text-[#0B4F42] text-xs font-bold flex items-center justify-center shrink-0 border border-[#D5E8D0]">
-                      0{idx + 1}
-                    </span>
-                    <span className="text-[#14201D] font-bold leading-snug">
-                      {item.question}
-                    </span>
+                  <span className="font-serif text-base sm:text-lg font-bold text-[#14201D]">
+                    {item.question}
                   </span>
-
                   <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-transform duration-300 ${
+                    className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-transform duration-200 ${
                       isOpen
-                        ? "bg-[#0B4F42] text-white rotate-180"
-                        : "bg-[#EBF4E7] text-[#0B4F42]"
+                        ? "rotate-180 bg-[#0B4F42] text-white"
+                        : "bg-surface-container text-[#14201D]"
                     }`}
                   >
                     <ChevronDown className="w-4 h-4" />
@@ -112,10 +108,8 @@ export default function FaqSection({
                 </button>
 
                 {isOpen && (
-                  <div className="px-5 pb-6 sm:px-6 sm:pb-6 text-sm text-on-surface-variant/90 leading-relaxed border-t border-outline-variant/10 pt-4 animate-in fade-in duration-200">
-                    <p className="whitespace-pre-line pl-10 border-l-2 border-[#0B4F42]/30">
-                      {item.answer}
-                    </p>
+                  <div className="px-5 sm:px-6 pb-6 pt-1 text-sm sm:text-base text-on-surface-variant/90 leading-relaxed border-t border-outline-variant/20 animate-in fade-in duration-150">
+                    <p>{item.answer}</p>
                   </div>
                 )}
               </div>
@@ -136,7 +130,7 @@ export default function FaqSection({
               Masih Memiliki Pertanyaan Lain?
             </h3>
             <p className="text-xs sm:text-sm text-emerald-100/90 max-w-xl">
-              Tim Customer Service PT Jasa Mandiri siap membantu Anda menjelaskan prosedur, pilihan kandidat, dan rincian garansi secara ramah.
+              Tim Customer Service {companyName} siap membantu Anda menjelaskan prosedur, pilihan kandidat, dan rincian garansi secara ramah.
             </p>
           </div>
 

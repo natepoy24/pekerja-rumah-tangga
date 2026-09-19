@@ -183,7 +183,7 @@ export default async function AdminDashboardPage() {
         <div>
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#EBF4E7] border border-[#D5E8D0] text-[#0B4F42] text-xs font-bold uppercase tracking-wider mb-2.5">
             <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Dashboard Eksekutif PT Jasa Mandiri</span>
+            <span>Dashboard Eksekutif Portal CMS</span>
           </div>
           <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#14201D] tracking-tight">
             Ringkasan Operasional & Manajemen Konten

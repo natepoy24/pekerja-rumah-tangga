@@ -308,7 +308,7 @@ export default async function ArtLayananPage() {
         </div>
       </section>
 
-      <FaqSection items={pageSetting?.faqs} whatsappNumber={waNumber} />
+      <FaqSection items={pageSetting?.faqs} whatsappNumber={waNumber} companyName={company.nama_perusahaan} />
 
       <section className="px-4 sm:px-6 lg:px-8 max-w-container mx-auto my-12">
         <div className="bg-brand-pine text-white rounded-2xl p-8 sm:p-12 text-center space-y-6">

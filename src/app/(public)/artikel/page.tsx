@@ -207,7 +207,7 @@ export default async function ArtikelPublicPage() {
         ) : null}
 
         {/* FAQ Section (CMS Driven) */}
-        <FaqSection items={pageSetting?.faqs} whatsappNumber={company.nomor_whatsapp} />
+        <FaqSection items={pageSetting?.faqs} whatsappNumber={company.nomor_whatsapp} companyName={company.nama_perusahaan} />
       </div>
     </main>
   );

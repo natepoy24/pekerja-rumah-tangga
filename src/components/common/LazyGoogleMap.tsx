@@ -16,7 +16,7 @@ interface LazyGoogleMapProps {
 export default function LazyGoogleMap({
   embedUrl,
   staticImageSrc = "/maps-placeholder.webp",
-  locationName = "Lokasi Kantor PT Jasa Mandiri",
+  locationName = "Lokasi Kantor Operasional",
   className = "w-full h-full min-h-[380px] lg:min-h-[460px]",
   priority = true,
   address = "Jl. Gunung Balong III No.78, RT.11/RW.4, Lb. Bulus, Kec. Cilandak, Kota Jakarta Selatan, DKI Jakarta 12440",
